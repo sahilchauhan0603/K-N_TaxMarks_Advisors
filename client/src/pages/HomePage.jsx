@@ -152,7 +152,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Powerful Features
+              Our Key Services
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Everything you need to manage customer relationships effectively
@@ -287,7 +287,7 @@ const HomePage = () => {
               Get in Touch
             </Link>
             <a
-              href="https://wa.me/919999999999" // Replace with your WhatsApp number
+              href="https://wa.me/919318469138" // Replace with your WhatsApp number
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-green-500 text-white rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-green-600 transition duration-300 shadow-lg hover:shadow-xl"
@@ -298,7 +298,7 @@ const HomePage = () => {
               Chat on WhatsApp
             </a>
             <a
-              href="https://instagram.com/kntaxmarkadvisors" // Replace with your Instagram profile
+              href="https://www.instagram.com/kn_taxmark/" // Replace with your Instagram profile
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded-lg font-bold flex items-center justify-center gap-2 hover:from-pink-600 hover:to-yellow-600 transition duration-300 shadow-lg hover:shadow-xl"

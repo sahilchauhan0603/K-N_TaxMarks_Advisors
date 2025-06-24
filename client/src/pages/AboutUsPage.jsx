@@ -16,7 +16,7 @@ const AboutUsPage = () => {
     {
       icon: <FaChartLine className="text-4xl mb-4 text-purple-600" />,
       title: "Our Impact",
-      description: "Serving 1,000+ clients across India, we have helped startups, SMEs, and individuals achieve their financial and legal goals."
+      description: "Serving clients across India, we have helped startups, SMEs, and individuals achieve their financial and legal goals."
     }
   ];
 
@@ -59,10 +59,10 @@ const AboutUsPage = () => {
             <div className="p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Story</h2>
               <p className="text-gray-600 mb-4">
-                Founded in 2021, K&N TaxMark Advisors started with a vision to simplify tax, legal, and business compliance for everyone. Our founders, CA Karan Sharma and Adv. Nidhi Verma, combined their expertise to create a one-stop solution for all financial and legal needs.
+                Founded in 2025, K&N TaxMark Advisors started with a vision to simplify tax, legal, and business compliance for everyone. Our founders, CA Komal Chauhan and Adv. Niharika Chauhan, combined their expertise to create a one-stop solution for all financial and legal needs.
               </p>
               <p className="text-gray-600 mb-4">
-                Over the years, we have built a reputation for trust, accuracy, and personalized service. Our team stays updated with the latest regulations to ensure our clients are always compliant and ahead in their business journey.
+                Over the time, we have built a reputation for trust, accuracy, and personalized service. Our team stays updated with the latest regulations to ensure our clients are always compliant and ahead in their business journey.
               </p>
               <p className="text-gray-600">
                 Whether you are an entrepreneur, a growing business, or an individual, we are here to guide you at every step—be it tax planning, GST, ITR filing, business registration, or legal advisory.
