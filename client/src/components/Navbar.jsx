@@ -114,7 +114,7 @@ const Navbar = () => {
 
           <div className="flex items-center">
             {isAuthenticated ? (
-              <div className="relative ml-2 flex items-center">
+              <div className="relative ml-2 flex items-center group">
                 <button
                   onClick={() => setShowUserDropdown(!showUserDropdown)}
                   className="flex items-center text-sm rounded-full focus:outline-none user-dropdown-btn"
@@ -135,7 +135,10 @@ const Navbar = () => {
                     {user?.name || user?.given_name || user?.first_name || "User"}
                   </span>
                 </button>
-
+                {/* Tooltip for mobile: show name on hover/focus */}
+                <span className="absolute left-1/2 -translate-x-1/2 mt-2 px-3 py-1 rounded bg-gray-900 text-white text-xs font-medium whitespace-nowrap z-30 md:hidden opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none">
+                  {user?.name || user?.given_name || user?.first_name || "User"}
+                </span>
                 {showUserDropdown && (
                   <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 user-dropdown-menu">
                     <div className="py-1">
