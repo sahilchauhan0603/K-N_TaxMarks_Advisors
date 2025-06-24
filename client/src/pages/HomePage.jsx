@@ -279,14 +279,37 @@ const HomePage = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6 text-black">Ready to simplify your taxes and grow your business?</h2>
           <p className="text-xl mb-8 text-black">Partner with K&N TaxMark Advisors for expert tax, legal, and business solutions.</p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
             <Link 
               to="/contact-us" 
               className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition duration-300 shadow-lg hover:shadow-xl"
             >
               Get in Touch
             </Link>
+            <a
+              href="https://wa.me/919999999999" // Replace with your WhatsApp number
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-4 bg-green-500 text-white rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-green-600 transition duration-300 shadow-lg hover:shadow-xl"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 13.487a4.5 4.5 0 01-6.349-6.349m6.349 6.349l2.121 2.121a1.5 1.5 0 01-2.121 2.121l-2.121-2.121m2.121-2.121a4.5 4.5 0 01-6.349-6.349" />
+              </svg>
+              Chat on WhatsApp
+            </a>
+            <a
+              href="https://instagram.com/kntaxmarkadvisors" // Replace with your Instagram profile
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded-lg font-bold flex items-center justify-center gap-2 hover:from-pink-600 hover:to-yellow-600 transition duration-300 shadow-lg hover:shadow-xl"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6">
+                <path d="M7.75 2A5.75 5.75 0 0 0 2 7.75v8.5A5.75 5.75 0 0 0 7.75 22h8.5A5.75 5.75 0 0 0 22 16.25v-8.5A5.75 5.75 0 0 0 16.25 2h-8.5zm0 1.5h8.5A4.25 4.25 0 0 1 20.5 7.75v8.5A4.25 4.25 0 0 1 16.25 20.5h-8.5A4.25 4.25 0 0 1 3.5 16.25v-8.5A4.25 4.25 0 0 1 7.75 3.5zm8.25 2.25a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zM12 7.25A4.75 4.75 0 1 0 12 16.75a4.75 4.75 0 0 0 0-9.5zm0 1.5a3.25 3.25 0 1 1 0 6.5a3.25 3.25 0 0 1 0-6.5z" />
+              </svg>
+              Chat on Instagram
+            </a>
           </div>
+          <p className="text-gray-500 text-sm">We're here to help you every step of the way!</p>
         </div>
       </section>
     </div>

@@ -68,7 +68,7 @@ const Navbar = () => {
             <Link to="/" className="flex-shrink-0 flex items-center">
               {/* Logo */}
               <img src={logo} alt="Logo" className="h-25 w-25 mr-2 object-contain" />
-              <span className="text-2xl font-bold text-blue-600">K&N TaxMark Advisors</span>
+              {/* <span className="text-2xl font-bold text-blue-600">K&N TaxMark Advisors</span> */}
             </Link>
             
             <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4 relative">
