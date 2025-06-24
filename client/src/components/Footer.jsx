@@ -11,6 +11,7 @@ import {
   FaInstagram
 } from 'react-icons/fa';
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 const Footer = () => {
@@ -18,11 +19,11 @@ const Footer = () => {
     {
       title: "Services",
       items: [
-        { name: "Tax Planning", href: "/services" },
-        { name: "ITR Filing", href: "/services" },
-        { name: "GST Filing", href: "/services" },
-        { name: "Business Advisory", href: "/services" },
-        { name: "Trademark & Legal", href: "/services" }
+        { name: "Tax Planning", href: "/services/tax-planning" },
+        { name: "ITR Filing", href: "/services/itr-filing" },
+        { name: "GST Filing", href: "/services/gst-filing" },
+        { name: "Business Advisory", href: "/services/business-advisory" },
+        { name: "Trademark & Legal", href: "/services/trademark" }
       ]
     },
     {
@@ -93,18 +94,28 @@ const Footer = () => {
               <ul className="space-y-3">
                 {section.items.map((item, itemIndex) => (
                   <li key={itemIndex}>
-                    <a 
-                      href={item.href}
-                      className="flex items-center text-gray-300 hover:text-white transition-colors duration-200 group"
-                      target={item.href.startsWith('http') ? "_blank" : "_self"}
-                      rel="noopener noreferrer"
-                    >
-                      {item.icon && <span className="mr-2">{item.icon}</span>}
-                      <span>{item.name}</span>
-                      {item.href.startsWith('http') && (
-                        <FaArrowRight className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform group-hover:translate-x-1" />
-                      )}
-                    </a>
+                    {item.href.startsWith('http') || item.href.startsWith('mailto') || item.href.startsWith('tel') ? (
+                      <a
+                        href={item.href}
+                        className="flex items-center text-gray-300 hover:text-white transition-colors duration-200 group"
+                        target={item.href.startsWith('http') ? "_blank" : "_self"}
+                        rel="noopener noreferrer"
+                      >
+                        {item.icon && <span className="mr-2">{item.icon}</span>}
+                        <span>{item.name}</span>
+                        {item.href.startsWith('http') && (
+                          <FaArrowRight className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform group-hover:translate-x-1" />
+                        )}
+                      </a>
+                    ) : (
+                      <Link
+                        to={item.href}
+                        className="flex items-center text-gray-300 hover:text-white transition-colors duration-200 group"
+                      >
+                        {item.icon && <span className="mr-2">{item.icon}</span>}
+                        <span>{item.name}</span>
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -145,10 +156,10 @@ const Footer = () => {
                   &copy; {new Date().getFullYear()} K&N TaxMark Advisors. All rights reserved.
                 </p>
                 <div className="mt-2 flex flex-wrap justify-center md:justify-end space-x-4 text-xs text-gray-500">
-                  <a href="/privacy" className="hover:text-gray-300">Privacy Policy</a>
-                  <a href="/terms" className="hover:text-gray-300">Terms of Service</a>
-                  <a href="/cookies" className="hover:text-gray-300">Cookie Policy</a>
-                  <a href="/sitemap" className="hover:text-gray-300">Sitemap</a>
+                  <Link to="/privacy" className="hover:text-gray-300">Privacy Policy</Link>
+                  <Link to="/terms" className="hover:text-gray-300">Terms of Service</Link>
+                  <Link to="/cookies" className="hover:text-gray-300">Cookie Policy</Link>
+                  <Link to="/sitemap" className="hover:text-gray-300">Sitemap</Link>
                 </div>
               </div>
             </div>

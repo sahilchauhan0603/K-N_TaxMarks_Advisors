@@ -114,7 +114,7 @@ const Navbar = () => {
 
           <div className="flex items-center">
             {isAuthenticated ? (
-              <div className="relative ml-2">
+              <div className="relative ml-2 flex items-center">
                 <button
                   onClick={() => setShowUserDropdown(!showUserDropdown)}
                   className="flex items-center text-sm rounded-full focus:outline-none user-dropdown-btn"
@@ -130,6 +130,7 @@ const Navbar = () => {
                       <FiUser size={16} />
                     </div>
                   )}
+                  {/* Show name on md+ screens, show only icon on mobile */}
                   <span className="ml-2 hidden md:inline text-gray-700 font-medium">
                     {user?.name || user?.given_name || user?.first_name || "User"}
                   </span>
@@ -151,7 +152,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 hidden md:block"
               >
                 Login
               </button>
@@ -161,6 +162,7 @@ const Navbar = () => {
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-gray-500 hover:text-gray-600 focus:outline-none"
+                aria-label="Open menu"
               >
                 <svg
                   className="h-6 w-6"
