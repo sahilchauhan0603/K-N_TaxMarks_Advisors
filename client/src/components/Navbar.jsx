@@ -1,0 +1,253 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FiUser, FiLogOut } from "react-icons/fi";
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from "react-router-dom";
+import logo from '../assets/logo.png'; 
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const navigate = useNavigate();
+
+  const { user, isAuthenticated, logout } = useAuth();
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      setIsVisible(window.scrollY <= lastScrollY);
+      lastScrollY = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    // Close user dropdown on outside click
+    const handleClickOutside = (e) => {
+      if (
+        showUserDropdown &&
+        !e.target.closest(".user-dropdown-btn") &&
+        !e.target.closest(".user-dropdown-menu")
+      ) {
+        setShowUserDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showUserDropdown]);
+
+  const handleProtectedRoute = (route) => {
+    if (!isAuthenticated) {
+      if (typeof window.setShowAuthPopup === 'function') {
+        window.setShowAuthPopup(true);
+        setTimeout(() => {
+          navigate(`/login?redirectTo=${encodeURIComponent(route)}`);
+          window.setShowAuthPopup(false);
+        }, 1200);
+      } else {
+        navigate(`/login?redirectTo=${encodeURIComponent(route)}`);
+      }
+    } else {
+      navigate(route);
+    }
+  };
+
+  return (
+    <nav
+      className={`bg-gray-50 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            
+            <Link to="/" className="flex-shrink-0 flex items-center">
+              {/* Logo */}
+              <img src={logo} alt="Logo" className="h-25 w-25 mr-2 object-contain" />
+              <span className="text-2xl font-bold text-blue-600">K&N TaxMark Advisors</span>
+            </Link>
+            
+            <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4 relative">
+              <NavLink to="/" text="Home" />
+              <div className="relative group">
+                <button
+                  className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center focus:outline-none"
+                >
+                  Services
+                  <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition-opacity duration-200">
+                  <button
+                    onClick={() => handleProtectedRoute("/services/tax-planning")}
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                  >Tax Planning</button>
+                  <button
+                    onClick={() => handleProtectedRoute("/services/itr-filing")}
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                  >ITR Filing</button>
+                  <button
+                    onClick={() => handleProtectedRoute("/services/gst-filing")}
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                  >GST Filing</button>
+                  <button
+                    onClick={() => handleProtectedRoute("/services/trademark")}
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                  >Trademark & Legal</button>
+                  <button
+                    onClick={() => handleProtectedRoute("/services/business-advisory")}
+                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                  >Business Advisory</button>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/contact-us')}
+                className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300"
+              >
+                Contact Us
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            {isAuthenticated ? (
+              <div className="relative ml-2">
+                <button
+                  onClick={() => setShowUserDropdown(!showUserDropdown)}
+                  className="flex items-center text-sm rounded-full focus:outline-none user-dropdown-btn"
+                >
+                  {user?.picture ? (
+                    <img
+                      src={user.picture}
+                      alt="Profile"
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                      <FiUser size={16} />
+                    </div>
+                  )}
+                  <span className="ml-2 hidden md:inline text-gray-700 font-medium">
+                    {user?.name || user?.given_name || user?.first_name || "User"}
+                  </span>
+                </button>
+
+                {showUserDropdown && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 user-dropdown-menu">
+                    <div className="py-1">
+                      <button
+                        onClick={logout}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                      >
+                        <FiLogOut className="mr-2" /> Sign out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => navigate('/login')}
+                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              >
+                Login
+              </button>
+            )}
+
+            <div className="md:hidden ml-4 flex items-center">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-gray-500 hover:text-gray-600 focus:outline-none"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  {isOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Nav */}
+      <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <MobileNavLink to="/" text="Home" />
+          <div className="relative">
+            <button
+              onClick={() => setIsOpen(isOpen === 'services' ? false : 'services')}
+              className="w-full px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100 flex items-center justify-between"
+            >
+              Services
+              <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {isOpen === 'services' && (
+              <div className="pl-4 py-2 space-y-1 bg-white rounded-md shadow-lg mt-1">
+                <button onClick={() => handleProtectedRoute("/services/tax-planning")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">Tax Planning</button>
+                <button onClick={() => handleProtectedRoute("/services/itr-filing")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">ITR Filing</button>
+                <button onClick={() => handleProtectedRoute("/services/gst-filing")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">GST Filing</button>
+                <button onClick={() => handleProtectedRoute("/services/trademark")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">Trademark & Legal</button>
+                <button onClick={() => handleProtectedRoute("/services/business-advisory")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">Business Advisory</button>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => handleProtectedRoute("/contact-us")}
+            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
+          >
+            Contact Us
+          </button>
+          {!isAuthenticated && (
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
+            >
+              Login
+            </button>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+const NavLink = ({ to, text }) => (
+  <Link
+    to={to}
+    className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300"
+  >
+    {text}
+  </Link>
+);
+
+const MobileNavLink = ({ to, text }) => (
+  <Link
+    to={to}
+    className="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
+  >
+    {text}
+  </Link>
+);
+
+export default Navbar;
