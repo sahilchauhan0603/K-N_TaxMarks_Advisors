@@ -162,39 +162,6 @@ const App = () => {
             <Route path="settings" element={<SettingsPage />} />
           </Route>
 
-          {/* Protected routes */}
-          {/* <Route 
-            path="/customers" 
-            element={
-              <PrivateRoute>
-                <CustomersPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/campaigns" 
-            element={
-              <PrivateRoute>
-                <CampaignsPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/analytics" 
-            element={
-              <PrivateRoute>
-                <AnalyticsPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            } 
-          /> */}
         </Routes>
       </main>
       {!isAdminRoute && <Footer />}
