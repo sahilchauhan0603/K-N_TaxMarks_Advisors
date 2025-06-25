@@ -125,18 +125,24 @@ const Footer = () => {
 
         <div className="border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
+            <div className="mb-6 md:mb-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-start">
               <div className="flex items-center">
                 <img src={logo} alt="K&N TaxMark Logo" className="h-15 w-15 mr-4 rounded-lg bg-white shadow" />
                 <div>
                   <h4 className="text-lg font-bold text-white">K&N TaxMark Advisors</h4>
                   <p className="text-sm text-gray-400">Tax, Legal & Business Advisory</p>
                 </div>
+                <Link
+                  to="/admin/login"
+                  className="ml-6 inline-block bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 border-2 border-blue-600 hover:border-blue-800"
+                >
+                  Admin Panel
+                </Link>
               </div>
             </div>
 
             <div className="flex flex-col items-center md:items-end space-y-4">
-              <div className="flex space-x-6">
+              <div className="flex space-x-6 items-center w-full md:w-auto justify-center md:justify-end">
                 {socialLinks.map((social, index) => (
                   <a 
                     key={index} 
@@ -151,15 +157,17 @@ const Footer = () => {
                 ))}
               </div>
               
-              <div className="text-center md:text-right">
-                <p className="text-sm text-gray-400">
-                  &copy; {new Date().getFullYear()} K&N TaxMark Advisors. All rights reserved.
-                </p>
-                <div className="mt-2 flex flex-wrap justify-center md:justify-end space-x-4 text-xs text-gray-500">
-                  <Link to="/privacy" className="hover:text-gray-300">Privacy Policy</Link>
-                  <Link to="/terms" className="hover:text-gray-300">Terms of Service</Link>
-                  <Link to="/cookies" className="hover:text-gray-300">Cookie Policy</Link>
-                  <Link to="/sitemap" className="hover:text-gray-300">Sitemap</Link>
+              <div className="text-center md:text-right flex flex-col md:flex-row md:items-center md:justify-end gap-4 mt-4 md:mt-0">
+                <div>
+                  <p className="text-sm text-gray-400">
+                    &copy; {new Date().getFullYear()} K&N TaxMark Advisors. All rights reserved.
+                  </p>
+                  <div className="mt-2 flex flex-wrap justify-center md:justify-end space-x-4 text-xs text-gray-500">
+                    <Link to="/privacy" className="hover:text-gray-300">Privacy Policy</Link>
+                    <Link to="/terms" className="hover:text-gray-300">Terms of Service</Link>
+                    <Link to="/cookies" className="hover:text-gray-300">Cookie Policy</Link>
+                    <Link to="/sitemap" className="hover:text-gray-300">Sitemap</Link>
+                  </div>
                 </div>
               </div>
             </div>

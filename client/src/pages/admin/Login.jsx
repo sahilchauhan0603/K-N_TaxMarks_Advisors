@@ -113,6 +113,14 @@ const AdminLogin = () => {
           Only authorized admin emails can access this panel.<br />
           For security, OTP is valid for 5 minutes.
         </div>
+        <div className="w-full flex justify-center mt-4">
+          <a
+            href="/"
+            className="inline-block bg-gradient-to-r from-gray-300 to-gray-400 text-sky-800 font-semibold px-4 py-2 rounded-lg shadow hover:from-gray-400 hover:to-gray-500 transition-all duration-200 border-2 border-gray-300 hover:border-gray-500"
+          >
+            Back to Main Site
+          </a>
+        </div>
       </div>
     </div>
   );
