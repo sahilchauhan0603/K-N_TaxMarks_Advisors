@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./db/dbConnection');
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -20,6 +21,7 @@ app.use(cors({
 // Routes
 app.use('/api', authRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

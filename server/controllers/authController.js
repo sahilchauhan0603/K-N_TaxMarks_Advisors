@@ -34,6 +34,27 @@ exports.register = async (req, res) => {
     await newUser.save();
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Send notification to admin
+    try {
+      await sendMail(
+        'kntaxmarkadvisors@gmail.com',
+        'New User Registered on K&N Taxmark Advisors',
+        `A new user has registered.\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nState: ${state}`,
+        `<div style="font-family:sans-serif;font-size:16px;">
+          <h2 style="color:#0ea5e9;">New User Registration</h2>
+          <p><b>Name:</b> ${name}</p>
+          <p><b>Email:</b> ${email}</p>
+          <p><b>Phone:</b> ${phone}</p>
+          <p><b>State:</b> ${state}</p>
+          <p style="margin-top:16px;">This is an automated notification from <b>K&N Taxmark Advisors</b>.</p>
+        </div>`
+      );
+    } catch (mailErr) {
+      // Log but don't block registration
+      console.error('Failed to send admin notification:', mailErr);
+    }
+
     res.status(201).json({ token, user: newUser });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

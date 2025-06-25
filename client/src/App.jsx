@@ -27,6 +27,13 @@ import GSTFiling from './pages/services/GSTFiling';
 import Trademark from './pages/services/Trademark';
 import BusinessAdvisory from './pages/services/BusinessAdvisory';
 
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminUsers from './pages/admin/Users';
+import AdminLogin from './pages/admin/Login';
+import ReportsPage from './pages/admin/Reports';
+import SettingsPage from './pages/admin/Settings';
+
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAuthPopup, setShowAuthPopup] = useState(false);
@@ -102,11 +109,14 @@ const App = () => {
     };
   }, []);
 
+  // Helper: check if current route is admin panel
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-800">
       <LoadingBar isLoading={isLoading} />
       <ScrollToTop />
-      <Navbar />
+      {!isAdminRoute && <Navbar />}
       <main className="flex-grow">
         {/* Toast Popup for Auth Redirect */}
         {showAuthPopup && (
@@ -143,6 +153,15 @@ const App = () => {
           <Route path="/services/trademark" element={<Trademark />} />
           <Route path="/services/business-advisory" element={<BusinessAdvisory />} />
 
+          {/* Admin Panel routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+
           {/* Protected routes */}
           {/* <Route 
             path="/customers" 
@@ -178,7 +197,7 @@ const App = () => {
           /> */}
         </Routes>
       </main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   );
 };
