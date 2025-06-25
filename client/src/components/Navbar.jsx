@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiUser, FiLogOut } from "react-icons/fi";
+import { FiUser, FiLogOut, FiLogIn } from "react-icons/fi";
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from "react-router-dom";
 import logo from '../assets/logo.png'; 
@@ -155,9 +155,9 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 hidden md:block"
+                className="ml-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 hidden md:inline-flex"
               >
-                Login
+                <FiLogIn className="text-lg" /> Login
               </button>
             )}
 
@@ -226,9 +226,9 @@ const Navbar = () => {
           {!isAuthenticated && (
             <button
               onClick={() => navigate('/login')}
-              className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
+              className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"
             >
-              Login
+              <FiLogIn className="text-lg" /> Login
             </button>
           )}
         </div>
