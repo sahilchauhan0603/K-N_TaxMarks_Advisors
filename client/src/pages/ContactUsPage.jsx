@@ -34,7 +34,7 @@ const ContactUsPage = () => {
       icon: <FaPhone className="text-2xl" />,
       title: "Call Us",
       details: "+91 9318469138",
-      action: "tel:+18002769366",
+      action: "tel:+919318469138",
       actionText: "Call Now",
       color: "bg-green-100 text-green-600"
     },
