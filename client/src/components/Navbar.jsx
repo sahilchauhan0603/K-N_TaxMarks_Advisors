@@ -218,7 +218,7 @@ const Navbar = () => {
             )}
           </div>
           <button
-            onClick={() => handleProtectedRoute("/contact-us")}
+            onClick={() => navigate("/contact-us")}
             className="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
           >
             Contact Us

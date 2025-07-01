@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+const TrademarkSearchForm = React.lazy(() => import('./TrademarkSearchForm'));
+const TrademarkDocumentationForm = React.lazy(() => import('./TrademarkDocumentationForm'));
+const TrademarkProtectionForm = React.lazy(() => import('./TrademarkProtectionForm'));
 
 const Trademark = () => {
+  const { isAuthenticated } = useAuth();
+  const [openForm, setOpenForm] = useState(null);
+
   const scrollToServices = () => {
     const section = document.getElementById('trademark-services-section');
     if (section) {
@@ -41,6 +48,7 @@ const Trademark = () => {
         <div id="trademark-services-section" className="mb-16">
           <h2 className="text-3xl font-bold text-purple-700 mb-8 text-center">Our Trademark & Legal Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Service Card 1 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-purple-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -53,7 +61,19 @@ const Trademark = () => {
               <p className="text-gray-600">
                 Comprehensive search and hassle-free registration to secure your brand identity.
               </p>
+              <button
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 1 ? null : 1)}
+              >
+                {openForm === 1 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 1 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <TrademarkSearchForm />
+                </React.Suspense>
+              )}
             </div>
+            {/* Service Card 2 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-purple-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -66,7 +86,19 @@ const Trademark = () => {
               <p className="text-gray-600">
                 Drafting, filing, and compliance for all your intellectual property needs.
               </p>
+              <button
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 2 ? null : 2)}
+              >
+                {openForm === 2 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 2 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <TrademarkDocumentationForm />
+                </React.Suspense>
+              )}
             </div>
+            {/* Service Card 3 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-purple-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -79,6 +111,17 @@ const Trademark = () => {
               <p className="text-gray-600">
                 Intellectual property protection, litigation, and dispute resolution services.
               </p>
+              <button
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 3 ? null : 3)}
+              >
+                {openForm === 3 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 3 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <TrademarkProtectionForm />
+                </React.Suspense>
+              )}
             </div>
           </div>
         </div>

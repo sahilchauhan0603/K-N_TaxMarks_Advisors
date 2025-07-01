@@ -1,0 +1,40 @@
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e40af;
+  --color-bg: #f9fafb;
+  --color-text: #1e293b;
+}
+[data-theme="dark"] {
+  --color-bg: #18181b;
+  --color-text: #f3f4f6;
+}
+[data-primary="blue"] {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e40af;
+}
+[data-primary="pink"] {
+  --color-primary: #ec4899;
+  --color-primary-dark: #be185d;
+}
+[data-primary="purple"] {
+  --color-primary: #8b5cf6;
+  --color-primary-dark: #6d28d9;
+}
+[data-primary="yellow"] {
+  --color-primary: #f59e0b;
+  --color-primary-dark: #b45309;
+}
+[data-primary="green"] {
+  --color-primary: #10b981;
+  --color-primary-dark: #047857;
+}
+body, .bg-gray-50 {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+.text-primary {
+  color: var(--color-primary) !important;
+}

@@ -33,6 +33,11 @@ import AdminUsers from './pages/admin/Users';
 import AdminLogin from './pages/admin/Login';
 import ReportsPage from './pages/admin/Reports';
 import SettingsPage from './pages/admin/Settings';
+import AdminTrademark from './pages/admin/AdminTrademark';
+import AdminBusiness from './pages/admin/AdminBusiness';
+import AdminTaxPlanning from './pages/admin/AdminTaxPlanning';
+import AdminGST from './pages/admin/AdminGST';
+import AdminITR from './pages/admin/AdminITR';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -160,6 +165,11 @@ const App = () => {
             <Route path="users" element={<AdminUsers />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="trademark" element={<AdminTrademark />} />
+            <Route path="business-advisory" element={<AdminBusiness />} />
+            <Route path="tax-planning" element={<AdminTaxPlanning />} />
+            <Route path="gst" element={<AdminGST />} />
+            <Route path="itr" element={<AdminITR />} />
           </Route>
 
         </Routes>

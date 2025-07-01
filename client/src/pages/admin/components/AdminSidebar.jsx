@@ -111,15 +111,15 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </li>
               <li>
                 <NavLink 
-                  to="/admin/tax" 
+                  to="/admin/itr" 
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
                       ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
                       : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
                   }
                 >
-                  <GiCash className="text-lg" /> 
-                  <span>Tax Filing</span>
+                  <FaFileInvoiceDollar className="text-lg" /> 
+                  <span>ITR Services</span>
                 </NavLink>
               </li>
               <li>
@@ -133,6 +133,32 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 >
                   <FaBusinessTime className="text-lg" /> 
                   <span>Trademark</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to="/admin/business-advisory" 
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
+                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
+                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
+                  }
+                >
+                  <FaBusinessTime className="text-lg" /> 
+                  <span>Business Advisory</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink 
+                  to="/admin/tax-planning" 
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
+                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
+                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
+                  }
+                >
+                  <GiCash className="text-lg" /> 
+                  <span>Tax Planning</span>
                 </NavLink>
               </li>
             </ul>

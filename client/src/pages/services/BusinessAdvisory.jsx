@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+const BusinessAdvisoryStartupForm = React.lazy(() => import('./BusinessAdvisoryStartupForm'));
+const BusinessAdvisoryIncorporationForm = React.lazy(() => import('./BusinessAdvisoryIncorporationForm'));
+const BusinessAdvisoryAdvisoryForm = React.lazy(() => import('./BusinessAdvisoryAdvisoryForm'));
 
 const BusinessAdvisory = () => {
+  const { isAuthenticated } = useAuth();
+  const [openForm, setOpenForm] = useState(null);
+
   const scrollToServices = () => {
     const section = document.getElementById('business-services-section');
     if (section) {
@@ -41,6 +48,7 @@ const BusinessAdvisory = () => {
         <div id="business-services-section" className="mb-16">
           <h2 className="text-3xl font-bold text-pink-700 mb-8 text-center">Our Business Advisory Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Service Card 1 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-pink-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -53,7 +61,19 @@ const BusinessAdvisory = () => {
               <p className="text-gray-600">
                 Hassle-free registration for startups and MSMEs, including all documentation and compliance.
               </p>
+              <button
+                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 1 ? null : 1)}
+              >
+                {openForm === 1 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 1 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <BusinessAdvisoryStartupForm />
+                </React.Suspense>
+              )}
             </div>
+            {/* Service Card 2 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-pink-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -66,7 +86,19 @@ const BusinessAdvisory = () => {
               <p className="text-gray-600">
                 End-to-end support for company formation, structuring, and legal compliance.
               </p>
+              <button
+                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 2 ? null : 2)}
+              >
+                {openForm === 2 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 2 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <BusinessAdvisoryIncorporationForm />
+                </React.Suspense>
+              )}
             </div>
+            {/* Service Card 3 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-pink-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -77,8 +109,19 @@ const BusinessAdvisory = () => {
                 <h3 className="text-xl font-semibold text-gray-800">Legal & Financial Advisory</h3>
               </div>
               <p className="text-gray-600">
-                Ongoing legal, financial, and compliance advisory for smooth business operations.
+                Ongoing legal, financial, and compliance advisory services to ensure smooth and hassle-free business operations.
               </p>
+              <button
+                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 3 ? null : 3)}
+              >
+                {openForm === 3 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 3 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <BusinessAdvisoryAdvisoryForm />
+                </React.Suspense>
+              )}
             </div>
           </div>
         </div>

@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
+const ITRFilingForm = React.lazy(() => import('./ITRFilingForm'));
+const ITRDocumentPrepForm = React.lazy(() => import('./ITRDocumentPrepForm'));
+const ITRRefundNoticeForm = React.lazy(() => import('./ITRRefundNoticeForm'));
 
 const ITRFiling = () => {
+  const { isAuthenticated } = useAuth();
+  const [openForm, setOpenForm] = useState(null); // which form is open
+
   // Scroll to services section
   const scrollToServices = () => {
     const section = document.getElementById('itr-services-section');
@@ -55,6 +63,17 @@ const ITRFiling = () => {
               <p className="text-gray-600">
                 Filing for salaried, self-employed, professionals, and businesses with expert review.
               </p>
+              <button
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 1 ? null : 1)}
+              >
+                {openForm === 1 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 1 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <ITRFilingForm type="individual" />
+                </React.Suspense>
+              )}
             </div>
 
             {/* Service Card 2 */}
@@ -68,8 +87,19 @@ const ITRFiling = () => {
                 <h3 className="text-xl font-semibold text-gray-800">Document Preparation</h3>
               </div>
               <p className="text-gray-600">
-                End-to-end document collection, preparation, and review for accurate filing.
+                End-to-end document collection, preparation, and review for accurate filing and maintenance.
               </p>
+              <button
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 2 ? null : 2)}
+              >
+                {openForm === 2 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 2 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <ITRDocumentPrepForm />
+                </React.Suspense>
+              )}
             </div>
 
             {/* Service Card 3 */}
@@ -83,8 +113,19 @@ const ITRFiling = () => {
                 <h3 className="text-xl font-semibold text-gray-800">Refund & Notice Handling</h3>
               </div>
               <p className="text-gray-600">
-                Maximize your eligible refunds and get expert help with tax notices and queries.
+                Maximize your eligible refunds with confidence and get expert assistance for all your tax notices and queries
               </p>
+              <button
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 3 ? null : 3)}
+              >
+                {openForm === 3 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 3 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <ITRRefundNoticeForm />
+                </React.Suspense>
+              )}
             </div>
           </div>
         </div>

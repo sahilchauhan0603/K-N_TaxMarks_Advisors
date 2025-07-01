@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+const TaxPlanningPersonalCorporateForm = React.lazy(() => import('./TaxPlanningPersonalCorporateForm'));
+const TaxPlanningYearRoundForm = React.lazy(() => import('./TaxPlanningYearRoundForm'));
+const TaxPlanningComplianceForm = React.lazy(() => import('./TaxPlanningComplianceForm'));
 
 const TaxPlanning = () => {
   const scrollToServices = () => {
@@ -8,6 +12,9 @@ const TaxPlanning = () => {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const { isAuthenticated } = useAuth();
+  const [openForm, setOpenForm] = useState(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
@@ -41,6 +48,8 @@ const TaxPlanning = () => {
         <div id="tax-services-section" className="mb-16">
           <h2 className="text-3xl font-bold text-blue-700 mb-8 text-center">Our Tax Planning Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Service Card 1 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -53,7 +62,19 @@ const TaxPlanning = () => {
               <p className="text-gray-600">
                 Strategic tax planning for individuals and businesses to optimize savings and compliance.
               </p>
+              <button
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 1 ? null : 1)}
+              >
+                {openForm === 1 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 1 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <TaxPlanningPersonalCorporateForm />
+                </React.Suspense>
+              )}
             </div>
+            {/* Service Card 2 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -64,9 +85,21 @@ const TaxPlanning = () => {
                 <h3 className="text-xl font-semibold text-gray-800">Year-round Strategies</h3>
               </div>
               <p className="text-gray-600">
-                Ongoing tax saving strategies and investment guidance for maximum benefit.
+                Stay ahead with ongoing tax-saving strategies and investment guidance to maximize your financial benefits
               </p>
+              <button
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 2 ? null : 2)}
+              >
+                {openForm === 2 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 2 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <TaxPlanningYearRoundForm />
+                </React.Suspense>
+              )}
             </div>
+            {/* Service Card 3 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
               <div className="flex items-center mb-4">
                 <img 
@@ -79,6 +112,17 @@ const TaxPlanning = () => {
               <p className="text-gray-600">
                 Expert advice and compliance support for all your tax-related needs.
               </p>
+              <button
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                onClick={() => setOpenForm(openForm === 3 ? null : 3)}
+              >
+                {openForm === 3 ? 'Close Form' : 'Apply Now'}
+              </button>
+              {isAuthenticated && openForm === 3 && (
+                <React.Suspense fallback={<div>Loading form...</div>}>
+                  <TaxPlanningComplianceForm />
+                </React.Suspense>
+              )}
             </div>
           </div>
         </div>

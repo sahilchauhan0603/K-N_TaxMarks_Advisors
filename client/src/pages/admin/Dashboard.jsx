@@ -35,50 +35,20 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('/api/admin/users', {
+        const res = await axios.get('/api/admin/dashboard-stats', {
           headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
         });
-        const users = res.data;
-        const total = users.length;
-        const now = Date.now();
-        const active = users.filter(u => now - new Date(u.createdAt).getTime() < 30*24*60*60*1000).length;
-        const inactive = total - active;
-        
-        // Monthly stats (last 6 months)
-        const monthly = Array(6).fill(0).map((_, i) => {
-          const month = new Date();
-          month.setMonth(month.getMonth() - (5-i));
-          const m = month.getMonth(), y = month.getFullYear();
-          return {
-            name: month.toLocaleString('default', { month: 'short' }),
-            Users: users.filter(u => {
-              const d = new Date(u.createdAt);
-              return d.getMonth() === m && d.getFullYear() === y;
-            }).length,
-            Revenue: Math.floor(Math.random() * 5000) + 1000 // Sample revenue data
-          };
-        });
-
-        // Recent users (last 5 by createdAt desc)
-        const sorted = [...users].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setRecentUsers(sorted.slice(0, 5));
-
-        // Sample service distribution
-        const services = {
-          gst: Math.floor(Math.random() * 40) + 30,
-          trademark: Math.floor(Math.random() * 30) + 15,
-          tax: Math.floor(Math.random() * 25) + 10,
-          other: Math.floor(Math.random() * 15) + 5
-        };
-
-        setStats({ 
-          total, 
-          active, 
-          inactive, 
+        const {
+          total,
+          active,
+          inactive,
           monthly,
-          revenue: monthly.reduce((sum, m) => sum + m.Revenue, 0),
-          services
-        });
+          revenue,
+          services,
+          recentUsers: recent
+        } = res.data;
+        setStats({ total, active, inactive, monthly, revenue, services });
+        setRecentUsers(recent);
       } catch {
         setStats({ total: 0, active: 0, inactive: 0, monthly: [], revenue: 0, services: {} });
         setRecentUsers([]);
