@@ -55,16 +55,16 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { 
-      icon: <FaLinkedin />, 
-      url: "https://linkedin.com/company/kntaxmarkadvisors",
-      name: "LinkedIn"
-    },
-    { 
-      icon: <FaFacebook />, 
-      url: "https://facebook.com/kntaxmarkadvisors",
-      name: "Facebook"
-    },
+    // { 
+    //   icon: <FaLinkedin />, 
+    //   url: "https://linkedin.com/company/kn_taxmark",
+    //   name: "LinkedIn"
+    // },
+    // { 
+    //   icon: <FaFacebook />, 
+    //   url: "https://facebook.com/kn_taxmark",
+    //   name: "Facebook"
+    // },
     { 
       icon: <FaEnvelope />, 
       url: "mailto:kntaxmarkadvisors@gmail.com",
@@ -77,7 +77,7 @@ const Footer = () => {
     },
     { 
       icon: <FaInstagram />, 
-      url: "https://instagram.com/kntaxmarkadvisors",
+      url: "https://instagram.com/kn_taxmark",
       name: "Instagram"
     }
   ];
