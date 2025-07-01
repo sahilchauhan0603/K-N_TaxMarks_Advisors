@@ -8,9 +8,9 @@ const subTabs = [
 ];
 
 const columns = {
-  search: ['name', 'email', 'mobile', 'brand Name', 'notes', 'document Path', 'created At'],
-  documentation: ['name', 'email', 'mobile', 'doc Type', 'notes', 'document Path', 'created At'],
-  protection: ['name', 'email', 'mobile', 'dispute Type', 'notes', 'document Path', 'created At'],
+  search: ['name', 'email', 'mobile', 'brandName', 'notes', 'documentPath', 'createdAt'],
+  documentation: ['name', 'email', 'mobile', 'docType', 'notes', 'documentPath', 'createdAt'],
+  protection: ['name', 'email', 'mobile', 'disputeType', 'notes', 'documentPath', 'createdAt'],
 };
 
 const AdminTrademark = () => {
@@ -55,6 +55,24 @@ const AdminTrademark = () => {
     if (activeTab === 'protection' && row.disputeType) return row.disputeType === filter;
     return true;
   });
+
+  const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Helper to format column names
+  const formatColHeader = (col) => {
+    if (col === 'brandName') return 'Brand Name';
+    if (col === 'docType') return 'Doc Type';
+    if (col === 'disputeType') return 'Dispute Type';
+    if (col === 'documentPath' || col === 'documents') return 'Documents';
+    if (col === 'createdAt') return 'Created At';
+    if (col === 'notes') return 'Notes';
+    // Capitalize first letter and add spaces before uppercase letters
+    return col.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+  };
 
   return (
     <div className="p-6">
@@ -107,16 +125,16 @@ const AdminTrademark = () => {
           />
         )}
       </div>
-      <div className="bg-white rounded-2xl shadow-lg p-4 border-l-4 border-purple-400">
+      <div className="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-purple-400 max-w-3xl mx-auto">
         {loading ? (
           <div className="text-center py-8 text-purple-500 font-semibold">Loading...</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-purple-200">
-              <thead className="bg-purple-50">
+            <table className="min-w-full divide-y divide-purple-200 text-sm" style={{ minWidth: '800px' }}>
+              <thead className="bg-purple-50 sticky top-0 z-10">
                 <tr>
                   {columns[activeTab].map(col => (
-                    <th key={col} className="px-4 py-2 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">{col}</th>
+                    <th key={col} className="px-6 py-3 text-left font-bold text-purple-700 uppercase tracking-wider whitespace-nowrap border-b border-purple-200 bg-purple-50 sticky top-0 z-10 shadow-sm">{formatColHeader(col)}</th>
                   ))}
                 </tr>
               </thead>
@@ -125,9 +143,9 @@ const AdminTrademark = () => {
                   <tr><td colSpan={columns[activeTab].length} className="text-center py-6 text-purple-300">No records found.</td></tr>
                 ) : (
                   filteredData.map((row, idx) => (
-                    <tr key={row._id || idx} className="hover:bg-purple-50">
+                    <tr key={row._id || idx} className={idx % 2 === 0 ? "bg-purple-50 hover:bg-purple-100 transition" : "bg-white hover:bg-purple-50 transition"}>
                       {columns[activeTab].map(col => (
-                        <td key={col} className="px-4 py-2 text-sm text-gray-700">{row[col] || '-'}</td>
+                        <td key={col} className="px-6 py-3 text-gray-700 whitespace-nowrap border-b border-purple-100">{col === 'createdAt' ? formatDate(row[col]) : (row[col] || '-')}</td>
                       ))}
                     </tr>
                   ))

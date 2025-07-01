@@ -8,9 +8,9 @@ const subTabs = [
 ];
 
 const columns = {
-  startup: ['name', 'email', 'mobile', 'business Name', 'business Type', 'notes', 'document Path', 'created At'],
-  incorporation: ['name', 'email', 'mobile', 'company Name', 'company Type', 'notes', 'document Path', 'created At'],
-  advisory: ['name', 'email', 'mobile', 'query', 'notes', 'document Path', 'created At'],
+  startup: ['name', 'email', 'mobile', 'businessName', 'businessType', 'notes', 'documentPath', 'createdAt'],
+  incorporation: ['name', 'email', 'mobile', 'companyName', 'companyType', 'notes', 'documentPath', 'createdAt'],
+  advisory: ['name', 'email', 'mobile', 'query', 'notes', 'documentPath', 'createdAt'],
 };
 
 const AdminBusiness = () => {
@@ -53,6 +53,26 @@ const AdminBusiness = () => {
     if (activeTab === 'incorporation' && row.companyType) return row.companyType === filter;
     return true;
   });
+
+  const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Helper to format column names
+  const formatColHeader = (col) => {
+    if (col === 'businessName') return 'Business Name';
+    if (col === 'businessType') return 'Business Type';
+    if (col === 'companyName') return 'Company Name';
+    if (col === 'companyType') return 'Company Type';
+    if (col === 'documentPath' || col === 'documents') return 'Documents';
+    if (col === 'createdAt') return 'Created At';
+    if (col === 'query') return 'Query';
+    if (col === 'notes') return 'Notes';
+    // Capitalize first letter and add spaces before uppercase letters
+    return col.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+  };
 
   return (
     <div className="p-6">
@@ -104,16 +124,16 @@ const AdminBusiness = () => {
           </select>
         )}
       </div>
-      <div className="bg-white rounded-2xl shadow-lg p-4 border-l-4 border-pink-400">
+      <div className="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-pink-400 max-w-4xl mx-auto">
         {loading ? (
           <div className="text-center py-8 text-pink-500 font-semibold">Loading...</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-pink-200">
-              <thead className="bg-pink-50">
+            <table className="min-w-full divide-y divide-pink-200 text-sm" style={{ minWidth: '800px' }}>
+              <thead className="bg-pink-50 sticky top-0 z-10">
                 <tr>
                   {columns[activeTab].map(col => (
-                    <th key={col} className="px-4 py-2 text-left text-xs font-bold text-pink-700 uppercase tracking-wider">{col}</th>
+                    <th key={col} className="px-6 py-3 text-left font-bold text-pink-700 uppercase tracking-wider whitespace-nowrap border-b border-pink-200 bg-pink-50 sticky top-0 z-10 shadow-sm">{formatColHeader(col)}</th>
                   ))}
                 </tr>
               </thead>
@@ -122,9 +142,9 @@ const AdminBusiness = () => {
                   <tr><td colSpan={columns[activeTab].length} className="text-center py-6 text-pink-300">No records found.</td></tr>
                 ) : (
                   filteredData.map((row, idx) => (
-                    <tr key={row._id || idx} className="hover:bg-pink-50">
+                    <tr key={row._id || idx} className={idx % 2 === 0 ? "bg-pink-50 hover:bg-pink-100 transition" : "bg-white hover:bg-pink-50 transition"}>
                       {columns[activeTab].map(col => (
-                        <td key={col} className="px-4 py-2 text-sm text-gray-700">{row[col] || '-'}</td>
+                        <td key={col} className="px-6 py-3 text-gray-700 whitespace-nowrap border-b border-pink-100">{col === 'createdAt' ? formatDate(row[col]) : (row[col] || '-')}</td>
                       ))}
                     </tr>
                   ))

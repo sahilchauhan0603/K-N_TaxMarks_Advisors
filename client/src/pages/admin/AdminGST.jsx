@@ -2,17 +2,27 @@ import React, { useEffect, useState } from 'react';
 import axios from '../../utils/axios';
 
 const subTabs = [
-  { key: 'return_filing', label: 'GST Return Filing', endpoint: '/api/gst-return-filing' },
-  { key: 'resolution', label: 'GST Resolution', endpoint: '/api/gst-resolution' },
+  { key: 'filing', label: 'GST Filing (Registration & Amendments)', endpoint: '/api/gst-filing', columns: ['name', 'email', 'mobile', 'gstNumber', 'filingType', 'businessName', 'notes', 'documents', 'createdAt'] },
+  { key: 'return_filing', label: 'GST Return Filing', endpoint: '/api/gst-return-filing', columns: ['name', 'email', 'mobile', 'gstin', 'notes', 'documents', 'createdAt'] },
+  { key: 'resolution', label: 'GST Resolution', endpoint: '/api/gst-resolution', columns: ['name', 'email', 'mobile', 'gstNumber', 'issue', 'notes', 'documents', 'createdAt'] },
 ];
 
-const columns = {
-  return_filing: ['name', 'email', 'mobile', 'gst in', 'notes', 'documents', 'created At'],
-  resolution: ['name', 'email', 'mobile', 'gst in', 'notes', 'documents', 'created At'],
+// Helper to format column names
+const formatColHeader = (col) => {
+  if (col === 'gstin') return 'GSTIN';
+  if (col === 'gstNumber') return 'GST Number';
+  if (col === 'filingType') return 'Filing Type';
+  if (col === 'businessName') return 'Business Name';
+  if (col === 'createdAt') return 'Created At';
+  if (col === 'documentPath' || col === 'documents') return 'Documents';
+  if (col === 'issue') return 'Issue';
+  if (col === 'notes') return 'Notes';
+  // Capitalize first letter and add spaces before uppercase letters
+  return col.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
 };
 
 const AdminGST = () => {
-  const [activeTab, setActiveTab] = useState('return_filing');
+  const [activeTab, setActiveTab] = useState('filing');
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,15 +52,23 @@ const AdminGST = () => {
   }, [activeTab]);
 
   // Filtered data
+  const columns = subTabs.find(t => t.key === activeTab)?.columns || [];
   const filteredData = data.filter(row => {
     const searchStr = search.toLowerCase();
-    return columns[activeTab].some(col => (row[col] || '').toString().toLowerCase().includes(searchStr));
+    return columns.some(col => (row[col] || '').toString().toLowerCase().includes(searchStr));
   }).filter(row => {
     if (!filter) return true;
     if (activeTab === 'return_filing' && row.gstin) return row.gstin === filter;
-    if (activeTab === 'resolution' && row.gstin) return row.gstin === filter;
+    if (activeTab === 'resolution' && row.gstNumber) return row.gstNumber === filter;
+    if (activeTab === 'filing' && row.gstNumber) return row.gstNumber === filter;
     return true;
   });
+
+  const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
     <div className="p-6">
@@ -77,33 +95,49 @@ const AdminGST = () => {
         />
         <input
           type="text"
-          placeholder="Filter by GSTIN"
+          placeholder={activeTab === 'return_filing' ? 'Filter by GSTIN' : 'Filter by GST Number'}
           value={filter}
           onChange={e => setFilter(e.target.value)}
           className="w-full md:w-48 px-4 py-2 border border-yellow-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
       </div>
-      <div className="bg-white rounded-2xl shadow-lg p-4 border-l-4 border-yellow-400">
+      <div className="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-yellow-400 max-w-4xl mx-auto">
         {loading ? (
           <div className="text-center py-8 text-yellow-500 font-semibold">Loading...</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-yellow-200">
-              <thead className="bg-yellow-50">
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-full divide-y divide-yellow-200 text-sm" style={{ minWidth: '800px' }}>
+              <thead className="bg-yellow-100 sticky top-0 z-10">
                 <tr>
-                  {columns[activeTab].map(col => (
-                    <th key={col} className="px-4 py-2 text-left text-xs font-bold text-yellow-700 uppercase tracking-wider">{col}</th>
+                  {columns.map(col => (
+                    <th
+                      key={col}
+                      className="px-4 py-3 text-left text-xs font-bold text-yellow-700 uppercase tracking-wider bg-yellow-100 sticky top-0 z-10 shadow-sm"
+                    >
+                      {formatColHeader(col)}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filteredData.length === 0 ? (
-                  <tr><td colSpan={columns[activeTab].length} className="text-center py-6 text-yellow-300">No records found.</td></tr>
+                  <tr>
+                    <td colSpan={columns.length} className="text-center py-6 text-yellow-300">No records found.</td>
+                  </tr>
                 ) : (
                   filteredData.map((row, idx) => (
-                    <tr key={row._id || idx} className="hover:bg-yellow-50">
-                      {columns[activeTab].map(col => (
-                        <td key={col} className="px-4 py-2 text-sm text-gray-700">{row[col] || '-'}</td>
+                    <tr
+                      key={row._id || idx}
+                      className={`transition-colors duration-150 ${idx % 2 === 0 ? 'bg-white' : 'bg-yellow-50'} hover:bg-yellow-100`}
+                    >
+                      {columns.map(col => (
+                        <td
+                          key={col}
+                          className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap"
+                          style={{ borderBottom: '1px solid #fef3c7' }}
+                        >
+                          {col === 'createdAt' ? formatDate(row[col]) : (row[col] || '-')}
+                        </td>
                       ))}
                     </tr>
                   ))

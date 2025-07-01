@@ -8,9 +8,9 @@ const subTabs = [
 ];
 
 const columns = {
-  personal_corporate: ['name', 'email', 'mobile', 'entity Type', 'income Details', 'notes', 'document Path', 'created At'],
-  year_round: ['name', 'email', 'mobile', 'investment Plans', 'year Goals', 'notes', 'document Path', 'created At'],
-  compliance: ['name', 'email', 'mobile', 'compliance Type', 'query', 'notes', 'document Path', 'created At'],
+  personal_corporate: ['name', 'email', 'mobile', 'entityType', 'incomeDetails', 'notes', 'documentPath', 'createdAt'],
+  year_round: ['name', 'email', 'mobile', 'investmentPlans', 'yearGoals', 'notes', 'documentPath', 'createdAt'],
+  compliance: ['name', 'email', 'mobile', 'complianceType', 'query', 'notes', 'documentPath', 'createdAt'],
 };
 
 const AdminTaxPlanning = () => {
@@ -54,6 +54,27 @@ const AdminTaxPlanning = () => {
     if (activeTab === 'compliance' && row.complianceType) return row.complianceType === filter;
     return true;
   });
+
+  const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Helper to format column names
+  const formatColHeader = (col) => {
+    if (col === 'entityType') return 'Entity Type';
+    if (col === 'incomeDetails') return 'Income Details';
+    if (col === 'investmentPlans') return 'Investment Plans';
+    if (col === 'yearGoals') return 'Year Goals';
+    if (col === 'complianceType') return 'Compliance Type';
+    if (col === 'documentPath' || col === 'documents') return 'Documents';
+    if (col === 'createdAt') return 'Created At';
+    if (col === 'query') return 'Query';
+    if (col === 'notes') return 'Notes';
+    // Capitalize first letter and add spaces before uppercase letters
+    return col.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+  };
 
   return (
     <div className="p-6">
@@ -106,27 +127,45 @@ const AdminTaxPlanning = () => {
           />
         )}
       </div>
-      <div className="bg-white rounded-2xl shadow-lg p-4 border-l-4 border-blue-400">
+      <div className="bg-white rounded-2xl shadow-lg p-4 border-l-4 border-blue-400 max-w-4xl mx-auto">
         {loading ? (
           <div className="text-center py-8 text-blue-500 font-semibold">Loading...</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-blue-200">
-              <thead className="bg-blue-50">
+            <table className="min-w-full divide-y divide-blue-200 text-sm" style={{ minWidth: '800px' }}>
+              <thead className="bg-blue-50 sticky top-0 z-10">
                 <tr>
                   {columns[activeTab].map(col => (
-                    <th key={col} className="px-4 py-2 text-left text-xs font-bold text-blue-700 uppercase tracking-wider">{col}</th>
+                    <th
+                      key={col}
+                      className="px-4 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 sticky top-0 z-10"
+                      style={{ background: '#eff6ff' }}
+                    >
+                      {formatColHeader(col)}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filteredData.length === 0 ? (
-                  <tr><td colSpan={columns[activeTab].length} className="text-center py-6 text-blue-300">No records found.</td></tr>
+                  <tr>
+                    <td colSpan={columns[activeTab].length} className="text-center py-6 text-blue-300">No records found.</td>
+                  </tr>
                 ) : (
                   filteredData.map((row, idx) => (
-                    <tr key={row._id || idx} className="hover:bg-blue-50">
+                    <tr
+                      key={row._id || idx}
+                      className={
+                        `transition-colors duration-150 ${idx % 2 === 0 ? 'bg-white' : 'bg-blue-50'} hover:bg-blue-100`}
+                    >
                       {columns[activeTab].map(col => (
-                        <td key={col} className="px-4 py-2 text-sm text-gray-700">{row[col] || '-'}</td>
+                        <td
+                          key={col}
+                          className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap"
+                          style={{ borderBottom: '1px solid #e0e7ef' }}
+                        >
+                          {col === 'createdAt' ? formatDate(row[col]) : (row[col] || '-')}
+                        </td>
                       ))}
                     </tr>
                   ))

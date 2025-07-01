@@ -8,9 +8,9 @@ const subTabs = [
 ];
 
 const columns = {
-  filing: ['name', 'email', 'mobile', 'pan', 'itr Type', 'annual Income', 'notes', 'document Path', 'created At'],
-  document_prep: ['name', 'email', 'mobile', 'pan', 'notes', 'documents', 'created At'],
-  refund_notice: ['name', 'email', 'mobile', 'pan', 'notes', 'documents', 'created At'],
+  filing: ['name', 'email', 'mobile', 'pan', 'itrType', 'annualIncome', 'notes', 'documentPath', 'createdAt'],
+  document_prep: ['name', 'email', 'mobile', 'pan', 'notes', 'documents', 'createdAt'],
+  refund_notice: ['name', 'email', 'mobile', 'pan', 'notes', 'documents', 'createdAt'],
 };
 
 const AdminITR = () => {
@@ -55,6 +55,24 @@ const AdminITR = () => {
     return true;
   });
 
+  const formatDate = (date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    return d.toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Helper to format column names
+  const formatColHeader = (col) => {
+    if (col === 'pan') return 'PAN';
+    if (col === 'itrType') return 'ITR Type';
+    if (col === 'annualIncome') return 'Annual Income';
+    if (col === 'documentPath' || col === 'documents') return 'Documents';
+    if (col === 'createdAt') return 'Created At';
+    if (col === 'notes') return 'Notes';
+    // Capitalize first letter and add spaces before uppercase letters
+    return col.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-3xl font-extrabold mb-6 text-green-700 tracking-tight">ITR Service Requests</h2>
@@ -86,16 +104,16 @@ const AdminITR = () => {
           className="w-full md:w-48 px-4 py-2 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
         />
       </div>
-      <div className="bg-white rounded-2xl shadow-lg p-4 border-l-4 border-green-400">
+      <div className="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-green-400 max-w-4xl mx-auto">
         {loading ? (
           <div className="text-center py-8 text-green-500 font-semibold">Loading...</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-green-200">
-              <thead className="bg-green-50">
+            <table className="min-w-full divide-y divide-green-200 text-sm" style={{ minWidth: '800px' }}>
+              <thead className="bg-green-50 sticky top-0 z-10">
                 <tr>
                   {columns[activeTab].map(col => (
-                    <th key={col} className="px-4 py-2 text-left text-xs font-bold text-green-700 uppercase tracking-wider">{col}</th>
+                    <th key={col} className="px-6 py-3 text-left font-bold text-green-700 uppercase tracking-wider whitespace-nowrap border-b border-green-200 bg-green-50 sticky top-0 z-10 shadow-sm">{formatColHeader(col)}</th>
                   ))}
                 </tr>
               </thead>
@@ -104,9 +122,9 @@ const AdminITR = () => {
                   <tr><td colSpan={columns[activeTab].length} className="text-center py-6 text-green-300">No records found.</td></tr>
                 ) : (
                   filteredData.map((row, idx) => (
-                    <tr key={row._id || idx} className="hover:bg-green-50">
+                    <tr key={row._id || idx} className={idx % 2 === 0 ? "bg-green-50 hover:bg-green-100 transition" : "bg-white hover:bg-green-50 transition"}>
                       {columns[activeTab].map(col => (
-                        <td key={col} className="px-4 py-2 text-sm text-gray-700">{row[col] || '-'}</td>
+                        <td key={col} className="px-6 py-3 text-gray-700 whitespace-nowrap border-b border-green-100">{col === 'createdAt' ? formatDate(row[col]) : (row[col] || '-')}</td>
                       ))}
                     </tr>
                   ))
