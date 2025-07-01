@@ -79,14 +79,11 @@ router.get('/dashboard-stats', adminAuth, async (req, res) => {
     const Trademark = require('../models/Trademark');
     const TaxPlanning = require('../models/TaxPlanning');
     const BusinessAdvisory = require('../models/BusinessAdvisory');
-    // Unified GST model
-    const GST = require('../models/GST');
-    // Remove old GSTReturnFiling and GSTResolution
-    // const GSTReturnFiling = require('../models/GSTReturnFiling');
-    // const GSTResolution = require('../models/GSTResolution');
-    const { ITRFiling } = require('../models/ITRFiling');
-    const ITRDocumentPrep = require('../models/ITRDocumentPrep');
-    const ITRRefundNotice = require('../models/ITRRefundNotice');
+    const GSTModels = require('../models/GST');
+    const GSTFiling = GSTModels.GSTFiling;
+    const GSTReturnFiling = GSTModels.GSTReturnFiling;
+    const GSTResolution = GSTModels.GSTResolution;
+    const { ITRFiling, ITRRefundNotice, ITRDocumentPrep } = require('../models/ITR');
 
     // Users
     const users = await User.find().select('-password');
@@ -112,8 +109,7 @@ router.get('/dashboard-stats', adminAuth, async (req, res) => {
     });
 
     // Service counts
-    // const gst = await GSTReturnFiling.countDocuments() + await GSTResolution.countDocuments();
-    const gst = await GST.countDocuments();
+    const gst = await GSTFiling.countDocuments() + await GSTReturnFiling.countDocuments() + await GSTResolution.countDocuments();
     const trademark = await Trademark.countDocuments();
     const tax = await TaxPlanning.countDocuments();
     const business = await BusinessAdvisory.countDocuments();
