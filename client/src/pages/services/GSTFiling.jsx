@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 const GSTFilingForm = React.lazy(() => import('./GSTFilingForm'));
 const GSTReturnFilingForm = React.lazy(() => import('./GSTReturnFilingForm'));
 const GSTResolutionForm = React.lazy(() => import('./GSTResolutionForm'));
+import TestimonialSection from '../../components/TestimonialSection';
 
 const GSTFiling = () => {
   // Scroll to services section
@@ -202,43 +203,7 @@ const GSTFiling = () => {
         </div>
 
         {/* Testimonials Section */}
-        <div className="mt-16 bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-3xl font-bold text-yellow-700 mb-8 text-center">What Our Clients Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border-l-4 border-yellow-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "The team made GST compliance so simple for our startup. We've saved countless hours and avoided penalties thanks to their timely reminders."
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/women/65.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Priya Sharma</p>
-                  <p className="text-sm text-gray-500">Founder, TechSolutions</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-l-4 border-yellow-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "Their reconciliation service helped us recover significant input tax credits we didn't even know we were missing. Highly recommended!"
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/men/32.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Rahul Mehta</p>
-                  <p className="text-sm text-gray-500">Director, RetailChain</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TestimonialSection service="GST Filing" />
       </div>
     </div>
   );

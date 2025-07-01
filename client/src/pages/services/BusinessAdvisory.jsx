@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 const BusinessAdvisoryStartupForm = React.lazy(() => import('./BusinessAdvisoryStartupForm'));
 const BusinessAdvisoryIncorporationForm = React.lazy(() => import('./BusinessAdvisoryIncorporationForm'));
 const BusinessAdvisoryAdvisoryForm = React.lazy(() => import('./BusinessAdvisoryAdvisoryForm'));
+import TestimonialSection from '../../components/TestimonialSection';
 
 const BusinessAdvisory = () => {
   const { isAuthenticated } = useAuth();
@@ -196,43 +197,7 @@ const BusinessAdvisory = () => {
         </div>
 
         {/* Testimonials Section */}
-        <div className="mt-16 bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-3xl font-bold text-pink-700 mb-8 text-center">What Our Clients Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border-l-4 border-pink-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "The business advisory team helped us incorporate our company and set up all compliance. Highly recommended!"
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/men/33.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Rohit Gupta</p>
-                  <p className="text-sm text-gray-500">Startup Founder</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-l-4 border-pink-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "Excellent legal and financial advice. Our business is in safe hands."
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/women/44.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Meera Singh</p>
-                  <p className="text-sm text-gray-500">Business Owner</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TestimonialSection service="Business Advisory" />
       </div>
     </div>
   );

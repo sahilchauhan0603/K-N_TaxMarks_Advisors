@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 const TaxPlanningPersonalCorporateForm = React.lazy(() => import('./TaxPlanningPersonalCorporateForm'));
 const TaxPlanningYearRoundForm = React.lazy(() => import('./TaxPlanningYearRoundForm'));
 const TaxPlanningComplianceForm = React.lazy(() => import('./TaxPlanningComplianceForm'));
+import TestimonialSection from '../../components/TestimonialSection';
 
 const TaxPlanning = () => {
   const scrollToServices = () => {
@@ -197,43 +198,7 @@ const TaxPlanning = () => {
         </div>
 
         {/* Testimonials Section */}
-        <div className="mt-16 bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-3xl font-bold text-blue-700 mb-8 text-center">What Our Clients Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border-l-4 border-blue-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "Their tax planning advice saved me a lot of money and gave me peace of mind. Highly recommended!"
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/men/22.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Suresh Kumar</p>
-                  <p className="text-sm text-gray-500">Business Owner</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-l-4 border-blue-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "Professional, knowledgeable, and always available for queries. My go-to for tax planning."
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/women/55.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Anjali Sharma</p>
-                  <p className="text-sm text-gray-500">Consultant</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TestimonialSection service="Tax Planning" />
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ const trademarkForms = require('./routes/trademarkForms');
 const businessForms = require('./routes/businessForms');
 const taxForms = require('./routes/taxForms');
 const settingsRouter = require('./routes/settings');
+const testimonialsRoutes = require('./routes/testimonials');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -30,6 +32,9 @@ app.use(cors({
   origin: true,              // Reflect the request origin
   credentials: true          // Allow cookies/authorization headers
 }));
+
+// Serve testimonial images statically
+app.use('/uploads/testimonials', express.static(path.join(__dirname, 'uploads/testimonials')));
 
 // Routes
 app.use('/api', authRoutes);
@@ -48,6 +53,7 @@ app.use('/api', trademarkForms);
 app.use('/api', businessForms);
 app.use('/api', taxForms);
 app.use('/api/admin/settings', settingsRouter);
+app.use('/api/testimonials', testimonialsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

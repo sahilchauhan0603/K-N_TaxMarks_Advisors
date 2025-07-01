@@ -4,7 +4,7 @@ const instance = axios.create({
   // baseURL: 'http://localhost:5000', 
   baseURL: 'https://k-n-taxmarks-advisors-backend.onrender.com', 
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
   },
 });
 

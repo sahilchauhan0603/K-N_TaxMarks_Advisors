@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import TestimonialSection from '../../components/TestimonialSection';
 
 const ITRFilingForm = React.lazy(() => import('./ITRFilingForm'));
 const ITRDocumentPrepForm = React.lazy(() => import('./ITRDocumentPrepForm'));
@@ -200,43 +201,7 @@ const ITRFiling = () => {
         </div>
 
         {/* Testimonials Section */}
-        <div className="mt-16 bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">What Our Clients Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border-l-4 border-green-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "The ITR team made the process so easy and stress-free. I got my refund quickly and without any hassle!"
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/men/45.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Amit Verma</p>
-                  <p className="text-sm text-gray-500">Entrepreneur</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-l-4 border-green-500 pl-4">
-              <p className="text-gray-600 italic mb-4">
-                "Prompt, professional, and always available for queries. Highly recommend their ITR services."
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://randomuser.me/api/portraits/women/68.jpg" 
-                  alt="Client" 
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <p className="font-semibold">Sneha Kapoor</p>
-                  <p className="text-sm text-gray-500">Freelancer</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TestimonialSection service="ITR Filing" />
       </div>
     </div>
   );
