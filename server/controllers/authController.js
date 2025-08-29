@@ -41,13 +41,18 @@ exports.register = async (req, res) => {
         'kntaxmarkadvisors@gmail.com',
         'New User Registered on K&N Taxmark Advisors',
         `A new user has registered.\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nState: ${state}`,
-        `<div style="font-family:sans-serif;font-size:16px;">
-          <h2 style="color:#0ea5e9;">New User Registration</h2>
-          <p><b>Name:</b> ${name}</p>
-          <p><b>Email:</b> ${email}</p>
-          <p><b>Phone:</b> ${phone}</p>
-          <p><b>State:</b> ${state}</p>
-          <p style="margin-top:16px;">This is an automated notification from <b>K&N Taxmark Advisors</b>.</p>
+        `<div style="font-family:sans-serif;font-size:16px;background:#f6f8fa;padding:32px;">
+          <div style="max-width:480px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:32px;">
+            <div style="text-align:center;margin-bottom:24px;">
+              <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:8px;' />
+              <h2 style="color:#0ea5e9;margin:0;">New User Registration</h2>
+            </div>
+            <p style="margin-bottom:8px;"><b>Name:</b> ${name}</p>
+            <p style="margin-bottom:8px;"><b>Email:</b> ${email}</p>
+            <p style="margin-bottom:8px;"><b>Phone:</b> ${phone}</p>
+            <p style="margin-bottom:16px;"><b>State:</b> ${state}</p>
+            <div style="margin-top:24px;color:#64748b;font-size:13px;">This is an automated notification from <b>K&N Taxmark Advisors</b>.</div>
+          </div>
         </div>`
       );
     } catch (mailErr) {
@@ -91,15 +96,15 @@ exports.sendOTP = async (req, res) => {
     otpStore[email] = otp;
     await sendMail(
       email,
-      'Your OTP Code',
+      'Your OTP Code - K&N Taxmark Advisors',
       `Your OTP code is: ${otp}. It is valid for 10 minutes.`,
-      `<div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; padding: 32px;">
-        <div style="max-width: 420px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 32px; text-align: center;">
-          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='Company Logo' style='height: 48px; margin-bottom: 16px;' />
-          <h2 style='color: #2563eb; margin-bottom: 16px;'>Your OTP Code</h2>
-          <div style='font-size: 2.5rem; font-weight: bold; color: #16a34a; letter-spacing: 6px; margin-bottom: 16px;'>${otp}</div>
-          <p style='color: #333; margin-bottom: 8px;'>Enter this code to verify your email address. It is valid for <b>10 minutes</b>.</p>
-          <div style='color: #64748b; font-size: 13px; margin-top: 24px;'>If you did not request this, please ignore this email.</div>
+      `<div style="font-family:'Segoe UI',Arial,sans-serif;background:#f6f8fa;padding:32px;">
+        <div style="max-width:420px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:32px;text-align:center;">
+          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:16px;' />
+          <h2 style='color:#2563eb;margin-bottom:16px;'>Your One-Time Password (OTP)</h2>
+          <div style='font-size:2.5rem;font-weight:bold;color:#16a34a;letter-spacing:6px;margin-bottom:16px;'>${otp}</div>
+          <p style='color:#333;margin-bottom:8px;'>Enter this code to verify your email address. <b>Valid for 10 minutes.</b></p>
+          <div style='color:#64748b;font-size:13px;margin-top:24px;'>If you did not request this, please ignore this email.<br/>Need help? Contact <a href='mailto:support@kntaxmarkadvisors.com' style='color:#2563eb;'>support@kntaxmarkadvisors.com</a></div>
         </div>
       </div>`
     );
@@ -121,15 +126,15 @@ exports.forgotPassword = async (req, res) => {
     otpStore[email] = otp;
     await sendMail(
       email,
-      'Password Reset OTP',
+      'Password Reset OTP - K&N Taxmark Advisors',
       `Your password reset OTP is: ${otp}. It is valid for 10 minutes.`,
-      `<div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; padding: 32px;">
-        <div style="max-width: 420px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 32px; text-align: center;">
-          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='Company Logo' style='height: 48px; margin-bottom: 16px;' />
-          <h2 style='color: #d97706; margin-bottom: 16px;'>Password Reset OTP</h2>
-          <div style='font-size: 2.5rem; font-weight: bold; color: #ea580c; letter-spacing: 6px; margin-bottom: 16px;'>${otp}</div>
-          <p style='color: #333; margin-bottom: 8px;'>Use this code to reset your password. It is valid for <b>10 minutes</b>.</p>
-          <div style='color: #64748b; font-size: 13px; margin-top: 24px;'>If you did not request this, please ignore this email.</div>
+      `<div style="font-family:'Segoe UI',Arial,sans-serif;background:#f6f8fa;padding:32px;">
+        <div style="max-width:420px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:32px;text-align:center;">
+          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:16px;' />
+          <h2 style='color:#d97706;margin-bottom:16px;'>Password Reset OTP</h2>
+          <div style='font-size:2.5rem;font-weight:bold;color:#ea580c;letter-spacing:6px;margin-bottom:16px;'>${otp}</div>
+          <p style='color:#333;margin-bottom:8px;'>Use this code to reset your password. <b>Valid for 10 minutes.</b></p>
+          <div style='color:#64748b;font-size:13px;margin-top:24px;'>If you did not request this, please ignore this email.<br/>Need help? Contact <a href='mailto:support@kntaxmarkadvisors.com' style='color:#d97706;'>support@kntaxmarkadvisors.com</a></div>
         </div>
       </div>`
     );

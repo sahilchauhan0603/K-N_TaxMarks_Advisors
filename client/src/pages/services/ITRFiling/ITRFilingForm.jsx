@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 // import { useAuth } from '/src/context/AuthContext';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 // import axios from '../utils/axios';
-import axios from '../../utils/axios'; // Adjust the import path as necessary
+import axios from '../../../utils/axios'; // Adjust the import path as necessary
 
 const ITRFilingForm = ({ type = 'individual' }) => {
   const { user } = useAuth();
