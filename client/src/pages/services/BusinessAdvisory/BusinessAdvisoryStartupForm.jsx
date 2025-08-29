@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import axios from '../../utils/axios';
+import { useAuth } from '../../../context/AuthContext';
+import axios from '../../../utils/axios';
 
-const BusinessAdvisoryIncorporationForm = () => {
+const BusinessAdvisoryStartupForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
     mobile: user?.phone || '',
-    companyName: '',
-    companyType: '',
+    businessName: '',
+    businessType: '',
     notes: '',
     documents: null,
   });
@@ -32,12 +32,12 @@ const BusinessAdvisoryIncorporationForm = () => {
       Object.entries(form).forEach(([key, value]) => {
         formData.append(key, value);
       });
-      const res = await axios.post('/api/business-incorporation', formData, {
+      const res = await axios.post('/api/business-startup', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (res.data.success) {
-        setSuccess('Your Company Incorporation request has been submitted successfully!');
-        setForm((prev) => ({ ...prev, companyName: '', companyType: '', notes: '', documents: null }));
+        setSuccess('Your Startup & MSME Registration request has been submitted successfully!');
+        setForm((prev) => ({ ...prev, businessName: '', businessType: '', notes: '', documents: null }));
       } else {
         setError(res.data.message || 'Submission failed.');
       }
@@ -50,7 +50,7 @@ const BusinessAdvisoryIncorporationForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 bg-gradient-to-br from-pink-50 to-white border-l-4 border-pink-500 rounded-xl p-6 shadow-md">
-      <h4 className="text-lg font-bold text-pink-700 mb-4">Company Incorporation</h4>
+      <h4 className="text-lg font-bold text-pink-700 mb-4">Startup & MSME Registration</h4>
       {success && <div className="mb-3 p-2 bg-pink-100 text-pink-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -67,17 +67,17 @@ const BusinessAdvisoryIncorporationForm = () => {
           <input name="mobile" value={form.mobile} onChange={handleChange} required className="w-full border border-pink-200 rounded px-3 py-2 focus:ring-2 focus:ring-pink-400" />
         </div>
         <div>
-          <label className="block text-sm text-pink-700 mb-1">Company Name</label>
-          <input name="companyName" value={form.companyName} onChange={handleChange} className="w-full border border-pink-200 rounded px-3 py-2 focus:ring-2 focus:ring-pink-400" />
+          <label className="block text-sm text-pink-700 mb-1">Business Name</label>
+          <input name="businessName" value={form.businessName} onChange={handleChange} className="w-full border border-pink-200 rounded px-3 py-2 focus:ring-2 focus:ring-pink-400" />
         </div>
         <div>
-          <label className="block text-sm text-pink-700 mb-1">Company Type</label>
-          <select name="companyType" value={form.companyType} onChange={handleChange} className="w-full border border-pink-200 rounded px-3 py-2 focus:ring-2 focus:ring-pink-400">
+          <label className="block text-sm text-pink-700 mb-1">Business Type</label>
+          <select name="businessType" value={form.businessType} onChange={handleChange} className="w-full border border-pink-200 rounded px-3 py-2 focus:ring-2 focus:ring-pink-400">
             <option value="">Select Type</option>
-            <option value="Private Limited">Private Limited</option>
-            <option value="Public Limited">Public Limited</option>
-            <option value="OPC">OPC</option>
+            <option value="Proprietorship">Proprietorship</option>
+            <option value="Partnership">Partnership</option>
             <option value="LLP">LLP</option>
+            <option value="Private Limited">Private Limited</option>
           </select>
         </div>
       </div>
@@ -96,4 +96,4 @@ const BusinessAdvisoryIncorporationForm = () => {
   );
 };
 
-export default BusinessAdvisoryIncorporationForm;
+export default BusinessAdvisoryStartupForm;

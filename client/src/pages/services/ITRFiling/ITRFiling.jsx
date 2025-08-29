@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import TestimonialSection from '../../components/TestimonialSection';
+import { useAuth } from '../../../context/AuthContext';
+import TestimonialSection from '../../../components/TestimonialSection';
 
 const ITRFilingForm = React.lazy(() => import('./ITRFilingForm'));
 const ITRDocumentPrepForm = React.lazy(() => import('./ITRDocumentPrepForm'));

@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+
 import HomePage from './pages/HomePage';
 import AboutUsPage from './pages/AboutUsPage';
 import ContactUsPage from './pages/ContactUsPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import FAQPage from './pages/FAQPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsPage from './pages/TermsPage';
-import CookiePolicyPage from './pages/CookiePolicyPage';
-import SitemapPage from './pages/SitemapPage';
+
+import FAQPage from './pages/Others/FAQPage';
+import PrivacyPolicyPage from './pages/Others/PrivacyPolicyPage';
+import TermsPage from './pages/Others/TermsPage';
+import CookiePolicyPage from './pages/Others/CookiePolicyPage';
+import SitemapPage from './pages/Others/SitemapPage';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -21,11 +23,11 @@ import ScrollToTop from './components/ScrollToTop';
 import LoadFromTop from './components/LoadFromTop';
 // import PrivateRoute from './components/PrivateRoute';
 
-import TaxPlanning from './pages/services/TaxPlanning';
-import ITRFiling from './pages/services/ITRFiling';
-import GSTFiling from './pages/services/GSTFiling';
-import Trademark from './pages/services/Trademark';
-import BusinessAdvisory from './pages/services/BusinessAdvisory';
+import TaxPlanning from './pages/services/TaxPlanning/TaxPlanning';
+import ITRFiling from './pages/services/ITRFiling/ITRFiling';
+import GSTFiling from './pages/services/GSTFiling/GSTFiling';
+import Trademark from './pages/services/TradeMark/Trademark';
+import BusinessAdvisory from './pages/services/BusinessAdvisory/BusinessAdvisory';
 
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/Dashboard';

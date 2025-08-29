@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import axios from '../../utils/axios';
+import { useAuth } from '../../../context/AuthContext';
+import axios from '../../../utils/axios';
 
-const GSTFilingForm = () => {
+const GSTResolutionForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
     mobile: user?.phone || '',
     gstNumber: '',
-    filingType: 'Registration',
-    businessName: '',
+    issue: '',
     notes: '',
     documents: null,
   });
@@ -33,12 +32,12 @@ const GSTFilingForm = () => {
       Object.entries(form).forEach(([key, value]) => {
         formData.append(key, value);
       });
-      const res = await axios.post('/api/gst-filing', formData, {
+      const res = await axios.post('/api/gst-resolution', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (res.data.success) {
-        setSuccess('Your GST request has been submitted successfully!');
-        setForm((prev) => ({ ...prev, gstNumber: '', businessName: '', notes: '', documents: null }));
+        setSuccess('Your GST resolution request has been submitted!');
+        setForm((prev) => ({ ...prev, gstNumber: '', issue: '', notes: '', documents: null }));
       } else {
         setError(res.data.message || 'Submission failed.');
       }
@@ -51,7 +50,7 @@ const GSTFilingForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 bg-gradient-to-br from-yellow-50 to-white border-l-4 border-yellow-500 rounded-xl p-6 shadow-md">
-      <h4 className="text-lg font-bold text-yellow-700 mb-4">GST Filing Request</h4>
+      <h4 className="text-lg font-bold text-yellow-700 mb-4">GST Resolution</h4>
       {success && <div className="mb-3 p-2 bg-yellow-100 text-yellow-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -72,16 +71,8 @@ const GSTFilingForm = () => {
           <input name="gstNumber" value={form.gstNumber} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400 uppercase" />
         </div>
         <div>
-          <label className="block text-sm text-yellow-700 mb-1">Type</label>
-          <select name="filingType" value={form.filingType} onChange={handleChange} className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400">
-            <option value="Registration">Registration & Amendments</option>
-            <option value="Return Filing">Return Filing</option>
-            <option value="Resolution">Resolution</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Business Name</label>
-          <input name="businessName" value={form.businessName} onChange={handleChange} className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
+          <label className="block text-sm text-yellow-700 mb-1">Issue</label>
+          <input name="issue" value={form.issue} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
         </div>
       </div>
       <div className="mt-4">
@@ -99,4 +90,4 @@ const GSTFilingForm = () => {
   );
 };
 
-export default GSTFilingForm;
+export default GSTResolutionForm;
