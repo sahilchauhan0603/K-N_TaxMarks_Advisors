@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
+const sendMail = require('../utils/mailer');
 const jwt = require('jsonwebtoken');
 const otpGenerator = require('otp-generator');
 const adminAuth = require('../middleware/adminAuth');
@@ -23,21 +23,30 @@ router.post('/send-otp', async (req, res) => {
   const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false });
   OTP_STORE[email] = { otp, expires: Date.now() + 5 * 60 * 1000 };
 
-  // Send OTP via email
-  // TODO: Use your mailer config
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Your Admin OTP',
-    text: `Your OTP is: ${otp}`,
-  });
+  // Send OTP via email using mailer utility
+  await sendMail(
+    email,
+    'Your Admin OTP',
+    undefined,
+    `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; padding: 32px 0;">
+        <div style="max-width: 420px; margin: 0 auto; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px #0001; padding: 32px 28px; border: 1px solid #e5e7eb;">
+          <div style="text-align: center; margin-bottom: 18px;">
+            <div style="display: inline-block; background: linear-gradient(90deg,#3b82f6,#6366f1); border-radius: 50%; padding: 16px; margin-bottom: 8px;">
+              <img src='https://cdn-icons-png.flaticon.com/512/3064/3064197.png' alt='Admin OTP' style='width: 40px; height: 40px;' />
+            </div>
+            <h2 style="font-size: 1.6rem; font-weight: 700; color: #1e293b; margin: 0;">Admin Panel Login OTP</h2>
+            <p style="color: #64748b; font-size: 1rem; margin: 8px 0 0 0;">Use the OTP below to sign in as admin. This code is valid for 5 minutes.</p>
+          </div>
+          <div style="text-align: center; margin: 32px 0;">
+            <span style="display: inline-block; font-size: 2.2rem; letter-spacing: 0.3em; font-weight: 700; color: #2563eb; background: #f1f5f9; border-radius: 12px; padding: 16px 32px; border: 1px dashed #6366f1;">${otp}</span>
+          </div>
+          <p style="color: #64748b; font-size: 0.98rem; text-align: center; margin-bottom: 0;">If you did not request this OTP, you can safely ignore this email.<br/>For support, contact your site administrator.</p>
+          <div style="margin-top: 32px; text-align: center; color: #94a3b8; font-size: 0.9rem;">&copy; ${new Date().getFullYear()} K-N TaxMarks Advisors</div>
+        </div>
+      </div>
+    `
+  );
   res.json({ message: 'OTP sent' });
 });
 

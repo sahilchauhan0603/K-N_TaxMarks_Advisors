@@ -44,7 +44,7 @@ exports.register = async (req, res) => {
         `<div style="font-family:sans-serif;font-size:16px;background:#f6f8fa;padding:32px;">
           <div style="max-width:480px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:32px;">
             <div style="text-align:center;margin-bottom:24px;">
-              <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:8px;' />
+              <img src='https://media.istockphoto.com/id/1469214984/photo/welcome-written-speech-bubble-and-blue-megaphone-on-blue-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=0QXYmKs5xRaE200a8UtGbeR1kypGOhRsABEhHurRYEE=' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:8px;' />
               <h2 style="color:#0ea5e9;margin:0;">New User Registration</h2>
             </div>
             <p style="margin-bottom:8px;"><b>Name:</b> ${name}</p>
@@ -100,7 +100,7 @@ exports.sendOTP = async (req, res) => {
       `Your OTP code is: ${otp}. It is valid for 10 minutes.`,
       `<div style="font-family:'Segoe UI',Arial,sans-serif;background:#f6f8fa;padding:32px;">
         <div style="max-width:420px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:32px;text-align:center;">
-          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:16px;' />
+          <img src='https://media.istockphoto.com/id/1469214984/photo/welcome-written-speech-bubble-and-blue-megaphone-on-blue-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=0QXYmKs5xRaE200a8UtGbeR1kypGOhRsABEhHurRYEE=' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:16px;' />
           <h2 style='color:#2563eb;margin-bottom:16px;'>Your One-Time Password (OTP)</h2>
           <div style='font-size:2.5rem;font-weight:bold;color:#16a34a;letter-spacing:6px;margin-bottom:16px;'>${otp}</div>
           <p style='color:#333;margin-bottom:8px;'>Enter this code to verify your email address. <b>Valid for 10 minutes.</b></p>
@@ -130,7 +130,7 @@ exports.forgotPassword = async (req, res) => {
       `Your password reset OTP is: ${otp}. It is valid for 10 minutes.`,
       `<div style="font-family:'Segoe UI',Arial,sans-serif;background:#f6f8fa;padding:32px;">
         <div style="max-width:420px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);padding:32px;text-align:center;">
-          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:16px;' />
+          <img src='https://media.istockphoto.com/id/1469214984/photo/welcome-written-speech-bubble-and-blue-megaphone-on-blue-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=0QXYmKs5xRaE200a8UtGbeR1kypGOhRsABEhHurRYEE=' alt='K&N Taxmark Advisors' style='height:48px;margin-bottom:16px;' />
           <h2 style='color:#d97706;margin-bottom:16px;'>Password Reset OTP</h2>
           <div style='font-size:2.5rem;font-weight:bold;color:#ea580c;letter-spacing:6px;margin-bottom:16px;'>${otp}</div>
           <p style='color:#333;margin-bottom:8px;'>Use this code to reset your password. <b>Valid for 10 minutes.</b></p>
