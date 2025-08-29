@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 
 const subTabs = [
   { key: 'search', label: 'Trademark Search & Registration', endpoint: '/api/trademark-search' },

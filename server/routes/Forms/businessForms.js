@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const BusinessAdvisory = require('../models/BusinessAdvisory');
+const BusinessAdvisory = require('../../models/BusinessAdvisory');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads/business'));
+    cb(null, path.join(__dirname, '../../uploads/business'));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);

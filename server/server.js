@@ -5,14 +5,16 @@ const connectDB = require('./db/dbConnection');
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
 const adminRoutes = require('./routes/admin');
-const trademarkForms = require('./routes/trademarkForms');
-const businessForms = require('./routes/businessForms');
-const taxForms = require('./routes/taxForms');
+
+const trademarkForms = require('./routes/Forms/trademarkForms');
+const businessForms = require('./routes/Forms/businessForms');
+const taxForms = require('./routes/Forms/taxForms');
+const gstForms = require('./routes/Forms/gstForms');
+const itrForms = require('./routes/Forms/itrForms');
+
 const settingsRouter = require('./routes/settings');
 const testimonialsRoutes = require('./routes/testimonials');
 const path = require('path');
-const gstForms = require('./routes/gstForms');
-const itrForms = require('./routes/itrForms');
 
 const app = express();
 const PORT = process.env.PORT || 8000;

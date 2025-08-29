@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 import { FaCog, FaSearch, FaUserShield, FaBell, FaPalette, FaLock } from 'react-icons/fa';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('account');

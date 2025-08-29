@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const { GSTFiling, GSTReturnFiling, GSTResolution } = require('../models/GST');
+const { GSTFiling, GSTReturnFiling, GSTResolution } = require('../../models/GST');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads/gst'));
+    cb(null, path.join(__dirname, '../../uploads/gst'));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);

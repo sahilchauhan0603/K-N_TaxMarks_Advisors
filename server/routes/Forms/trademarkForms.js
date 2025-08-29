@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const Trademark = require('../models/Trademark');
+const Trademark = require('../../models/Trademark');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads/trademark'));
+    cb(null, path.join(__dirname, '../../uploads/trademark'));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);

@@ -33,7 +33,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       <aside
         className={`fixed top-0 left-0 h-full z-50 bg-white text-gray-800 transition-all duration-300 ease-in-out
-          w-58 flex flex-col border-r border-gray-200
+          w-60 flex flex-col border-r border-gray-200
           ${sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
           md:translate-x-0`}
       >
@@ -200,8 +200,8 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
         </nav>
 
         {/* Footer with Logout */}
-        <div className="px-4 pb-6 mt-auto">
-          <div className="p-4 bg-gray-50 rounded-lg mb-4">
+        <div className="px-4 pb-6 mt-auto bg-gray-100">
+          <div className="p-2.5 bg-gray-50 rounded-lg mb-4 mt-2.5">
             <div className="text-sm text-gray-600 mb-2">Logged in as:</div>
             <div className="font-medium text-gray-800">Admin User</div>
           </div>

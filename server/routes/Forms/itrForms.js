@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const { ITRFiling, ITRRefundNotice, ITRDocumentPrep } = require('../models/ITR');
+const { ITRFiling, ITRRefundNotice, ITRDocumentPrep } = require('../../models/ITR');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads/itr'));
+    cb(null, path.join(__dirname, '../../uploads/itr'));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);

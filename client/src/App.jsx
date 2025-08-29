@@ -30,16 +30,16 @@ import Trademark from './pages/services/TradeMark/Trademark';
 import BusinessAdvisory from './pages/services/BusinessAdvisory/BusinessAdvisory';
 
 import AdminLayout from './pages/admin/AdminLayout';
+import AdminLogin from './pages/admin/auth/Login';
 import AdminDashboard from './pages/admin/Dashboard';
-import AdminUsers from './pages/admin/Users';
-import AdminLogin from './pages/admin/Login';
-import ReportsPage from './pages/admin/Reports';
-import SettingsPage from './pages/admin/Settings';
-import AdminTrademark from './pages/admin/AdminTrademark';
-import AdminBusiness from './pages/admin/AdminBusiness';
-import AdminTaxPlanning from './pages/admin/AdminTaxPlanning';
-import AdminGST from './pages/admin/AdminGST';
-import AdminITR from './pages/admin/AdminITR';
+import AdminUsers from './pages/admin/Others/Users';
+import ReportsPage from './pages/admin/Others/Reports';
+import SettingsPage from './pages/admin/Others/Settings';
+import AdminTrademark from './pages/admin/TablesForForms/AdminTrademark';
+import AdminBusiness from './pages/admin/TablesForForms/AdminBusiness';
+import AdminTaxPlanning from './pages/admin/TablesForForms/AdminTaxPlanning';
+import AdminGST from './pages/admin/TablesForForms/AdminGST';
+import AdminITR from './pages/admin/TablesForForms/AdminITR';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 
 const subTabs = [
   { key: 'personal_corporate', label: 'Personal & Corporate Tax', endpoint: '/api/tax-personal-corporate' },

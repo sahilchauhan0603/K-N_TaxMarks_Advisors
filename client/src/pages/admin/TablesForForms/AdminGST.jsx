@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 
 const subTabs = [
   { key: 'filing', label: 'GST Filing (Registration & Amendments)', endpoint: '/api/gst-filing', columns: ['name', 'email', 'mobile', 'gstNumber', 'filingType', 'businessName', 'notes', 'documents', 'createdAt'] },

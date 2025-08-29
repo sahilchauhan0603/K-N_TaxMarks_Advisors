@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 
 const subTabs = [
   { key: 'startup', label: 'Startup & MSME Registration', endpoint: '/api/business-startup' },
