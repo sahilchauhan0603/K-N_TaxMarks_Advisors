@@ -188,38 +188,38 @@ const ContactUsPage = () => {
               </div>
             </div>
             {/* Support Info */}
-            <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-400 to-blue-600 p-6 sm:p-8 md:p-12 text-white flex items-center">
+            <div className="w-full md:w-1/2 bg-blue-50 p-6 sm:p-8 md:p-12 text-black flex items-center">
               <div className="w-full">
                 <div className="flex items-start mb-8">
                   <div className="p-3 bg-white bg-opacity-20 rounded-lg mr-4 text-black">
                     <MdSupportAgent className="text-3xl" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-1">Customer Support</h3>
-                    <p className="text-blue-100">Our dedicated team is ready to assist you</p>
+                    <h3 className="text-xl text-black font-bold mb-1">Customer Support</h3>
+                    <p className="text-black">Our dedicated team is ready to assist you</p>
                   </div>
                 </div>
                 <div className="space-y-6">
                   <div>
-                    <h4 className="text-sm font-medium uppercase tracking-wider text-blue-200 mb-2">Quick Help</h4>
+                    <h4 className="text-sm font-medium uppercase tracking-wider text-black mb-2">Quick Help</h4>
                     <ul className="space-y-2">
                       <li>
-                        <a href="/faq" className="flex items-center text-blue-50 hover:text-white transition-colors">
+                        <a href="/faq" className="flex items-center text-black hover:text-gray-600 transition-colors">
                           <FaArrowRight className="mr-2 text-xs" />
                           Frequently Asked Questions
                         </a>
                       </li>
                       <li>
-                        <a href="/community" className="flex items-center text-blue-50 hover:text-white transition-colors">
+                        <a href="/community" className="flex items-center text-black hover:text-gray-600 transition-colors">
                           <FaArrowRight className="mr-2 text-xs" />
                           Community Forum
                         </a>
                       </li>
                     </ul>
                   </div>
-                  <div className="pt-6 border-t border-blue-500">
-                    <h4 className="text-sm font-medium uppercase tracking-wider text-blue-200 mb-2">Emergency</h4>
-                    <p className="text-blue-50">
+                  <div className="pt-6 border-t border-blue-700">
+                    <h4 className="text-sm font-medium uppercase tracking-wider text-black mb-2">Emergency</h4>
+                    <p className="text-black">
                       For critical issues, call our 24/7 support line: <br />
                       <a href="tel:+18005551234" className="font-semibold hover:underline">+91 9318469138</a>
                     </p>
