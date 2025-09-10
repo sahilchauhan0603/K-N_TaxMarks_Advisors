@@ -132,12 +132,12 @@ const SignupPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center mb-4">
+        {/* <div className="flex justify-center mb-4">
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-4 shadow-lg transform hover:scale-105 transition-transform duration-200">
             <FiUser className="text-white text-3xl" />
           </div>
-        </div>
-        <h2 className="mt-2 text-center text-3xl font-bold text-gray-900">
+        </div> */}
+        <h2 className="text-center text-3xl font-bold text-gray-900">
           Create your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
@@ -240,67 +240,40 @@ const SignupPage = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <div>
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-400 cursor-not-allowed relative group"
-                      disabled
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0110 4.844c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.934.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C17.14 18.163 20 14.418 20 10c0-5.523-4.477-10-10-10z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <span className="ml-2">GitHub</span>
-                      <span className="absolute left-1/2 -translate-x-1/2 -top-9 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
-                        Will be implemented soon
-                      </span>
-                    </button>
-                  </div>
-
-                  <div>
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-400 cursor-not-allowed relative group"
-                      disabled
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 48 48"
-                      >
-                        <path
-                          fill="#EA4335"
-                          d="M24 9.5c3.94 0 7.47 1.35 10.26 3.98l7.64-7.64C37.61 1.67 31.27-1 24  -1 14.59-1 6.47 4.99 2.69 13.27l8.9 6.9C13.05 14.05 18.12 9.5 24 9.5z"
-                        />
-                        <path
-                          fill="#4285F4"
-                          d="M46.5 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.75c-.55 2.9-2.25 5.37-4.8 7.04l7.45 5.8c4.35-4.01 6.85-9.92 6.85-17.09z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M11.59 28.17a14.48 14.48 0 01-.76-4.17c0-1.45.27-2.84.76-4.17l-8.9-6.9C1.6 16.3 0 20 0 24c0 4 1.6 7.7 4.19 10.07l8.9-6.9z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M24 48c6.48 0 11.9-2.13 15.87-5.79l-7.45-5.8c-2.08 1.4-4.74 2.22-8.42 2.22-5.88 0-10.95-4.55-12.41-10.63l-8.9 6.9C6.47 43.01 14.59 49 24 49z"
-                        />
-                      </svg>
-                      <span className="ml-2">Google</span>
-                      <span className="absolute left-1/2 -translate-x-1/2 -top-9 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
-                        Will be implemented soon
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                <div className="mt-6 flex justify-center">
+              <button
+                type="button"
+                className="w-[200px] max-w-xs inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-400 cursor-not-allowed relative group"
+                disabled
+              >
+                <svg
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 48 48"
+                >
+                  <path
+                    fill="#EA4335"
+                    d="M24 9.5c3.94 0 7.47 1.35 10.26 3.98l7.64-7.64C37.61 1.67 31.27-1 24  -1 14.59-1 6.47 4.99 2.69 13.27l8.9 6.9C13.05 14.05 18.12 9.5 24 9.5z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M46.5 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.75c-.55 2.9-2.25 5.37-4.8 7.04l7.45 5.8c4.35-4.01 6.85-9.92 6.85-17.09z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M11.59 28.17a14.48 14.48 0 01-.76-4.17c0-1.45.27-2.84.76-4.17l-8.9-6.9C1.6 16.3 0 20 0 24c0 4 1.6 7.7 4.19 10.07l8.9-6.9z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M24 48c6.48 0 11.9-2.13 15.87-5.79l-7.45-5.8c-2.08 1.4-4.74 2.22-8.42 2.22-5.88 0-10.95-4.55-12.41-10.63l-8.9 6.9C6.47 43.01 14.59 49 24 49z"
+                  />
+                </svg>
+                <span className="ml-2">Google</span>
+                <span className="absolute left-1/2 -translate-x-1/2 -top-9 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
+                  Will be implemented soon
+                </span>
+              </button>
+            </div>
               </div>
 
               <div className="mt-6 text-center">

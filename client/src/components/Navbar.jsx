@@ -144,7 +144,7 @@ const Navbar = () => {
                     <div className="py-1">
                       <button
                         onClick={logout}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                        className="w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                       >
                         <FiLogOut className="mr-2" /> Sign out
                       </button>
@@ -155,7 +155,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="ml-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 hidden md:inline-flex"
+                className="ml-4 px-4 py-2 cursor-pointer bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 hidden md:inline-flex"
               >
                 <FiLogIn className="text-lg" /> Login
               </button>
@@ -226,7 +226,7 @@ const Navbar = () => {
           {!isAuthenticated && (
             <button
               onClick={() => navigate('/login')}
-              className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"
+              className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"
             >
               <FiLogIn className="text-lg" /> Login
             </button>

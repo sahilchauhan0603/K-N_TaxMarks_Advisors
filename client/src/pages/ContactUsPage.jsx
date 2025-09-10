@@ -41,7 +41,7 @@ const ContactUsPage = () => {
     {
       icon: <FaClock className="text-2xl" />,
       title: "Hours",
-      details: "Monday-Friday: 9am-6pm PST",
+      details: "Monday-Friday: 9am-6pm IST",
       color: "bg-purple-100 text-purple-600"
     }
   ];
@@ -188,7 +188,7 @@ const ContactUsPage = () => {
               </div>
             </div>
             {/* Support Info */}
-            <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-6 sm:p-8 md:p-12 text-white flex items-center">
+            <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-400 to-blue-600 p-6 sm:p-8 md:p-12 text-white flex items-center">
               <div className="w-full">
                 <div className="flex items-start mb-8">
                   <div className="p-3 bg-white bg-opacity-20 rounded-lg mr-4 text-black">

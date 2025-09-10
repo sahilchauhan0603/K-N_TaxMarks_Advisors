@@ -116,14 +116,17 @@ const App = () => {
     };
   }, []);
 
+
   // Helper: check if current route is admin panel
   const isAdminRoute = location.pathname.startsWith('/admin');
+  // Helper: check if current route is login or signup
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-800">
       <LoadingBar isLoading={isLoading} />
       <ScrollToTop />
-      {!isAdminRoute && <Navbar />}
+  {!isAdminRoute && <Navbar />}
       <main className="flex-grow">
         {/* Toast Popup for Auth Redirect */}
         {showAuthPopup && (
@@ -176,7 +179,7 @@ const App = () => {
 
         </Routes>
       </main>
-      {!isAdminRoute && <Footer />}
+  {!isAdminRoute && !isAuthPage && <Footer />}
     </div>
   );
 };
