@@ -64,7 +64,6 @@ app.use('/api/testimonials', testimonialsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
   res.status(500).json({ message: 'Something broke!', error: err.message });
 });
 

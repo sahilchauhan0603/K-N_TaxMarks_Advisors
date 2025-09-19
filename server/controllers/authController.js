@@ -115,7 +115,6 @@ exports.sendOTP = async (req, res) => {
     );
     res.status(200).json({ success: true, message: 'OTP sent to email' });
   } catch (error) {
-    console.error('Error sending OTP:', error);
     res.status(500).json({ success: false, message: 'Failed to send OTP' });
   }
 };
@@ -145,7 +144,6 @@ exports.forgotPassword = async (req, res) => {
     );
     res.status(200).json({ success: true, message: 'OTP sent to email' });
   } catch (error) {
-    console.error('Forgot password error:', error);
     res.status(500).json({ success: false, message: 'Failed to send OTP' });
   }
 };
@@ -165,7 +163,6 @@ exports.resetPassword = async (req, res) => {
     delete otpStore[email];
     res.status(200).json({ success: true, message: 'Password reset successful' });
   } catch (error) {
-    console.error('Reset password error:', error);
     res.status(500).json({ success: false, message: 'Failed to reset password' });
   }
 };
@@ -187,7 +184,6 @@ exports.verifyToken = async (req, res) => {
 
     res.json({ valid: true, user: { id: user._id, name: user.name, email: user.email } });
   } catch (error) {
-    console.error('Token verification error:', error);
     res.status(401).json({ valid: false, message: 'Invalid token' });
   }
 };

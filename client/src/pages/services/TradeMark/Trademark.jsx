@@ -30,7 +30,7 @@ const Trademark = () => {
               Secure your business identity and protect your brand with our end-to-end trademark registration and legal advisory services. We guide you through every step, from application to enforcement.
             </p>
             <button
-              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-pointer transition duration-300 transform hover:scale-105"
               onClick={scrollToServices}
             >
               Get Started Today
@@ -63,7 +63,7 @@ const Trademark = () => {
                 Comprehensive search and hassle-free registration to secure your brand identity.
               </p>
               <button
-                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 1 ? null : 1)}
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
@@ -88,7 +88,7 @@ const Trademark = () => {
                 Drafting, filing, and compliance for all your intellectual property needs.
               </p>
               <button
-                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 2 ? null : 2)}
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
@@ -113,7 +113,7 @@ const Trademark = () => {
                 Intellectual property protection, litigation, and dispute resolution services.
               </p>
               <button
-                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 3 ? null : 3)}
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}

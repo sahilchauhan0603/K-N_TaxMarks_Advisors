@@ -78,7 +78,7 @@ const TrademarkSearchForm = () => {
         <label className="block text-sm text-purple-700 mb-1">Notes (optional)</label>
         <textarea name="notes" value={form.notes} onChange={handleChange} rows={2} className="w-full border border-purple-200 rounded px-3 py-2 focus:ring-2 focus:ring-purple-400" />
       </div>
-      <button type="submit" disabled={loading} className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded shadow transition disabled:opacity-60">
+      <button type="submit" disabled={loading} className="mt-6 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded shadow cursor-pointer transition disabled:opacity-60">
         {loading ? 'Submitting...' : 'Submit Request'}
       </button>
     </form>

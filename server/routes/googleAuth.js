@@ -15,30 +15,26 @@ router.get('/test-config', (req, res) => {
 });
 
 // Google OAuth login
-router.get('/google', (req, res, next) => {
-  console.log('Initiating Google OAuth...');
+router.get('/google', 
   passport.authenticate('google', { 
     scope: ['profile', 'email'],
     prompt: 'select_account'
-  })(req, res, next);
-});
+  })
+);
 
 // Google OAuth callback
 router.get('/google/callback', 
   (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
       if (err) {
-        console.error('Google OAuth Error:', err);
         return res.redirect(`${process.env.CLIENT_URL}/login?error=google_auth_failed`);
       }
       if (!user) {
-        console.error('Google OAuth: No user returned');
         return res.redirect(`${process.env.CLIENT_URL}/login?error=google_auth_failed`);
       }
       
       req.logIn(user, (err) => {
         if (err) {
-          console.error('Login error:', err);
           return res.redirect(`${process.env.CLIENT_URL}/login?error=login_failed`);
         }
         
@@ -53,8 +49,6 @@ router.get('/google/callback',
             { expiresIn: '7d' }
           );
 
-          console.log('User profile complete:', user.profileComplete);
-
           // If profile is incomplete, redirect to profile completion
           if (!user.profileComplete) {
             res.redirect(`${process.env.CLIENT_URL}/complete-profile?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
@@ -63,7 +57,6 @@ router.get('/google/callback',
             res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
           }
         } catch (error) {
-          console.error('Token generation error:', error);
           res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
         }
       });
@@ -117,7 +110,6 @@ router.post('/complete-profile', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Complete profile error:', error);
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({ message: 'Invalid token' });
     }

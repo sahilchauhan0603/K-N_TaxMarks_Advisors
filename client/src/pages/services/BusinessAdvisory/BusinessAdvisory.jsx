@@ -30,7 +30,7 @@ const BusinessAdvisory = () => {
               From startup registration to company incorporation and ongoing legal advisory, our business advisory services help you grow and stay compliant at every stage.
             </p>
             <button
-              className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+              className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-pointer transition duration-300 transform hover:scale-105"
               onClick={scrollToServices}
             >
               Get Started Today
@@ -63,7 +63,7 @@ const BusinessAdvisory = () => {
                 Hassle-free registration for startups and MSMEs, including all documentation and compliance.
               </p>
               <button
-                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 1 ? null : 1)}
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
@@ -88,7 +88,7 @@ const BusinessAdvisory = () => {
                 End-to-end support for company formation, structuring, and legal compliance.
               </p>
               <button
-                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 2 ? null : 2)}
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
@@ -113,7 +113,7 @@ const BusinessAdvisory = () => {
                 Ongoing legal, financial, and compliance advisory services to ensure smooth and hassle-free business operations.
               </p>
               <button
-                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 3 ? null : 3)}
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}

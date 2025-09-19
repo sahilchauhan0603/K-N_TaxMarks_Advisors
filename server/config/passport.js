@@ -8,13 +8,10 @@ passport.use(new GoogleStrategy({
   callbackURL: "/api/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    console.log('Google OAuth Profile:', profile);
-    
     // Check if user already exists with this Google ID
     let user = await User.findOne({ googleId: profile.id });
     
     if (user) {
-      console.log('Existing Google user found:', user.email);
       return done(null, user);
     }
     
@@ -22,15 +19,12 @@ passport.use(new GoogleStrategy({
     user = await User.findOne({ email: profile.emails[0].value });
     
     if (user) {
-      console.log('Linking Google account to existing user:', user.email);
       // Link Google account to existing user
       user.googleId = profile.id;
       user.isGoogleUser = true;
       await user.save();
       return done(null, user);
     }
-    
-    console.log('Creating new Google user:', profile.emails[0].value);
     
     // Create new user with Google data (incomplete profile)
     const newUser = new User({
@@ -44,10 +38,8 @@ passport.use(new GoogleStrategy({
     });
     
     const savedUser = await newUser.save();
-    console.log('New Google user created:', savedUser.email);
     return done(null, savedUser);
   } catch (error) {
-    console.error('Google OAuth Strategy Error:', error);
     return done(error, null);
   }
 }));

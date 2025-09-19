@@ -126,7 +126,7 @@ const FAQPage = () => {
                   className={`border border-blue-100 rounded-xl overflow-hidden transition-all duration-300 ${activeIndex === index ? 'faq-active bg-blue-50 shadow-md' : 'bg-white'}`}
                 >
                   <button 
-                    className="w-full flex justify-between items-center p-5 text-left font-medium text-gray-800 hover:bg-blue-50 transition-colors duration-200"
+                    className="w-full flex justify-between items-center p-5 text-left font-medium text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors duration-200"
                     onClick={() => toggleFAQ(index)}
                   >
                     <span className="pr-4">{faq.question}</span>

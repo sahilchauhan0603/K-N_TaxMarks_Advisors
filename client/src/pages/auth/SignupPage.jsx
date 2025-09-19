@@ -280,7 +280,7 @@ const SignupPage = () => {
                   type="button"
                   onClick={handleSendOTP}
                   disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {isLoading ? (
                     <svg
@@ -457,7 +457,7 @@ const SignupPage = () => {
                     </span>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <NumericOTPInput
                     length={6}
@@ -548,7 +548,7 @@ const SignupPage = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowPassword((v) => !v)}
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
@@ -587,7 +587,7 @@ const SignupPage = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowConfirmPassword((v) => !v)}
                     aria-label={
                       showConfirmPassword
@@ -614,7 +614,7 @@ const SignupPage = () => {
                     setOtp("");
                     setMessage("");
                   }}
-                  className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                  className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-all duration-200"
                 >
                   Back
                 </button>
@@ -622,7 +622,7 @@ const SignupPage = () => {
                   type="button"
                   onClick={handleRegister}
                   disabled={isLoading}
-                  className="flex-1 group relative flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="flex-1 group relative flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {isLoading ? (
                     <svg

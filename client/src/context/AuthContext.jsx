@@ -20,11 +20,9 @@ export const AuthProvider = ({ children }) => {
           if (userData) {
             setUser(userData);
             setIsAuthenticated(true);
-            console.log('User authenticated from localStorage:', userData);
           }
         }
       } catch (error) {
-        console.error('Auth check error:', error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       } finally {
@@ -45,7 +43,6 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       return { success: true };
     } catch (error) {
-      console.error('Login error:', error);
       return { success: false, message: error.response?.data?.message || 'An error occurred during login' };
     }
   };
@@ -60,7 +57,6 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       return { success: true };
     } catch (error) {
-      console.error('Registration error:', error);
       return { success: false, message: error.response?.data?.message || 'An error occurred during registration' };
     }
   };
@@ -70,7 +66,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post('/api/send-otp', { email });
       return response.data;
     } catch (error) {
-      console.error('OTP send error:', error);
       return { success: false, message: error.response?.data?.message || 'Error sending OTP' };
     }
   };
@@ -85,17 +80,13 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       return { success: true };
     } catch (error) {
-      console.error('Complete profile error:', error);
       return { success: false, message: error.response?.data?.message || 'An error occurred' };
     }
   };
 
   const handleGoogleCallback = (token, name, email) => {
-    console.log('handleGoogleCallback called with:', { token: !!token, name, email });
-    
     // Prevent multiple calls
     if (isAuthenticated && user) {
-      console.log('User already authenticated, skipping callback');
       return;
     }
     
@@ -104,7 +95,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
     setIsAuthenticated(true);
-    console.log('Google authentication successful, user set:', userData);
   };
 
   const logout = () => {

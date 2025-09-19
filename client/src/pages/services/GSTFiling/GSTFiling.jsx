@@ -32,7 +32,7 @@ const GSTFiling = () => {
               Stay compliant and avoid penalties with our professional GST solutions tailored for businesses of all sizes.
             </p>
             <button
-              className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-pointer transition duration-300 transform hover:scale-105"
               onClick={scrollToServices}
             >
               Get Started Today
@@ -66,7 +66,7 @@ const GSTFiling = () => {
                 Hassle-free GST registration and seamless amendments to keep your business compliant.
               </p>
               <button
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 1 ? null : 1)}
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
@@ -92,7 +92,7 @@ const GSTFiling = () => {
                 Accurate monthly/quarterly GST return filing to ensure compliance and maximize input tax credits.
               </p>
               <button
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 2 ? null : 2)}
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
@@ -118,7 +118,7 @@ const GSTFiling = () => {
                 Comprehensive input tax credit reconciliation to optimize your tax savings and compliance.
               </p>
               <button
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 3 ? null : 3)}
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}

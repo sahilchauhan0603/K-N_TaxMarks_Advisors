@@ -32,7 +32,7 @@ const ITRFiling = () => {
               Accurate Income Tax Return filing for individuals, firms, and companies. Our experts ensure timely, error-free submissions, maximize your eligible refunds, and keep you compliant.
             </p>
             <button
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-pointer transition duration-300 transform hover:scale-105"
               onClick={scrollToServices}
             >
               Get Started Today
@@ -65,7 +65,7 @@ const ITRFiling = () => {
                 Filing for salaried, self-employed, professionals, and businesses with expert review.
               </p>
               <button
-                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 1 ? null : 1)}
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
@@ -91,7 +91,7 @@ const ITRFiling = () => {
                 End-to-end document collection, preparation, and review for accurate filing and maintenance.
               </p>
               <button
-                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 2 ? null : 2)}
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
@@ -117,7 +117,7 @@ const ITRFiling = () => {
                 Maximize your eligible refunds with confidence and get expert assistance for all your tax notices and queries
               </p>
               <button
-                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+                className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
                 onClick={() => setOpenForm(openForm === 3 ? null : 3)}
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}

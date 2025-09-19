@@ -78,7 +78,7 @@ const ITRDocumentPrepForm = () => {
         <label className="block text-sm text-green-700 mb-1">Notes (optional)</label>
         <textarea name="notes" value={form.notes} onChange={handleChange} rows={2} className="w-full border border-green-200 rounded px-3 py-2 focus:ring-2 focus:ring-green-400" />
       </div>
-      <button type="submit" disabled={loading} className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition disabled:opacity-60">
+      <button type="submit" disabled={loading} className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow cursor-pointer transition disabled:opacity-60">
         {loading ? 'Submitting...' : 'Submit Request'}
       </button>
     </form>

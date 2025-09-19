@@ -56,7 +56,7 @@ const SitemapPage = () => {
             <div className="mb-8">
               <button 
                 onClick={() => toggleSection('main')}
-                className="flex items-center justify-between w-full text-left mb-4"
+                className="flex items-center justify-between w-full text-left mb-4 cursor-pointer"
               >
                 <h2 className="text-2xl font-semibold text-blue-800 flex items-center">
                   <FiList className="mr-3" /> Main Pages
@@ -129,7 +129,7 @@ const SitemapPage = () => {
             <div className="mb-8">
               <button 
                 onClick={() => toggleSection('services')}
-                className="flex items-center justify-between w-full text-left mb-4"
+                className="flex items-center justify-between w-full text-left mb-4 cursor-pointer"
               >
                 <h2 className="text-2xl font-semibold text-blue-800 flex items-center">
                   <FiBriefcase className="mr-3" /> Services
@@ -181,7 +181,7 @@ const SitemapPage = () => {
             <div className="mb-8">
               <button 
                 onClick={() => toggleSection('auth')}
-                className="flex items-center justify-between w-full text-left mb-4"
+                className="flex items-center justify-between w-full text-left mb-4 cursor-pointer"
               >
                 <h2 className="text-2xl font-semibold text-blue-800 flex items-center">
                   <FiLock className="mr-3" /> Authentication
@@ -219,7 +219,7 @@ const SitemapPage = () => {
             <div>
               <button 
                 onClick={() => toggleSection('admin')}
-                className="flex items-center justify-between w-full text-left mb-4"
+                className="flex items-center justify-between w-full text-left mb-4 cursor-pointer"
               >
                 <h2 className="text-2xl font-semibold text-blue-800 flex items-center">
                   <FiSettings className="mr-3" /> Admin Panel

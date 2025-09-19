@@ -209,11 +209,11 @@ const Navbar = () => {
             </button>
             {isOpen === 'services' && (
               <div className="pl-4 py-2 space-y-1 bg-white rounded-md shadow-lg mt-1">
-                <button onClick={() => handleProtectedRoute("/services/tax-planning")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">Tax Planning</button>
-                <button onClick={() => handleProtectedRoute("/services/itr-filing")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">ITR Filing</button>
-                <button onClick={() => handleProtectedRoute("/services/gst-filing")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">GST Filing</button>
-                <button onClick={() => handleProtectedRoute("/services/trademark")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">Trademark & Legal</button>
-                <button onClick={() => handleProtectedRoute("/services/business-advisory")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded">Business Advisory</button>
+                <button onClick={() => handleProtectedRoute("/services/tax-planning")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded cursor-pointer">Tax Planning</button>
+                <button onClick={() => handleProtectedRoute("/services/itr-filing")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded cursor-pointer">ITR Filing</button>
+                <button onClick={() => handleProtectedRoute("/services/gst-filing")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded cursor-pointer">GST Filing</button>
+                <button onClick={() => handleProtectedRoute("/services/trademark")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded cursor-pointer">Trademark & Legal</button>
+                <button onClick={() => handleProtectedRoute("/services/business-advisory")} className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded cursor-pointer">Business Advisory</button>
               </div>
             )}
           </div>

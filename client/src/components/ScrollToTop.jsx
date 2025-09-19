@@ -23,7 +23,7 @@ const ScrollToTop = () => {
 
   return (
     isVisible && (
-      <button className="scroll-to-top" onClick={scrollToTop}>
+      <button className="scroll-to-top cursor-pointer" onClick={scrollToTop}>
         ↑
       </button>
     )

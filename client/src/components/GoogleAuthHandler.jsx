@@ -19,17 +19,13 @@ const GoogleAuthHandler = () => {
     const email = searchParams.get('email');
     const error = searchParams.get('error');
 
-    console.log('GoogleAuthHandler - Token:', !!token, 'Name:', name, 'Email:', email, 'Error:', error);
-
     if (error) {
-      console.error('Google OAuth error:', error);
       processedRef.current = true;
       navigate('/login?error=' + error, { replace: true });
       return;
     }
 
     if (token && name) {
-      console.log('Processing Google OAuth success...');
       processedRef.current = true;
       
       handleGoogleCallback(token, decodeURIComponent(name), email ? decodeURIComponent(email) : '');
@@ -39,7 +35,6 @@ const GoogleAuthHandler = () => {
         navigate('/', { replace: true });
       }, 500);
     } else {
-      console.log('Missing token or name, redirecting to login');
       processedRef.current = true;
       navigate('/login', { replace: true });
     }
