@@ -116,7 +116,7 @@ const AdminLogin = () => {
         </p>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-6 sm:mx-auto sm:w-full ml-4 mr-4 sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
           {error === "not-allowed" && (
             <div className="mb-4 p-4 rounded-lg flex items-start gap-3 bg-red-50 text-red-800 border border-red-200">

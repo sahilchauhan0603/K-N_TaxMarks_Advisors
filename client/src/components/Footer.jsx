@@ -85,7 +85,7 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12 text-center md:text-left">
           {links.map((section, index) => (
             <div key={index}>
               <h3 className="text-lg font-semibold text-white mb-4 uppercase tracking-wider">
@@ -97,7 +97,7 @@ const Footer = () => {
                     {item.href.startsWith('http') || item.href.startsWith('mailto') || item.href.startsWith('tel') ? (
                       <a
                         href={item.href}
-                        className="flex items-center text-gray-300 hover:text-white transition-colors duration-200 group"
+                        className="flex items-center justify-center md:justify-start text-gray-300 hover:text-white transition-colors duration-200 group"
                         target={item.href.startsWith('http') ? "_blank" : "_self"}
                         rel="noopener noreferrer"
                       >
@@ -110,7 +110,7 @@ const Footer = () => {
                     ) : (
                       <Link
                         to={item.href}
-                        className="flex items-center text-gray-300 hover:text-white transition-colors duration-200 group"
+                        className="flex items-center justify-center md:justify-start text-gray-300 hover:text-white transition-colors duration-200 group"
                       >
                         {item.icon && <span className="mr-2">{item.icon}</span>}
                         <span>{item.name}</span>
@@ -125,8 +125,8 @@ const Footer = () => {
 
         <div className="border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-start">
-              <div className="flex items-center">
+            <div className="mb-6 md:mb-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-start items-center md:items-start text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start w-full">
                 <img src={logo} alt="K&N TaxMark Logo" className="h-15 w-15 mr-4 rounded-lg bg-white shadow" />
                 <div>
                   <h4 className="text-lg font-bold text-white">K&N TaxMark Advisors</h4>
@@ -141,7 +141,7 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="flex flex-col items-center md:items-end space-y-4">
+            <div className="flex flex-col items-center md:items-end space-y-4 w-full md:w-auto">
               <div className="flex space-x-6 items-center w-full md:w-auto justify-center md:justify-end">
                 {socialLinks.map((social, index) => (
                   <a 
@@ -157,8 +157,8 @@ const Footer = () => {
                 ))}
               </div>
               
-              <div className="text-center md:text-right flex flex-col md:flex-row md:items-center md:justify-end gap-4 mt-4 md:mt-0">
-                <div>
+              <div className="text-center md:text-right flex flex-col md:flex-row md:items-center md:justify-end gap-4 mt-4 md:mt-0 w-full md:w-auto">
+                <div className="w-full md:w-auto">
                   <p className="text-sm text-gray-400">
                     &copy; {new Date().getFullYear()} K&N TaxMark Advisors. All rights reserved.
                   </p>
