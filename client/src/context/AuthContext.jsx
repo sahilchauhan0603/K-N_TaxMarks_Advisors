@@ -13,16 +13,20 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Check for existing token in localStorage
         const token = localStorage.getItem('token');
         if (token) {
-          // You might want to verify the token with your backend here
           const userData = JSON.parse(localStorage.getItem('user'));
-          setUser(userData);
-          setIsAuthenticated(true);
+          if (userData) {
+            setUser(userData);
+            setIsAuthenticated(true);
+            console.log('User authenticated from localStorage:', userData);
+          }
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        logout();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       } finally {
         setLoading(false);
       }
@@ -71,12 +75,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const completeGoogleProfile = async (token, phone, state) => {
+    try {
+      const response = await axios.post('/api/auth/complete-profile', { token, phone, state });
+      const data = response.data;
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
+      setIsAuthenticated(true);
+      return { success: true };
+    } catch (error) {
+      console.error('Complete profile error:', error);
+      return { success: false, message: error.response?.data?.message || 'An error occurred' };
+    }
+  };
+
+  const handleGoogleCallback = (token, name, email) => {
+    console.log('handleGoogleCallback called with:', { token: !!token, name, email });
+    
+    // Prevent multiple calls
+    if (isAuthenticated && user) {
+      console.log('User already authenticated, skipping callback');
+      return;
+    }
+    
+    localStorage.setItem('token', token);
+    const userData = { name, email: email || '' };
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+    setIsAuthenticated(true);
+    console.log('Google authentication successful, user set:', userData);
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
-    navigate('/');
+    if (navigate) {
+      navigate('/');
+    }
   };
 
   return (
@@ -88,6 +126,8 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         sendOTP,
+        completeGoogleProfile,
+        handleGoogleCallback,
         logout
       }}
     >

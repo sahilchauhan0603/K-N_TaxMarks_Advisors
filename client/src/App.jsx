@@ -5,6 +5,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import CompleteProfilePage from './pages/auth/CompleteProfilePage';
+import GoogleAuthHandler from './components/GoogleAuthHandler';
 
 import HomePage from './pages/HomePage';
 import AboutUsPage from './pages/AboutUsPage';
@@ -120,13 +122,13 @@ const App = () => {
   // Helper: check if current route is admin panel
   const isAdminRoute = location.pathname.startsWith('/admin');
   // Helper: check if current route is login or signup
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/complete-profile';
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-800">
       <LoadingBar isLoading={isLoading} />
       <ScrollToTop />
-  {!isAdminRoute && <Navbar />}
+  {!isAdminRoute && !isAuthPage && <Navbar />}
       <main className="flex-grow">
         {/* Toast Popup for Auth Redirect */}
         {showAuthPopup && (
@@ -148,6 +150,8 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/complete-profile" element={<CompleteProfilePage />} />
+          <Route path="/auth/callback" element={<GoogleAuthHandler />} />
 
           {/* Footer/Info pages */}
           <Route path="/faq" element={<FAQPage />} />

@@ -1,8 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('./config/passport');
 const connectDB = require('./db/dbConnection');
 const authRoutes = require('./routes/auth');
+const googleAuthRoutes = require('./routes/googleAuth');
 const contactRoutes = require('./routes/contact');
 const adminRoutes = require('./routes/admin');
 
@@ -28,11 +31,27 @@ app.use(cors({
   credentials: true          // Allow cookies/authorization headers
 }));
 
+// Session middleware for passport
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-session-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    secure: false, // Set to true in production with HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Serve testimonial images statically
 app.use('/uploads/testimonials', express.static(path.join(__dirname, 'uploads/testimonials')));
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/api/auth', googleAuthRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', trademarkForms);

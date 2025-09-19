@@ -66,6 +66,19 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Back to Home Link */}
+      <div className="absolute top-6 left-6">
+        <Link
+          to="/"
+          className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Home
+        </Link>
+      </div>
+      
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* <div className="flex justify-center mb-4">
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-4 shadow-lg transform hover:scale-105 transition-transform duration-200">
@@ -234,12 +247,15 @@ const LoginPage = () => {
               </div>
             </div>
 
-
             <div className="mt-6 flex justify-center">
               <button
                 type="button"
-                className="w-[200px] max-w-xs inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-400 cursor-not-allowed relative group"
-                disabled
+                onClick={() =>
+                  (window.location.href =
+                    import.meta.env.VITE_GOOGLE_AUTH_URL ||
+                    "http://localhost:5000/api/auth/google")
+                }
+                className="w-[150px] max-w-xs cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
               >
                 <svg
                   className="w-5 h-5"
@@ -264,9 +280,6 @@ const LoginPage = () => {
                   />
                 </svg>
                 <span className="ml-2">Google</span>
-                <span className="absolute left-1/2 -translate-x-1/2 -top-9 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
-                  Will be implemented soon
-                </span>
               </button>
             </div>
           </div>

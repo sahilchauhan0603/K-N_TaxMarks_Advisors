@@ -117,7 +117,7 @@ const Navbar = () => {
               <div className="relative ml-2 flex items-center group">
                 <button
                   onClick={() => setShowUserDropdown(!showUserDropdown)}
-                  className="flex items-center text-sm rounded-full focus:outline-none user-dropdown-btn"
+                  className="flex items-center text-sm cursor-pointer rounded-full focus:outline-none user-dropdown-btn"
                 >
                   {user?.picture ? (
                     <img
@@ -131,7 +131,7 @@ const Navbar = () => {
                     </div>
                   )}
                   {/* Show name on md+ screens, show only icon on mobile */}
-                  <span className="ml-2 hidden md:inline text-gray-700 font-medium">
+                  <span className="ml-2 hidden md:inline text-gray-700 font-medium cursor-pointer">
                     {user?.name || user?.given_name || user?.first_name || "User"}
                   </span>
                 </button>

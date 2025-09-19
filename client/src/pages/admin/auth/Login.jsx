@@ -1,37 +1,88 @@
-
-import React, { useState } from 'react';
-import axios from '../../../utils/axios';
-import { FaUserShield, FaEnvelope, FaKey, FaLock } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "../../../utils/axios";
+import { FaUserShield, FaEnvelope, FaKey, FaLock } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import OTPInput from "../../../components/OTPInput";
 
 const allowedEmails = [
-  'sahilchauhan0603@gmail.com',
-  'sahilpersonal2003@gmail.com',
-  'saritachauhan0704@gmail.com',
+  "sahilchauhan0603@gmail.com",
+  "sahilpersonal2003@gmail.com",
+  "saritachauhan0704@gmail.com",
 ];
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [step, setStep] = useState(1); // 1: enter email, 2: enter OTP
-  const [otp, setOtp] = useState('');
-  const [error, setError] = useState('');
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [info, setInfo] = useState('');
+  const [info, setInfo] = useState("");
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [canResendOtp, setCanResendOtp] = useState(false);
+
+  // OTP Timer Effect
+  useEffect(() => {
+    let interval = null;
+    if (otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((timer) => {
+          if (timer <= 1) {
+            setCanResendOtp(true);
+            return 0;
+          }
+          return timer - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [otpTimer]);
+
+  // Format timer display
+  const formatTimer = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     if (!allowedEmails.includes(email)) {
-      setError('not-allowed');
+      setError("not-allowed");
       return;
     }
     setLoading(true);
     try {
-      await axios.post('/api/admin/send-otp', { email });
+      await axios.post("/api/admin/send-otp", { email });
       setStep(2);
-      setError('');
-      setInfo('OTP sent to your email. Please check your inbox.');
+      setError("");
+      setInfo("OTP sent to your email. Please check your inbox.");
+      // Start 3-minute timer (180 seconds) for admin OTP
+      setOtpTimer(180);
+      setCanResendOtp(false);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP');
+      setError(err.response?.data?.message || "Failed to send OTP");
+    }
+    setLoading(false);
+  };
+
+  const handleResendOTP = async () => {
+    if (!canResendOtp) return;
+
+    setLoading(true);
+    setError("");
+    setInfo("");
+
+    try {
+      await axios.post("/api/admin/send-otp", { email });
+      setInfo("New OTP sent to your email. Please check your inbox.");
+      // Restart 3-minute timer
+      setOtpTimer(180);
+      setCanResendOtp(false);
+      setOtp(""); // Clear previous OTP
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP");
     }
     setLoading(false);
   };
@@ -40,11 +91,11 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/api/admin/verify-otp', { email, otp });
-      localStorage.setItem('adminToken', res.data.token);
-      window.location.href = '/admin';
+      const res = await axios.post("/api/admin/verify-otp", { email, otp });
+      localStorage.setItem("adminToken", res.data.token);
+      window.location.href = "/admin";
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid OTP');
+      setError(err.response?.data?.message || "Invalid OTP");
     }
     setLoading(false);
   };
@@ -57,17 +108,27 @@ const AdminLogin = () => {
             <FaUserShield className="text-white text-3xl" />
           </div>
         </div>
-        <h2 className="mt-1.5 text-center text-3xl font-bold text-gray-900">Admin Login</h2>
-        <p className="mt-1.5 text-center text-sm text-gray-600">Sign in to access the admin panel</p>
+        <h2 className="mt-1.5 text-center text-3xl font-bold text-gray-900">
+          Admin Login
+        </h2>
+        <p className="mt-1.5 text-center text-sm text-gray-600">
+          Sign in to access the admin panel
+        </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
-          {error === 'not-allowed' && (
+          {error === "not-allowed" && (
             <div className="mb-4 p-4 rounded-lg flex items-start gap-3 bg-red-50 text-red-800 border border-red-200">
               <FaLock className="text-red-500 text-xl mt-0.5 flex-shrink-0" />
               <span>This user is not allowed to access the admin panel.</span>
-              <button className="ml-auto text-red-500 hover:text-red-700" onClick={() => setError('')} title="Close">&times;</button>
+              <button
+                className="ml-auto text-red-500 hover:text-red-700"
+                onClick={() => setError("")}
+                title="Close"
+              >
+                &times;
+              </button>
             </div>
           )}
           {info && (
@@ -76,7 +137,7 @@ const AdminLogin = () => {
               <span>{info}</span>
             </div>
           )}
-          {error && error !== 'not-allowed' && (
+          {error && error !== "not-allowed" && (
             <div className="mb-4 p-4 rounded-lg flex items-start gap-3 bg-red-50 text-red-800 border border-red-200">
               <FaLock className="text-red-500 text-xl mt-0.5 flex-shrink-0" />
               <span>{error}</span>
@@ -85,7 +146,12 @@ const AdminLogin = () => {
           {step === 1 && (
             <form onSubmit={handleEmailSubmit} className="space-y-5">
               <div>
-                <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700 mb-1">Admin Email</label>
+                <label
+                  htmlFor="admin-email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Admin Email
+                </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FaEnvelope className="h-5 w-5 text-gray-400" />
@@ -97,7 +163,7 @@ const AdminLogin = () => {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
                     placeholder="Enter admin email"
                     autoFocus
@@ -134,37 +200,103 @@ const AdminLogin = () => {
                   ) : (
                     <FaLock className="mr-2" />
                   )}
-                  {loading ? 'Sending...' : 'Send OTP'}
+                  {loading ? "Sending..." : "Send OTP"}
                 </button>
               </div>
             </form>
           )}
           {step === 2 && (
             <form onSubmit={handleOtpSubmit} className="space-y-5">
+              {/* Show Email (Read-only) */}
               <div>
-                <label htmlFor="admin-otp" className="block text-sm font-medium text-gray-700 mb-1">OTP</label>
+                <label
+                  htmlFor="admin-email-display"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Admin Email
+                </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaKey className="h-5 w-5 text-gray-400" />
+                    <FaEnvelope className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="admin-otp"
-                    name="admin-otp"
-                    type="text"
-                    required
-                    value={otp}
-                    onChange={e => setOtp(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 tracking-widest"
-                    placeholder="Enter OTP"
-                    autoFocus
-                    maxLength={6}
+                    id="admin-email-display"
+                    name="admin-email-display"
+                    type="email"
+                    value={email}
+                    readOnly
+                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 sm:text-sm cursor-not-allowed"
                   />
                 </div>
               </div>
+
               <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Enter OTP
+                  </label>
+                  {otpTimer > 0 && (
+                    <span className="text-sm text-blue-600 font-medium">
+                      Expires in: {formatTimer(otpTimer)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <OTPInput
+                    length={6}
+                    value={otp}
+                    onChange={setOtp}
+                    disabled={loading}
+                    autoFocus={true}
+                  />
+                </div>
+
+                {/* Resend OTP Button */}
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-500">
+                    Didn't receive the code?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResendOTP}
+                    disabled={!canResendOtp || loading}
+                    className={`text-sm font-medium transition-colors duration-200 ${
+                      canResendOtp && !loading
+                        ? "text-blue-600 hover:text-blue-500 cursor-pointer"
+                        : "text-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    {loading ? "Sending..." : "Resend OTP"}
+                  </button>
+                </div>
+                {otpTimer === 0 && canResendOtp && (
+                  <div className="mb-2">
+                    <span className="text-sm text-red-600">
+                      OTP has expired. Please request a new one.
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep(1);
+                    setOtpTimer(0);
+                    setCanResendOtp(false);
+                    setOtp("");
+                    setError("");
+                    setInfo("");
+                  }}
+                  className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                >
+                  Back
+                </button>
                 <button
                   type="submit"
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="flex-1 group relative flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                   disabled={loading}
                 >
                   {loading ? (
@@ -191,14 +323,17 @@ const AdminLogin = () => {
                   ) : (
                     <FaUserShield className="mr-2" />
                   )}
-                  {loading ? 'Verifying...' : 'Login'}
+                  {loading ? "Verifying..." : "Login"}
                 </button>
               </div>
             </form>
           )}
           <div className="mt-8 text-xs text-slate-400 text-center">
-            Only authorized admin emails can access this panel.<br />
-            For security, OTP is valid for 5 minutes.
+            Only authorized admin emails can access this panel.
+            <br />
+            {step === 1
+              ? "For security, OTP is valid for 3 minutes."
+              : "You can resend OTP after it expires."}
           </div>
           <div className="mt-6 text-center">
             <Link

@@ -12,10 +12,15 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    // Check if user is a Google user trying to login with password
+    if (user.isGoogleUser && !user.password) {
+      return res.status(400).json({ message: 'Please use Google Sign-In for this account' });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -162,5 +167,27 @@ exports.resetPassword = async (req, res) => {
   } catch (error) {
     console.error('Reset password error:', error);
     res.status(500).json({ success: false, message: 'Failed to reset password' });
+  }
+};
+
+// Verify token
+exports.verifyToken = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ valid: false, message: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId || decoded.id);
+    
+    if (!user) {
+      return res.status(401).json({ valid: false, message: 'User not found' });
+    }
+
+    res.json({ valid: true, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (error) {
+    console.error('Token verification error:', error);
+    res.status(401).json({ valid: false, message: 'Invalid token' });
   }
 };

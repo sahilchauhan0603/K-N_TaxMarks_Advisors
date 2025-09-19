@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -12,15 +12,29 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.isGoogleUser;
+    },
   },
   phone: {
     type: String,
-    required: true,
+    required: false,
   },
   state: {
     type: String,
-    required: true,
+    required: false,
+  },
+  googleId: {
+    type: String,
+    sparse: true,
+  },
+  isGoogleUser: {
+    type: Boolean,
+    default: false,
+  },
+  profileComplete: {
+    type: Boolean,
+    default: true,
   },
   createdAt: {
     type: Date,
@@ -28,4 +42,4 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
