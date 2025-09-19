@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../../utils/axios';
-import { FaTrash, FaSearch, FaFilter, FaChevronDown, FaChevronLeft, FaChevronRight, FaEye, FaEdit } from 'react-icons/fa';
+import { FaTrash, FaSearch, FaFilter, FaChevronDown, FaChevronLeft, FaChevronRight, FaEye, FaEdit, FaSyncAlt } from 'react-icons/fa';
 import { format, parseISO, subDays } from 'date-fns';
 
 const AdminUsers = () => {
@@ -155,11 +155,22 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 p-4 md:p-8">
+    <div className="w-full min-h-screen p-4 md:p-4 md:ml-4">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-sky-800 mb-2">Users Management</h1>
-          <p className="text-sky-600">Manage all registered users in the system</p>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-sky-800 mb-2">Users Management</h1>
+            <p className="text-sky-600">Manage all registered users in the system</p>
+          </div>
+          <button
+            onClick={fetchUsers}
+            className={`flex items-center gap-2 px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow transition ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+            title="Refresh user list"
+            disabled={loading}
+          >
+            <FaSyncAlt className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
         </div>
         
         {/* Stats Overview */}

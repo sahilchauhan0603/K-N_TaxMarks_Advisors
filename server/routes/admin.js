@@ -133,6 +133,23 @@ router.get("/dashboard-stats", adminAuth, async (req, res) => {
         };
       });
 
+    // Daily activity (last 7 days)
+    const dailyActivity = Array(7)
+      .fill(0)
+      .map((_, i) => {
+        const day = new Date();
+        day.setDate(day.getDate() - (6 - i));
+        day.setHours(0, 0, 0, 0);
+        const dayStr = day.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        return {
+          name: dayStr,
+          Signups: users.filter((u) => {
+            const d = new Date(u.createdAt);
+            return d >= day && d < new Date(day.getTime() + 24 * 60 * 60 * 1000);
+          }).length,
+        };
+      });
+
     // Service counts
     const gst =
       (await GSTFiling.countDocuments()) +
@@ -159,6 +176,7 @@ router.get("/dashboard-stats", adminAuth, async (req, res) => {
       active,
       inactive,
       monthly,
+      dailyActivity,
       revenue,
       services: { gst, trademark, tax, business, itr, other },
       recentUsers,

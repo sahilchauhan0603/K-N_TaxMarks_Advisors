@@ -93,6 +93,8 @@ const AdminLogin = () => {
     try {
       const res = await axios.post("/api/admin/verify-otp", { email, otp });
       localStorage.setItem("adminToken", res.data.token);
+      localStorage.setItem("adminEmail", email);
+      localStorage.setItem("adminLoginTime", new Date().toISOString());
       window.location.href = "/admin";
     } catch (err) {
       setError(err.response?.data?.message || "Invalid OTP");

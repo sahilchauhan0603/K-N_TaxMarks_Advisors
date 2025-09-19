@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   FaTachometerAlt, 
@@ -9,16 +9,46 @@ import {
   FaChartLine,
   FaCog,
   FaUserShield,
-  FaBusinessTime
+  FaBusinessTime,
+  FaChevronDown,
+  FaChevronRight,
+  FaChevronLeft,
+  FaBars
 } from 'react-icons/fa';
 import { GiCash } from 'react-icons/gi';
+import './AdminSidebar.css';
 
 const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
+  // Get admin info from localStorage
+  const adminEmail = localStorage.getItem('adminEmail');
+  const adminLoginTime = localStorage.getItem('adminLoginTime');
+  const formattedLoginTime = adminLoginTime ? new Date(adminLoginTime).toLocaleString() : '';
   const navigate = useNavigate();
+  const [expandedSections, setExpandedSections] = useState({
+    management: true,
+    services: true,
+    analytics: true
+  });
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    navigate('/admin/login');
+    if (window.confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminEmail');
+      localStorage.removeItem('adminLoginTime');
+      navigate('/admin/login');
+    }
+  };
+
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   return (
@@ -26,27 +56,35 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
       {/* Overlay for mobile */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="admin-sidebar-overlay"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <aside
-        className={`fixed top-0 left-0 h-full z-50 bg-white text-gray-800 transition-all duration-300 ease-in-out
-          w-60 flex flex-col border-r border-gray-200
-          ${sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
-          md:translate-x-0`}
+      {/* Mobile menu button */}
+      <button 
+        className="admin-sidebar-mobile-toggle"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
       >
+        <FaBars />
+      </button>
+
+      <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${sidebarOpen ? 'open' : ''}`}>
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-500">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-900 bg-opacity-20 rounded-lg">
-              <FaUserShield className="text-white text-xl" />
+        <div className="admin-sidebar-header">
+          <div className="admin-sidebar-brand">
+            <div className="admin-sidebar-logo">
+              <FaUserShield />
             </div>
-            <h2 className="text-xl font-bold tracking-wide text-white">Admin Portal</h2>
+            {!isCollapsed && (
+              <div>
+                <h2>Admin Portal</h2>
+                <p>Business Services</p>
+              </div>
+            )}
           </div>
           <button
-            className="text-white text-xl md:hidden focus:outline-none"
+            className="admin-sidebar-close"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close sidebar"
           >
@@ -54,163 +92,196 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </button>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="flex-1 px-3 py-6 overflow-y-auto">
-          <div className="mb-8 px-3">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-              Management
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <NavLink 
-                  to="/admin" 
-                  end 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <FaTachometerAlt className="text-lg" /> 
-                  <span>Dashboard</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
-                  to="/admin/users" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <FaUsers className="text-lg" /> 
-                  <span>User Management</span>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
+        {/* Collapse/Expand Button */}
+        <button 
+          className="admin-sidebar-collapse-btn"
+          onClick={toggleSidebar}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <FaChevronLeft className={isCollapsed ? 'rotate-180' : ''} />
+        </button>
 
-          <div className="mb-8 px-3">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-              Services
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <NavLink 
-                  to="/admin/gst" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
+        {/* Scrollable content area */}
+        <div className="admin-sidebar-content">
+          {/* Navigation Links */}
+          <nav className="admin-sidebar-nav">
+            <div className="admin-sidebar-section">
+              {!isCollapsed && (
+                <button 
+                  className="admin-sidebar-section-btn"
+                  onClick={() => toggleSection('management')}
                 >
-                  <FaFileInvoiceDollar className="text-lg" /> 
-                  <span>GST Services</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
-                  to="/admin/itr" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <FaFileInvoiceDollar className="text-lg" /> 
-                  <span>ITR Services</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
-                  to="/admin/trademark" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <FaBusinessTime className="text-lg" /> 
-                  <span>Trademark</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
-                  to="/admin/business-advisory" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <FaBusinessTime className="text-lg" /> 
-                  <span>Business Advisory</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
-                  to="/admin/tax-planning" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <GiCash className="text-lg" /> 
-                  <span>Tax Planning</span>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
+                  <span>Management</span>
+                  {expandedSections.management ? <FaChevronDown /> : <FaChevronRight />}
+                </button>
+              )}
+              {(expandedSections.management || isCollapsed) && (
+                <ul className="admin-sidebar-menu">
+                  <li>
+                    <NavLink 
+                      to="/admin" 
+                      end 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Dashboard"
+                    >
+                      <FaTachometerAlt /> 
+                      {!isCollapsed && <span>Dashboard</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/users" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="User Management"
+                    >
+                      <FaUsers /> 
+                      {!isCollapsed && <span>User Management</span>}
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </div>
 
-          <div className="px-3">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-              Analytics
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <NavLink 
-                  to="/admin/reports" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
+            <div className="admin-sidebar-section">
+              {!isCollapsed && (
+                <button 
+                  className="admin-sidebar-section-btn"
+                  onClick={() => toggleSection('services')}
                 >
-                  <FaChartLine className="text-lg" /> 
-                  <span>Reports</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
-                  to="/admin/settings" 
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium ${isActive 
-                      ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-500' 
-                      : 'hover:bg-gray-100 hover:text-gray-900 text-gray-600'}`
-                  }
-                >
-                  <FaCog className="text-lg" /> 
-                  <span>Settings</span>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
-        </nav>
+                  <span>Services</span>
+                  {expandedSections.services ? <FaChevronDown /> : <FaChevronRight />}
+                </button>
+              )}
+              {(expandedSections.services || isCollapsed) && (
+                <ul className="admin-sidebar-menu">
+                  <li>
+                    <NavLink 
+                      to="/admin/gst" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="GST Services"
+                    >
+                      <FaFileInvoiceDollar /> 
+                      {!isCollapsed && <span>GST Services</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/itr" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="ITR Services"
+                    >
+                      <FaFileInvoiceDollar /> 
+                      {!isCollapsed && <span>ITR Services</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/trademark" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Trademark"
+                    >
+                      <FaBusinessTime /> 
+                      {!isCollapsed && <span>Trademark</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/business-advisory" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Business Advisory"
+                    >
+                      <FaBusinessTime /> 
+                      {!isCollapsed && <span>Business Advisory</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/tax-planning" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Tax Planning"
+                    >
+                      <GiCash /> 
+                      {!isCollapsed && <span>Tax Planning</span>}
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </div>
 
-        {/* Footer with Logout */}
-        <div className="px-4 pb-6 mt-auto bg-gray-100">
-          <div className="p-2.5 bg-gray-50 rounded-lg mb-4 mt-2.5">
-            <div className="text-sm text-gray-600 mb-2">Logged in as:</div>
-            <div className="font-medium text-gray-800">Admin User</div>
-          </div>
+            <div className="admin-sidebar-section">
+              {!isCollapsed && (
+                <button 
+                  className="admin-sidebar-section-btn"
+                  onClick={() => toggleSection('analytics')}
+                >
+                  <span>Analytics</span>
+                  {expandedSections.analytics ? <FaChevronDown /> : <FaChevronRight />}
+                </button>
+              )}
+              {(expandedSections.analytics || isCollapsed) && (
+                <ul className="admin-sidebar-menu">
+                  <li>
+                    <NavLink 
+                      to="/admin/reports" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Reports"
+                    >
+                      <FaChartLine /> 
+                      {!isCollapsed && <span>Reports</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/settings" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Settings"
+                    >
+                      <FaCog /> 
+                      {!isCollapsed && <span>Settings</span>}
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </div>
+          </nav>
+        </div>
+
+        {/* Fixed footer with Logout */}
+        <div className="admin-sidebar-footer">
+          {!isCollapsed && (
+            <div className="admin-user-info">
+              <div className="admin-user-details">
+                <div className="font-semibold">{adminEmail || 'Admin User'}</div>
+                <span className="text-xs text-gray-500">Logged in: {formattedLoginTime || 'N/A'}</span>
+              </div>
+            </div>
+          )}
           <button
-            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold py-3 px-4 rounded-lg shadow hover:from-red-600 hover:to-red-700 transition-all"
+            className="admin-logout-btn"
             onClick={handleLogout}
+            title="Logout"
+            type="button"
           >
             <FaSignOutAlt /> 
-            <span>Logout</span>
+            {!isCollapsed && <span>Logout</span>}
           </button>
         </div>
       </aside>
