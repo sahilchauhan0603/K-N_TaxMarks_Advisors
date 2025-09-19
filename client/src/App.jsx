@@ -57,6 +57,71 @@ const App = () => {
     '/services/business-advisory',
   ], []);
 
+  // Set document title based on route
+  useEffect(() => {
+    let pageTitle = '';
+    switch (location.pathname) {
+      case '/':
+        pageTitle = 'Home';
+        break;
+      case '/login':
+        pageTitle = 'Login';
+        break;
+      case '/signup':
+        pageTitle = 'Signup';
+        break;
+      case '/forgot-password':
+        pageTitle = 'Forgot Password';
+        break;
+      case '/complete-profile':
+        pageTitle = 'Complete Profile';
+        break;
+      case '/about-us':
+        pageTitle = 'About Us';
+        break;
+      case '/contact-us':
+        pageTitle = 'Contact Us';
+        break;
+      case '/faq':
+        pageTitle = 'FAQ';
+        break;
+      case '/privacy':
+        pageTitle = 'Privacy Policy';
+        break;
+      case '/terms':
+        pageTitle = 'Terms & Conditions';
+        break;
+      case '/cookies':
+        pageTitle = 'Cookie Policy';
+        break;
+      case '/sitemap':
+        pageTitle = 'Sitemap';
+        break;
+      case '/services/tax-planning':
+        pageTitle = 'Tax Planning';
+        break;
+      case '/services/itr-filing':
+        pageTitle = 'ITR Filing';
+        break;
+      case '/services/gst-filing':
+        pageTitle = 'GST Filing';
+        break;
+      case '/services/trademark':
+        pageTitle = 'Trademark';
+        break;
+      case '/services/business-advisory':
+        pageTitle = 'Business Advisory';
+        break;
+      default:
+        if (location.pathname.startsWith('/admin')) {
+          pageTitle = 'Admin';
+        } else {
+          pageTitle = 'K&N';
+        }
+    }
+    document.title = `${pageTitle} | K&N`;
+  }, [location.pathname]);
+
   // Protect service routes
   useEffect(() => {
     if (
