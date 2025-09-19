@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../../utils/axios';
 import { FiMail, FiLock, FiArrowLeft, FiEye, FiEyeOff, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 
 const ForgotPasswordPage = () => {
+  // Timer for OTP expiry
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [canResendOtp, setCanResendOtp] = useState(false);
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -15,6 +18,31 @@ const ForgotPasswordPage = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+
+  // Timer effect
+  useEffect(() => {
+    let interval = null;
+    if (otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((timer) => {
+          if (timer <= 1) {
+            setCanResendOtp(true);
+            return 0;
+          }
+          return timer - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [otpTimer]);
+
+  const formatTimer = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   const handleSendOTP = async () => {
     if (!email) {
@@ -32,6 +60,8 @@ const ForgotPasswordPage = () => {
         setStep(2);
         setMessageType('success');
         setMessage('OTP sent to your email. Please check your inbox.');
+        setOtpTimer(600); // 10 minutes
+        setCanResendOtp(false);
       } else {
         setMessageType('error');
         setMessage(res.data.message || 'Error sending OTP');
@@ -140,7 +170,7 @@ const ForgotPasswordPage = () => {
                 <button
                   onClick={handleSendOTP}
                   disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="w-full flex justify-center cursor-pointer py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {isLoading ? (
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -156,10 +186,32 @@ const ForgotPasswordPage = () => {
             </div>
           ) : (
             <div className="space-y-5">
+              {/* Show user email (read-only) */}
               <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1">
-                  Verification Code
-                </label>
+                <label htmlFor="email-display" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiMail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email-display"
+                    name="email-display"
+                    type="email"
+                    value={email}
+                    readOnly
+                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 sm:text-sm cursor-not-allowed"
+                    placeholder="Email Address"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label htmlFor="otp" className="block text-sm font-medium text-gray-700">Verification Code</label>
+                  {otpTimer > 0 && (
+                    <span className="text-sm text-blue-600 font-medium">Expires in: {formatTimer(otpTimer)}</span>
+                  )}
+                </div>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiLock className="h-5 w-5 text-gray-400" />
@@ -175,15 +227,16 @@ const ForgotPasswordPage = () => {
                     placeholder="Enter the 6-digit code"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Check your email for the verification code we sent to {email}
-                </p>
+                <p className="mt-1 text-xs text-gray-500">Check your email for the verification code we sent to {email}</p>
+                {otpTimer === 0 && canResendOtp && (
+                  <div className="mb-2">
+                    <span className="text-sm text-red-600">OTP has expired. Please request a new one.</span>
+                  </div>
+                )}
               </div>
 
               <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  New Password
-                </label>
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiLock className="h-5 w-5 text-gray-400" />
@@ -200,7 +253,7 @@ const ForgotPasswordPage = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute cursor-pointer inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                   >
                     {showNewPassword ? (
@@ -209,6 +262,17 @@ const ForgotPasswordPage = () => {
                       <FiEye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                     )}
                   </button>
+                </div>
+                {/* Password requirements description */}
+                <div className="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                  <strong>Password requirements:</strong>
+                  <ul className="list-disc ml-5">
+                    <li>At least 8 characters</li>
+                    <li>One uppercase letter (A-Z)</li>
+                    <li>One lowercase letter (a-z)</li>
+                    <li>One digit (0-9)</li>
+                    <li>One special character (!@#$%^&amp;* etc.)</li>
+                  </ul>
                 </div>
               </div>
 
@@ -232,7 +296,7 @@ const ForgotPasswordPage = () => {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute cursor-pointer inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -248,7 +312,7 @@ const ForgotPasswordPage = () => {
                 <button
                   onClick={handleResetPassword}
                   disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="w-full flex cursor-pointer justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {isLoading ? (
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -263,7 +327,7 @@ const ForgotPasswordPage = () => {
                 
                 <button
                   onClick={() => setStep(1)}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 shadow-sm"
+                  className="w-full flex justify-center cursor-pointer py-2 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 shadow-sm"
                 >
                   <FiArrowLeft className="mr-2" />
                   Back to Email Entry

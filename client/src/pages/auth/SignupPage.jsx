@@ -58,6 +58,17 @@ const SignupPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+
+  // Error states for each field
+  const [errors, setErrors] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    otp: "",
+    state: "",
+    password: "",
+    confirmPassword: ""
+  });
   const [state, setState] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -93,10 +104,59 @@ const SignupPage = () => {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const validateEmail = (value) => {
+    if (!value) return "Email is required";
+    // Simple email regex
+    if (!/^\S+@\S+\.\S+$/.test(value)) return "Invalid email address";
+    return "";
+  };
+
+  const validateName = (value) => {
+    if (!value) return "Name is required";
+    if (value.length < 2) return "Name is too short";
+    return "";
+  };
+
+  const validatePhone = (value) => {
+    if (!value) return "Phone number is required";
+    if (!/^\d{10}$/.test(value)) return "Phone number must be 10 digits";
+    return "";
+  };
+
+  const validateOTP = (value) => {
+    if (!value) return "OTP is required";
+    if (!/^\d{6}$/.test(value)) return "OTP must be 6 digits";
+    return "";
+  };
+
+  const validateState = (value) => {
+    if (!value) return "State is required";
+    return "";
+  };
+
+  const validatePassword = (value) => {
+    if (!value) return "Password is required";
+    // Password requirements: min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char
+    if (value.length < 8) return "Password must be at least 8 characters";
+    if (!/[A-Z]/.test(value)) return "Password must contain an uppercase letter";
+    if (!/[a-z]/.test(value)) return "Password must contain a lowercase letter";
+    if (!/\d/.test(value)) return "Password must contain a digit";
+    if (!/[!@#$%^&*(),.?\":{}|<>]/.test(value)) return "Password must contain a special character";
+    return "";
+  };
+
+  const validateConfirmPassword = (value) => {
+    if (!value) return "Please confirm your password";
+    if (value !== password) return "Passwords do not match";
+    return "";
+  };
+
   const handleSendOTP = async () => {
-    if (!email) {
+    const emailError = validateEmail(email);
+    setErrors((prev) => ({ ...prev, email: emailError }));
+    if (emailError) {
       setMessageType("error");
-      setMessage("Please enter your email");
+      setMessage(emailError);
       return;
     }
     setIsLoading(true);
@@ -113,7 +173,12 @@ const SignupPage = () => {
         setCanResendOtp(false);
       } else {
         setMessageType("error");
-        setMessage(result?.message || "Error sending OTP");
+        // Show a specific message if the backend says user already exists
+        if (result?.message && result.message.toLowerCase().includes("user with this email already exists")) {
+          setMessage("User with this email already exists");
+        } else {
+          setMessage(result?.message || "Error sending OTP");
+        }
       }
     } catch (error) {
       const err = error instanceof Error ? error.message : String(error);
@@ -153,19 +218,27 @@ const SignupPage = () => {
   };
 
   const handleRegister = async () => {
-    if (!name || !phone || !state || !otp || !password || !confirmPassword) {
+    // Validate all fields
+    const nameError = validateName(name);
+    const phoneError = validatePhone(phone);
+    const stateError = validateState(state);
+    const otpError = validateOTP(otp);
+    const passwordError = validatePassword(password);
+    const confirmPasswordError = validateConfirmPassword(confirmPassword);
+    const newErrors = {
+      name: nameError,
+      phone: phoneError,
+      state: stateError,
+      otp: otpError,
+      password: passwordError,
+      confirmPassword: confirmPasswordError,
+      email: "" // Email is already validated in step 1
+    };
+    setErrors(newErrors);
+    const hasError = Object.values(newErrors).some((err) => err);
+    if (hasError) {
       setMessageType("error");
-      setMessage("Please fill all fields");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setMessageType("error");
-      setMessage("Passwords do not match");
-      return;
-    }
-    if (password.length < 6) {
-      setMessageType("error");
-      setMessage("Password must be at least 6 characters");
+      setMessage("Please fix the errors below.");
       return;
     }
 
@@ -178,7 +251,12 @@ const SignupPage = () => {
         navigate("/", { replace: true });
       } else {
         setMessageType("error");
-        setMessage(result?.message || "Registration failed");
+        // Show a specific message if the backend says user already exists
+        if (result?.message && result.message.toLowerCase().includes("user already exists")) {
+          setMessage("User with this email already exists");
+        } else {
+          setMessage(result?.message || "Registration failed");
+        }
       }
     } catch (error) {
       const err = error instanceof Error ? error.message : String(error);
@@ -192,7 +270,7 @@ const SignupPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Back to Home Link */}
-      <div className="absolute top-6 left-6">
+      <div className="absolute top-3 left-6">
         <Link
           to="/"
           className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
@@ -228,7 +306,7 @@ const SignupPage = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
           {message && (
             <div
@@ -268,10 +346,16 @@ const SignupPage = () => {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrors((prev) => ({ ...prev, email: "" }));
+                    }}
+                    className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Enter your email"
                   />
+                  {errors.email && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.email}</span>
+                  )}
                 </div>
               </div>
 
@@ -415,10 +499,16 @@ const SignupPage = () => {
                     type="text"
                     required
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setErrors((prev) => ({ ...prev, name: "" }));
+                    }}
+                    className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Full Name"
                   />
+                  {errors.name && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.name}</span>
+                  )}
                 </div>
               </div>
 
@@ -439,10 +529,16 @@ const SignupPage = () => {
                     type="tel"
                     required
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      setErrors((prev) => ({ ...prev, phone: "" }));
+                    }}
+                    className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.phone ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Phone Number"
                   />
+                  {errors.phone && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.phone}</span>
+                  )}
                 </div>
               </div>
 
@@ -462,10 +558,16 @@ const SignupPage = () => {
                   <NumericOTPInput
                     length={6}
                     value={otp}
-                    onChange={setOtp}
+                    onChange={(val) => {
+                      setOtp(val);
+                      setErrors((prev) => ({ ...prev, otp: "" }));
+                    }}
                     disabled={isLoading}
                     autoFocus={false}
                   />
+                  {errors.otp && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.otp}</span>
+                  )}
                 </div>
 
                 {/* Resend OTP Button */}
@@ -511,8 +613,11 @@ const SignupPage = () => {
                     name="state"
                     required
                     value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                    onChange={(e) => {
+                      setState(e.target.value);
+                      setErrors((prev) => ({ ...prev, state: "" }));
+                    }}
+                    className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.state ? "border-red-500" : "border-gray-300"} rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                   >
                     <option value="">Select your state</option>
                     {STATES_OF_INDIA.map((stateName) => (
@@ -521,6 +626,9 @@ const SignupPage = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.state && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.state}</span>
+                  )}
                 </div>
               </div>
 
@@ -542,8 +650,11 @@ const SignupPage = () => {
                     autoComplete="new-password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrors((prev) => ({ ...prev, password: "" }));
+                    }}
+                    className={`appearance-none block w-full pl-10 pr-12 py-3 border ${errors.password ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Enter your password"
                   />
                   <button
@@ -560,6 +671,20 @@ const SignupPage = () => {
                       <FiEye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                     )}
                   </button>
+                  {errors.password && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.password}</span>
+                  )}
+                </div>
+                {/* Password requirements description */}
+                <div className="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                  <strong>Password requirements:</strong>
+                  <ul className="list-disc ml-5">
+                    <li>At least 8 characters</li>
+                    <li>One uppercase letter (A-Z)</li>
+                    <li>One lowercase letter (a-z)</li>
+                    <li>One digit (0-9)</li>
+                    <li>One special character (!@#$%^&amp;* etc.)</li>
+                  </ul>
                 </div>
               </div>
 
@@ -581,8 +706,11 @@ const SignupPage = () => {
                     autoComplete="new-password"
                     required
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                    }}
+                    className={`appearance-none block w-full pl-10 pr-12 py-3 border ${errors.confirmPassword ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Confirm your password"
                   />
                   <button
@@ -601,6 +729,9 @@ const SignupPage = () => {
                       <FiEye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                     )}
                   </button>
+                  {errors.confirmPassword && (
+                    <span className="text-xs text-red-600 mt-1 block">{errors.confirmPassword}</span>
+                  )}
                 </div>
               </div>
 

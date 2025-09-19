@@ -96,6 +96,11 @@ exports.sendOTP = async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ success: false, message: 'Email is required' });
   try {
+    // Check if user already exists
+    const existingUser = await require('../models/User').findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User with this email already exists' });
+    }
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpStore[email] = otp;

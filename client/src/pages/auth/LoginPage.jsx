@@ -67,7 +67,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Back to Home Link */}
-      <div className="absolute top-6 left-6">
+      <div className="absolute top-3 left-6">
         <Link
           to="/"
           className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
@@ -88,12 +88,12 @@ const LoginPage = () => {
         <h2 className="text-center text-3xl font-bold text-gray-900">
           Welcome Back
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        {/* <p className="mt-1 text-center text-sm text-gray-600">
           Sign in to continue to your account
-        </p>
+        </p> */}
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
           {message && (
             <div

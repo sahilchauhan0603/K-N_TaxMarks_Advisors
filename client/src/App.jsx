@@ -122,7 +122,7 @@ const App = () => {
   // Helper: check if current route is admin panel
   const isAdminRoute = location.pathname.startsWith('/admin');
   // Helper: check if current route is login or signup
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/complete-profile';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/complete-profile' || location.pathname === '/forgot-password';
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-800">
