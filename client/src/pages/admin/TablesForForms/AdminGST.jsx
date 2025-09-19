@@ -148,7 +148,7 @@ const AdminGST = () => {
         </div>
         
         {/* Data Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm border w-[960px] border-gray-100">
           {loading ? (
             // Skeleton loading screen
             <div className="p-6">
@@ -167,80 +167,104 @@ const AdminGST = () => {
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap border-r border-gray-300">S.No</th>
-                    {columns.map(col => (
-                      <th 
-                        key={col} 
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap border-r border-gray-300"
-                      >
-                        {formatColHeader(col)}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredData.length === 0 ? (
+            <div className="w-full overflow-hidden">
+              <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
+                <table className="w-full table-fixed divide-y divide-gray-200">
+                  <thead className="bg-gray-50 sticky top-0 z-10">
                     <tr>
-                      <td colSpan={columns.length + 1} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center justify-center text-gray-400">
-                          <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          </svg>
-                          <p className="text-lg font-medium">No records found</p>
-                          <p className="mt-1 max-w-md">Try adjusting your search or filter to find what you're looking for.</p>
-                        </div>
-                      </td>
+                      <th className="w-16 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300">S.No</th>
+                      {columns.map(col => (
+                        <th 
+                          key={col} 
+                          className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300 ${
+                            col === 'name' || col === 'email' ? 'w-40' :
+                            col === 'mobile' ? 'w-32' :
+                            col === 'businessName' || col === 'companyName' ? 'w-48' :
+                            col === 'businessType' || col === 'companyType' || col === 'gstNumber' ? 'w-36' :
+                            col === 'turnover' ? 'w-32' :
+                            col === 'query' || col === 'notes' || col === 'issueDescription' ? 'w-64' :
+                            col === 'documents' ? 'w-32' :
+                            col === 'createdAt' ? 'w-44' : 'w-32'
+                          }`}
+                        >
+                          {formatColHeader(col)}
+                        </th>
+                      ))}
                     </tr>
-                  ) : (
-                    filteredData.map((row, idx) => (
-                      <tr 
-                        key={row._id || idx} 
-                        className="hover:bg-yellow-50 transition-colors duration-150"
-                      >
-                        <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap border-r border-gray-200 font-semibold">{idx + 1}</td>
-                        {columns.map(col => (
-                          <td 
-                            key={col} 
-                            className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap border-r border-gray-200"
-                          >
-                            {col === 'createdAt' ? (
-                              <span className="text-gray-500">{formatDate(row[col])}</span>
-                            ) : col === 'documents' ? (
-                              row[col] ? (
-                                <button
-                                  onClick={() => handleDownload(row[col])}
-                                  className="text-yellow-600 hover:text-yellow-800 flex items-center gap-1"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                  </svg>
-                                  Download
-                                </button>
-                              ) : (
-                                '-'
-                              )
-                            ) : col === 'email' ? (
-                              <a href={`mailto:${row[col]}`} className="text-yellow-600 hover:text-yellow-800">
-                                {row[col] || '-'}
-                              </a>
-                            ) : col === 'mobile' ? (
-                              <a href={`tel:${row[col]}`} className="text-gray-700">
-                                {row[col] || '-'}
-                              </a>
-                            ) : (
-                              row[col] || '-'
-                            )}
-                          </td>
-                        ))}
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredData.length === 0 ? (
+                      <tr>
+                        <td colSpan={columns.length + 1} className="px-6 py-12 text-center">
+                          <div className="flex flex-col items-center justify-center text-gray-400">
+                            <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p className="text-lg font-medium">No records found</p>
+                            <p className="mt-1 max-w-md">Try adjusting your search or filter to find what you're looking for.</p>
+                          </div>
+                        </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      filteredData.map((row, idx) => (
+                        <tr 
+                          key={row._id || idx} 
+                          className="hover:bg-yellow-50 transition-colors duration-150"
+                        >
+                          <td className="w-16 px-4 py-4 text-sm text-gray-700 border-r border-gray-200 font-semibold">{idx + 1}</td>
+                          {columns.map(col => (
+                            <td 
+                              key={col} 
+                              className={`px-4 py-4 text-sm text-gray-700 border-r border-gray-200 ${
+                                col === 'name' || col === 'email' ? 'w-40' :
+                                col === 'mobile' ? 'w-32' :
+                                col === 'businessName' || col === 'companyName' ? 'w-48' :
+                                col === 'businessType' || col === 'companyType' || col === 'gstNumber' ? 'w-36' :
+                                col === 'turnover' ? 'w-32' :
+                                col === 'query' || col === 'notes' || col === 'issueDescription' ? 'w-64' :
+                                col === 'documents' ? 'w-32' :
+                                col === 'createdAt' ? 'w-44' : 'w-32'
+                              }`}
+                            >
+                              <div className="overflow-hidden">
+                                {col === 'createdAt' ? (
+                                  <span className="text-gray-500 block truncate">{formatDate(row[col])}</span>
+                                ) : col === 'documents' ? (
+                                  row[col] ? (
+                                    <button
+                                      onClick={() => handleDownload(row[col])}
+                                      className="text-yellow-600 hover:text-yellow-800 flex items-center gap-1 truncate"
+                                    >
+                                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                      </svg>
+                                      <span className="truncate">Download</span>
+                                    </button>
+                                  ) : (
+                                    <span className="block truncate">-</span>
+                                  )
+                                ) : col === 'email' ? (
+                                  <a href={`mailto:${row[col]}`} className="text-yellow-600 hover:text-yellow-800 block truncate" title={row[col]}>
+                                    {row[col] || '-'}
+                                  </a>
+                                ) : col === 'mobile' ? (
+                                  <a href={`tel:${row[col]}`} className="text-gray-700 block truncate">
+                                    {row[col] || '-'}
+                                  </a>
+                                ) : (
+                                  <span className="block truncate" title={row[col]}>
+                                    {row[col] || '-'}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
