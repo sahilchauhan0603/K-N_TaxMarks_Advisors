@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
 const { login, register, verifyOTP, sendOTP, forgotPassword, resetPassword, verifyToken } = require('../controllers/authController');
 const { getUserByEmail, updateUserProfile } = require('../controllers/authController');
 
@@ -24,10 +25,10 @@ router.post('/reset-password', resetPassword);
 // Verify Token
 router.get('/verify-token', verifyToken);
 
-// Get user by email
-router.get('/auth/user', getUserByEmail);
+// Get user profile (protected route)
+router.get('/user', getUserByEmail);
 
-// Edit user profile
-router.put('/auth/user', updateUserProfile);
+// Update user profile (protected route)
+router.put('/user', updateUserProfile);
 
 module.exports = router;

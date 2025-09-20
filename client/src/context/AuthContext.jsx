@@ -107,6 +107,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -118,7 +123,8 @@ export const AuthProvider = ({ children }) => {
         sendOTP,
         completeGoogleProfile,
         handleGoogleCallback,
-        logout
+        logout,
+        updateUser
       }}
     >
       {children}
