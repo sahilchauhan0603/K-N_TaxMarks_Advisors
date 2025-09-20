@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   User,
   Mail,
@@ -21,6 +21,104 @@ import {
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
+
+// Memoized Form Inputs Component to prevent re-creation
+const EditFormInputs = React.memo(({ form, handleChange, fieldErrors }) => {
+  return (
+    <>
+      {/* Full Name */}
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <User className="w-4 h-4 mr-2 text-gray-500" />
+          Full Name *
+        </label>
+        <input
+          type="text"
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-lg ${
+            fieldErrors.name
+              ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30"
+              : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300"
+          }`}
+          placeholder="Enter your full name"
+        />
+        {fieldErrors.name && (
+          <p className="text-red-600 text-sm flex items-center mt-2">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            {fieldErrors.name}
+          </p>
+        )}
+      </div>
+
+      {/* Email Address */}
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <Mail className="w-4 h-4 mr-2 text-gray-500" />
+          Email Address
+        </label>
+        <input
+          type="email"
+          value={form.email}
+          disabled
+          className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-600 text-lg"
+        />
+        <p className="text-xs text-gray-500 flex items-center">
+          <AlertCircle className="w-3 h-3 mr-2" />
+          Email address cannot be changed for security reasons
+        </p>
+      </div>
+
+      {/* Phone Number */}
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <Phone className="w-4 h-4 mr-2 text-gray-500" />
+          Phone Number
+        </label>
+        <input
+          type="tel"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-lg ${
+            fieldErrors.phone
+              ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30"
+              : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300"
+          }`}
+          placeholder="Enter your phone number (e.g., +91 98765 43210)"
+        />
+        {fieldErrors.phone && (
+          <p className="text-red-600 text-sm flex items-center mt-2">
+            <AlertCircle className="w-4 h-4 mr-2" />
+            {fieldErrors.phone}
+          </p>
+        )}
+      </div>
+
+      {/* State */}
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+          State/Province
+        </label>
+        <select
+          name="state"
+          value={form.state}
+          onChange={handleChange}
+          className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300 transition-all duration-200 text-lg"
+        >
+          <option value="">Select your state</option>
+          {STATES_OF_INDIA.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+});
 
 // States of India
 const STATES_OF_INDIA = [
@@ -225,44 +323,68 @@ const UserProfile = () => {
   const [fieldErrors, setFieldErrors] = useState({});
 
   // Fetch user profile data from backend
-  const fetchUserProfile = async () => {
-    if (!user?.email) return;
+  const fetchUserProfile = useCallback(
+    async (forceRefresh = false) => {
+      if (!user?.email) return;
 
-    try {
-      setProfileLoading(true);
-      const response = await axios.get(`/api/user?email=${user.email}`);
-      const userData = response.data;
+      try {
+        setProfileLoading(true);
+        const response = await axios.get(`/api/user?email=${user.email}`);
+        const userData = response.data;
 
-      const profileData = {
-        name: userData.name || "",
-        email: userData.email || "",
-        phone: userData.phone || "",
-        state: userData.state || "",
-      };
+        const profileData = {
+          name: userData.name || "",
+          email: userData.email || "",
+          phone: userData.phone || "",
+          state: userData.state || "",
+        };
 
-      setUserProfile(userData);
-      setForm(profileData);
-      setOriginalForm(profileData);
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      setError("Failed to load profile data");
-    } finally {
-      setProfileLoading(false);
-    }
-  };
+        setUserProfile(userData);
+
+        // Only update form if forcing refresh or if form is empty (initial load)
+        if (forceRefresh || !form.name) {
+          setForm(profileData);
+          setOriginalForm(profileData);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setError("Failed to load profile data");
+      } finally {
+        setProfileLoading(false);
+      }
+    },
+    [user?.email, form.name]
+  );
 
   useEffect(() => {
-    fetchUserProfile();
-  }, [user]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+    // Only fetch if we don't have profile data yet
+    if (user?.email && !userProfile) {
+      fetchUserProfile(false);
     }
-  };
+  }, [user?.email, userProfile, fetchUserProfile]);
+
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
+
+      // Clear field errors when user starts typing
+      setFieldErrors((prev) => {
+        if (prev[name]) {
+          const newErrors = { ...prev };
+          delete newErrors[name];
+          return newErrors;
+        }
+        return prev;
+      });
+
+      // Clear general error when user makes changes
+      if (error) {
+        setError("");
+      }
+    },
+    [error]
+  );
 
   const validateForm = () => {
     const errors = {};
@@ -519,96 +641,11 @@ const UserProfile = () => {
       {/* Form */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="p-8 space-y-6">
-          {/* Full Name */}
-          <div className="space-y-2">
-            <label className="flex items-center text-sm font-medium text-gray-700">
-              <User className="w-4 h-4 mr-2 text-gray-500" />
-              Full Name *
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-lg ${
-                fieldErrors.name
-                  ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300"
-              }`}
-              placeholder="Enter your full name"
-            />
-            {fieldErrors.name && (
-              <p className="text-red-600 text-sm flex items-center mt-2">
-                <AlertCircle className="w-4 h-4 mr-2" />
-                {fieldErrors.name}
-              </p>
-            )}
-          </div>
-
-          {/* Email Address */}
-          <div className="space-y-2">
-            <label className="flex items-center text-sm font-medium text-gray-700">
-              <Mail className="w-4 h-4 mr-2 text-gray-500" />
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={form.email}
-              disabled
-              className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-600 text-lg"
-            />
-            <p className="text-xs text-gray-500 flex items-center">
-              <AlertCircle className="w-3 h-3 mr-2" />
-              Email address cannot be changed for security reasons
-            </p>
-          </div>
-
-          {/* Phone Number */}
-          <div className="space-y-2">
-            <label className="flex items-center text-sm font-medium text-gray-700">
-              <Phone className="w-4 h-4 mr-2 text-gray-500" />
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-lg ${
-                fieldErrors.phone
-                  ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300"
-              }`}
-              placeholder="Enter your phone number (e.g., +91 98765 43210)"
-            />
-            {fieldErrors.phone && (
-              <p className="text-red-600 text-sm flex items-center mt-2">
-                <AlertCircle className="w-4 h-4 mr-2" />
-                {fieldErrors.phone}
-              </p>
-            )}
-          </div>
-
-          {/* State */}
-          <div className="space-y-2">
-            <label className="flex items-center text-sm font-medium text-gray-700">
-              <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-              State/Province
-            </label>
-            <select
-              name="state"
-              value={form.state}
-              onChange={handleChange}
-              className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300 transition-all duration-200 text-lg"
-            >
-              <option value="">Select your state</option>
-              {STATES_OF_INDIA.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-          </div>
+          <EditFormInputs
+            form={form}
+            handleChange={handleChange}
+            fieldErrors={fieldErrors}
+          />
 
           {/* Changes Indicator */}
           {hasChanges() && (
