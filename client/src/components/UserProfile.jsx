@@ -56,9 +56,13 @@ const STATES_OF_INDIA = [
 ];
 
 // Enhanced Sidebar Component
-const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
+const Sidebar = ({
+  activeSection,
+  onSectionChange,
+  onLogout,
+  showLogoutModal,
+  setShowLogoutModal,
+}) => {
   const menuItems = [
     {
       key: "profile",
@@ -196,38 +200,6 @@ const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
           </button>
         </div>
       </div>
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform animate-in fade-in-0 zoom-in-95 duration-300">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <LogOut className="w-8 h-8 text-red-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Sign Out</h3>
-              <p className="text-gray-600 mb-8">
-                Are you sure you want to sign out of your account?
-              </p>
-
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setShowLogoutModal(false)}
-                  className="flex-1 px-6 cursor-pointer py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors duration-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex-1 px-6 cursor-pointer py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium transition-all duration-200 shadow-lg"
-                >
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
@@ -238,6 +210,7 @@ const UserProfile = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [userProfile, setUserProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -746,6 +719,8 @@ const UserProfile = () => {
                 activeSection={activeSection}
                 onSectionChange={handleSectionChange}
                 onLogout={logout}
+                showLogoutModal={showLogoutModal}
+                setShowLogoutModal={setShowLogoutModal}
               />
             </div>
           </div>
@@ -761,6 +736,41 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal - Rendered at root level */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-[9999] p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform animate-in fade-in-0 zoom-in-95 duration-300 relative z-[10000]">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <LogOut className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Sign Out</h3>
+              <p className="text-gray-600 mb-8">
+                Are you sure you want to sign out of your account?
+              </p>
+
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    logout();
+                    setShowLogoutModal(false);
+                  }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium transition-all duration-200 shadow-lg"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
