@@ -159,7 +159,7 @@ const AdminTrademark = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[960px] mx-auto">
         <h2 className="text-3xl font-bold mb-2 text-gray-800">
           Trademark Service Requests
         </h2>
@@ -188,7 +188,7 @@ const AdminTrademark = () => {
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border w-full border-gray-100">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -286,7 +286,7 @@ const AdminTrademark = () => {
         </div>
 
         {/* Data Table */}
-        <div className="bg-white rounded-xl shadow-sm border w-[960px] border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm border w-full border-gray-100">
           {loading ? (
             // Skeleton loading screen
             <div className="p-6">

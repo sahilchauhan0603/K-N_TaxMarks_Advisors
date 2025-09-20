@@ -61,13 +61,6 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
         />
       )}
 
-      {/* Mobile menu button */}
-      <button 
-        className="admin-sidebar-mobile-toggle"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-      >
-        <FaBars />
-      </button>
 
       <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${sidebarOpen ? 'open' : ''}`}>
         {/* Sidebar Header */}
@@ -92,14 +85,14 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </button>
         </div>
 
-        {/* Collapse/Expand Button */}
+        {/* Collapse/Expand Button
         <button 
           className="admin-sidebar-collapse-btn"
           onClick={toggleSidebar}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <FaChevronLeft className={isCollapsed ? 'rotate-180' : ''} />
-        </button>
+        </button> */}
 
         {/* Scrollable content area */}
         <div className="admin-sidebar-content">

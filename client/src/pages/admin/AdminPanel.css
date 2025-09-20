@@ -18,6 +18,19 @@
   .admin-sidebar {
     display: none;
   }
+  .admin-sidebar.open {
+    display: flex !important;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1001;
+    height: 100vh;
+    width: 250px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.12);
+    background: #fff;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 .admin-users-table {
   width: 100%;
