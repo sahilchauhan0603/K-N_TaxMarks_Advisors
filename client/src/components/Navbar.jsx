@@ -197,8 +197,14 @@ const Navbar = () => {
                       "User"}
                   </span>
                   {showUserDropdown && (
-                    <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 user-dropdown-menu">
+                    <div className="origin-top-right top-4 absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 user-dropdown-menu">
                       <div className="py-1">
+                        <button
+                          onClick={() => { setShowUserDropdown(false); navigate('/profile'); }}
+                          className="w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                        >
+                          <FiUser className="mr-2" /> User Profile
+                        </button>
                         <button
                           onClick={handleLogout}
                           className="w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"

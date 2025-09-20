@@ -23,6 +23,7 @@ import Footer from './components/Footer';
 import LoadingBar from './components/LoadingBar';
 import ScrollToTop from './components/ScrollToTop';
 import LoadFromTop from './components/LoadFromTop';
+import UserProfile from './components/UserProfile';
 // import PrivateRoute from './components/PrivateRoute';
 
 import TaxPlanning from './pages/services/TaxPlanning/TaxPlanning';
@@ -112,6 +113,9 @@ const App = () => {
       case '/services/business-advisory':
         pageTitle = 'Business Advisory';
         break;
+      case '/profile':
+        pageTitle = 'User Profile';
+        break;
       default:
         if (location.pathname.startsWith('/admin')) {
           pageTitle = 'Admin';
@@ -187,7 +191,7 @@ const App = () => {
   // Helper: check if current route is admin panel
   const isAdminRoute = location.pathname.startsWith('/admin');
   // Helper: check if current route is login or signup
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/complete-profile' || location.pathname === '/forgot-password';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/complete-profile' || location.pathname === '/forgot-password' || location.pathname === '/profile';
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-800">
@@ -207,7 +211,8 @@ const App = () => {
             </div>
           </div>
         )}
-        <Routes>
+  <Routes>
+          <Route path="/profile" element={<UserProfile />} />
           {/* Public routes */}
           <Route path="/" element={<HomePage onFeatureClick={handleProtectedFeatureClick} />} />
           <Route path="/about-us" element={<AboutUsPage />} />

@@ -192,3 +192,33 @@ exports.verifyToken = async (req, res) => {
     res.status(401).json({ valid: false, message: 'Invalid token' });
   }
 };
+// Get user by email
+exports.getUserByEmail = async (req, res) => {
+  const email = req.query.email;
+  if (!email) return res.status(400).json({ message: 'Email is required' });
+  try {
+    const user = await User.findOne({ email }).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Edit user profile
+exports.updateUserProfile = async (req, res) => {
+  const { email, name, phone, state } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email is required' });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    // Only update provided fields
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (state) user.state = state;
+    await user.save();
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
