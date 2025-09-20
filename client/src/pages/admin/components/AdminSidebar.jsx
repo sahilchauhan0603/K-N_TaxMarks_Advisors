@@ -239,7 +239,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {!isCollapsed && <span>Reports</span>}
                     </NavLink>
                   </li>
-                  <li>
+                  {/* <li>
                     <NavLink 
                       to="/admin/settings" 
                       className={({ isActive }) =>
@@ -250,7 +250,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <FaCog /> 
                       {!isCollapsed && <span>Settings</span>}
                     </NavLink>
-                  </li>
+                  </li> */}
                 </ul>
               )}
             </div>

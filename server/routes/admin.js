@@ -1,3 +1,4 @@
+const ExcelJS = require('exceljs');
 const express = require("express");
 const router = express.Router();
 const sendMail = require("../utils/mailer");
@@ -185,6 +186,149 @@ router.get("/dashboard-stats", adminAuth, async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to fetch dashboard stats", error: err.message });
+  }
+});
+
+
+// Export users to Excel
+router.get('/export-users-excel', adminAuth, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Users');
+    worksheet.columns = [
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Created At', key: 'createdAt', width: 22 },
+    ];
+    users.forEach(user => {
+      worksheet.addRow({
+        name: user.name || user.given_name || user.first_name || '',
+        email: user.email,
+        phone: user.phone || '',
+        createdAt: user.createdAt ? new Date(user.createdAt).toLocaleString() : '',
+      });
+    });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=users_report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to export users', error: err.message });
+  }
+});
+
+// Export services to Excel
+router.get('/export-services-excel', adminAuth, async (req, res) => {
+  try {
+    const Trademark = require('../models/Trademark');
+    const TaxPlanning = require('../models/TaxPlanning');
+    const BusinessAdvisory = require('../models/BusinessAdvisory');
+    const GSTModels = require('../models/GST');
+    const GSTFiling = GSTModels.GSTFiling;
+    const GSTReturnFiling = GSTModels.GSTReturnFiling;
+    const GSTResolution = GSTModels.GSTResolution;
+    const { ITRFiling, ITRRefundNotice, ITRDocumentPrep } = require('../models/ITR');
+
+    // Collect all service data
+    const gst = await GSTFiling.find();
+    const gstReturn = await GSTReturnFiling.find();
+    const gstResolution = await GSTResolution.find();
+    const trademark = await Trademark.find();
+    const tax = await TaxPlanning.find();
+    const business = await BusinessAdvisory.find();
+    const itr = await ITRFiling.find();
+    const itrPrep = await ITRDocumentPrep.find();
+    const itrRefund = await ITRRefundNotice.find();
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Services');
+    worksheet.columns = [
+      { header: 'Service Type', key: 'type', width: 22 },
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Created At', key: 'createdAt', width: 22 },
+    ];
+    const addRows = (arr, type) => {
+      arr.forEach(item => {
+        worksheet.addRow({
+          type,
+          name: item.name || '',
+          email: item.email || '',
+          phone: item.mobile || item.phone || '',
+          createdAt: item.createdAt ? new Date(item.createdAt).toLocaleString() : '',
+        });
+      });
+    };
+    addRows(gst, 'GST Filing');
+    addRows(gstReturn, 'GST Return Filing');
+    addRows(gstResolution, 'GST Resolution');
+    addRows(trademark, 'Trademark');
+    addRows(tax, 'Tax Planning');
+    addRows(business, 'Business Advisory');
+    addRows(itr, 'ITR Filing');
+    addRows(itrPrep, 'ITR Document Prep');
+    addRows(itrRefund, 'ITR Refund Notice');
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=services_report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to export services', error: err.message });
+  }
+});
+
+// Return all services data as JSON for frontend table
+router.get('/services-report', adminAuth, async (req, res) => {
+  try {
+    const Trademark = require('../models/Trademark');
+    const TaxPlanning = require('../models/TaxPlanning');
+    const BusinessAdvisory = require('../models/BusinessAdvisory');
+    const GSTModels = require('../models/GST');
+    const GSTFiling = GSTModels.GSTFiling;
+    const GSTReturnFiling = GSTModels.GSTReturnFiling;
+    const GSTResolution = GSTModels.GSTResolution;
+    const { ITRFiling, ITRRefundNotice, ITRDocumentPrep } = require('../models/ITR');
+
+    // Collect all service data
+    const gst = await GSTFiling.find();
+    const gstReturn = await GSTReturnFiling.find();
+    const gstResolution = await GSTResolution.find();
+    const trademark = await Trademark.find();
+    const tax = await TaxPlanning.find();
+    const business = await BusinessAdvisory.find();
+    const itr = await ITRFiling.find();
+    const itrPrep = await ITRDocumentPrep.find();
+    const itrRefund = await ITRRefundNotice.find();
+
+    const rows = [];
+    const addRows = (arr, type) => {
+      arr.forEach(item => {
+        rows.push({
+          type,
+          name: item.name || '',
+          email: item.email || '',
+          mobile: item.mobile || item.phone || '',
+          createdAt: item.createdAt || '',
+        });
+      });
+    };
+    addRows(gst, 'GST Filing');
+    addRows(gstReturn, 'GST Return Filing');
+    addRows(gstResolution, 'GST Resolution');
+    addRows(trademark, 'Trademark');
+    addRows(tax, 'Tax Planning');
+    addRows(business, 'Business Advisory');
+    addRows(itr, 'ITR Filing');
+    addRows(itrPrep, 'ITR Document Prep');
+    addRows(itrRefund, 'ITR Refund Notice');
+
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch services report', error: err.message });
   }
 });
 
