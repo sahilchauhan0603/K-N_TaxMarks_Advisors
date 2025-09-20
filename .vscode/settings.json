@@ -1,3 +1,4 @@
 {
-    "kiroAgent.agentAutonomy": "Autopilot"
+    "kiroAgent.agentAutonomy": "Autopilot",
+    "javascript.autoClosingTags": false
 }

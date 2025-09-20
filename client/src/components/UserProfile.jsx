@@ -1,16 +1,58 @@
 import { useState, useEffect } from "react";
-import { User, Mail, Phone, MapPin, Edit3, Save, X, LogOut, ArrowLeft, Check, AlertCircle, Briefcase, Receipt, Settings, Camera, Sparkles, Clock } from "lucide-react";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Edit3,
+  Save,
+  X,
+  LogOut,
+  ArrowLeft,
+  Check,
+  AlertCircle,
+  Briefcase,
+  Receipt,
+  Settings,
+  Camera,
+  Sparkles,
+  Clock,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "../utils/axios";
 
 // States of India
 const STATES_OF_INDIA = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
-  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
-  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
-  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi",
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
 ];
 
 // Enhanced Sidebar Component
@@ -18,31 +60,31 @@ const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const menuItems = [
-    { 
-      key: "profile", 
-      label: "Profile Overview", 
+    {
+      key: "profile",
+      label: "Profile Overview",
       icon: <User className="w-5 h-5" />,
-      description: "View your profile"
+      description: "View your profile",
     },
-    { 
-      key: "edit", 
-      label: "Edit Profile", 
+    {
+      key: "edit",
+      label: "Edit Profile",
       icon: <Edit3 className="w-5 h-5" />,
-      description: "Update your information"
+      description: "Update your information",
     },
-    { 
-      key: "services", 
-      label: "My Services", 
+    {
+      key: "services",
+      label: "My Services",
       icon: <Briefcase className="w-5 h-5" />,
       description: "Manage services",
-      comingSoon: true
+      comingSoon: true,
     },
-    { 
-      key: "bills", 
-      label: "My Bills", 
+    {
+      key: "bills",
+      label: "My Bills",
       icon: <Receipt className="w-5 h-5" />,
       description: "View billing history",
-      comingSoon: true
+      comingSoon: true,
     },
   ];
 
@@ -55,7 +97,7 @@ const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
     <>
       <div className="w-full lg:w-80 h-full bg-gradient-to-br from-white to-blue-50/30 border border-blue-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
         {/* Sidebar Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white flex-shrink-0">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
               <Settings className="w-6 h-6" />
@@ -78,28 +120,40 @@ const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
                   disabled={item.comingSoon}
                   className={`w-full group relative overflow-hidden rounded-xl transition-all duration-300 ${
                     activeSection === item.key
-                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-[1.02]'
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-[1.02]"
                       : item.comingSoon
-                      ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
-                      : 'bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-700 border border-gray-100 hover:border-blue-200 hover:shadow-md'
+                      ? "bg-gray-50 text-gray-400 cursor-not-allowed"
+                      : "bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-700 border border-gray-100 hover:border-blue-200 hover:shadow-md"
                   }`}
                 >
                   <div className="flex items-center p-4 relative z-10">
-                    <div className={`mr-4 transition-transform duration-300 ${activeSection === item.key ? 'scale-110' : 'group-hover:scale-105'}`}>
+                    <div
+                      className={`mr-4 transition-transform duration-300 ${
+                        activeSection === item.key
+                          ? "scale-110"
+                          : "group-hover:scale-105"
+                      }`}
+                    >
                       {item.icon}
                     </div>
                     <div className="text-left flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{item.label}</span>
+                        <span className="font-medium text-sm">
+                          {item.label}
+                        </span>
                         {item.comingSoon && (
                           <span className="text-xs bg-amber-100 text-amber-600 px-2 py-1 rounded-full font-medium">
                             Soon
                           </span>
                         )}
                       </div>
-                      <p className={`text-xs mt-1 ${
-                        activeSection === item.key ? 'text-blue-100' : 'text-gray-500'
-                      }`}>
+                      <p
+                        className={`text-xs mt-1 ${
+                          activeSection === item.key
+                            ? "text-blue-100"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {item.description}
                       </p>
                     </div>
@@ -114,23 +168,23 @@ const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
         </div>
 
         {/* Back to Home Button */}
-          <div className="mt-8 flex-shrink-0 p-4 border-t border-gray-200">
-            <Link
-              to="/"
-              className="w-full group bg-gradient-to-r from-slate-50 to-blue-50 hover:from-slate-100 hover:to-blue-100 border border-blue-200 hover:border-blue-300 rounded-xl p-4 transition-all duration-300 hover:shadow-md flex items-center text-blue-600"
-            >
-              <ArrowLeft className="w-5 h-5 mr-4 transition-transform duration-300 group-hover:-translate-x-1" />
-              <div className="text-left">
-                <span className="font-medium text-sm">Home</span>
-                <p className="text-xs text-blue-500 mt-1">Back to Home</p>
-              </div>
-            </Link>
-          </div>
+        <div className="mt-8 flex-shrink-0 p-4 border-t border-gray-200">
+          <Link
+            to="/"
+            className="w-full group bg-gradient-to-r from-slate-50 to-blue-50 hover:from-slate-100 hover:to-blue-100 border border-blue-200 hover:border-blue-300 rounded-xl p-4 transition-all duration-300 hover:shadow-md flex items-center text-blue-600"
+          >
+            <ArrowLeft className="w-5 h-5 mr-4 transition-transform duration-300 group-hover:-translate-x-1" />
+            <div className="text-left">
+              <span className="font-medium text-sm">Home</span>
+              <p className="text-xs text-blue-500 mt-1">Back to Home</p>
+            </div>
+          </Link>
+        </div>
         {/* Logout Button - Fixed at bottom */}
         <div className="flex-shrink-0 p-4 border-t border-gray-200">
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="w-full group bg-gradient-to-r from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100 border border-red-200 hover:border-red-300 rounded-xl p-4 transition-all duration-300 hover:shadow-md"
+            className="w-full group bg-gradient-to-r cursor-pointer from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100 border border-red-200 hover:border-red-300 rounded-xl p-4 transition-all duration-300 hover:shadow-md"
           >
             <div className="flex items-center text-red-600">
               <LogOut className="w-5 h-5 mr-4 transition-transform duration-300 group-hover:scale-110" />
@@ -145,25 +199,27 @@ const Sidebar = ({ activeSection, onSectionChange, onLogout }) => {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform animate-in fade-in-0 zoom-in-95 duration-300">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <LogOut className="w-8 h-8 text-red-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Sign Out</h3>
-              <p className="text-gray-600 mb-8">Are you sure you want to sign out of your account?</p>
-              
+              <p className="text-gray-600 mb-8">
+                Are you sure you want to sign out of your account?
+              </p>
+
               <div className="flex space-x-4">
                 <button
                   onClick={() => setShowLogoutModal(false)}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors duration-200"
+                  className="flex-1 px-6 cursor-pointer py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium transition-all duration-200 shadow-lg"
+                  className="flex-1 px-6 cursor-pointer py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-medium transition-all duration-200 shadow-lg"
                 >
                   Sign Out
                 </button>
@@ -182,7 +238,7 @@ const UserProfile = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [userProfile, setUserProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -198,24 +254,24 @@ const UserProfile = () => {
   // Fetch user profile data from backend
   const fetchUserProfile = async () => {
     if (!user?.email) return;
-    
+
     try {
       setProfileLoading(true);
       const response = await axios.get(`/api/user?email=${user.email}`);
       const userData = response.data;
-      
+
       const profileData = {
         name: userData.name || "",
         email: userData.email || "",
         phone: userData.phone || "",
-        state: userData.state || ""
+        state: userData.state || "",
       };
-      
+
       setUserProfile(userData);
       setForm(profileData);
       setOriginalForm(profileData);
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error("Error fetching user profile:", error);
       setError("Failed to load profile data");
     } finally {
       setProfileLoading(false);
@@ -228,26 +284,26 @@ const UserProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    
+    setForm((prev) => ({ ...prev, [name]: value }));
+
     if (fieldErrors[name]) {
-      setFieldErrors(prev => ({ ...prev, [name]: "" }));
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
     const errors = {};
-    
+
     if (form.name.trim().length < 2 || form.name.trim().length > 50) {
       errors.name = "Name must be between 2 and 50 characters";
     } else if (!/^[a-zA-Z\s]+$/.test(form.name.trim())) {
       errors.name = "Name can only contain letters and spaces";
     }
-    
+
     if (form.phone && !/^(\+91|91|0)?[789]\d{9}$/.test(form.phone.trim())) {
       errors.phone = "Please enter a valid Indian phone number";
     }
-    
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -273,11 +329,11 @@ const UserProfile = () => {
     setFieldErrors({});
 
     try {
-      const response = await axios.put('/api/user', {
+      const response = await axios.put("/api/user", {
         email: form.email,
         name: form.name,
         phone: form.phone,
-        state: form.state
+        state: form.state,
       });
 
       if (response.data.success) {
@@ -285,11 +341,11 @@ const UserProfile = () => {
         setUserProfile(response.data.user);
         setOriginalForm(form);
         setSuccess("Profile updated successfully! 🎉");
-        
+
         // Update user data in context and localStorage
         const updatedUser = { ...user, ...form };
         updateUser(updatedUser);
-        
+
         // Switch back to profile view after successful update
         setTimeout(() => {
           setSuccess("");
@@ -299,8 +355,11 @@ const UserProfile = () => {
         setError("Failed to update profile. Please try again.");
       }
     } catch (err) {
-      console.error('Error updating profile:', err);
-      setError(err.response?.data?.message || "Failed to update profile. Please try again.");
+      console.error("Error updating profile:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to update profile. Please try again."
+      );
     }
     setLoading(false);
   };
@@ -340,10 +399,10 @@ const UserProfile = () => {
       )}
 
       {/* Profile Card */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12" />
-        
+
         <div className="relative z-10 flex items-center space-x-6">
           <div className="relative">
             <div className="w-24 h-24 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/30">
@@ -354,7 +413,9 @@ const UserProfile = () => {
             </button>
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-2">{userProfile?.name || "Your Name"}</h1>
+            <h1 className="text-3xl font-bold mb-2">
+              {userProfile?.name || "Your Name"}
+            </h1>
             <p className="text-blue-100 flex items-center mb-3">
               <Mail className="w-4 h-4 mr-2" />
               {userProfile?.email}
@@ -421,21 +482,21 @@ const UserProfile = () => {
             className="text-purple-600 hover:text-purple-700 p-2 rounded-lg hover:bg-purple-100 transition-colors duration-200 disabled:opacity-50"
             title="Refresh profile data"
           >
-            <div className={`w-4 h-4 ${profileLoading ? 'animate-spin' : ''}`}>
+            <div className={`w-4 h-4 ${profileLoading ? "animate-spin" : ""}`}>
               ↻
             </div>
           </button>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <button 
+          <button
             onClick={() => handleSectionChange("edit")}
-            className="bg-white hover:bg-gray-50 p-4 rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md text-left"
+            className="bg-white hover:bg-gray-50 p-4 cursor-pointer rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md text-left"
           >
             <Edit3 className="w-6 h-6 text-blue-600 mb-2" />
             <p className="font-medium text-gray-900">Edit Profile</p>
             <p className="text-sm text-gray-500">Update your information</p>
           </button>
-          <button className="bg-white hover:bg-gray-50 p-4 rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md text-left opacity-60 cursor-not-allowed">
+          <button className="bg-white hover:bg-gray-50 p-4 rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md text-left cursor-not-allowed">
             <Settings className="w-6 h-6 text-gray-400 mb-2" />
             <p className="font-medium text-gray-500">Settings</p>
             <p className="text-sm text-gray-400">Coming soon</p>
@@ -497,9 +558,9 @@ const UserProfile = () => {
               value={form.name}
               onChange={handleChange}
               className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-lg ${
-                fieldErrors.name 
-                  ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30' 
-                  : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300'
+                fieldErrors.name
+                  ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30"
+                  : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300"
               }`}
               placeholder="Enter your full name"
             />
@@ -541,9 +602,9 @@ const UserProfile = () => {
               value={form.phone}
               onChange={handleChange}
               className={`w-full px-4 py-4 rounded-xl border-2 transition-all duration-200 text-lg ${
-                fieldErrors.phone 
-                  ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30' 
-                  : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300'
+                fieldErrors.phone
+                  ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 bg-red-50/30"
+                  : "border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 bg-white hover:border-gray-300"
               }`}
               placeholder="Enter your phone number (e.g., +91 98765 43210)"
             />
@@ -569,7 +630,9 @@ const UserProfile = () => {
             >
               <option value="">Select your state</option>
               {STATES_OF_INDIA.map((state) => (
-                <option key={state} value={state}>{state}</option>
+                <option key={state} value={state}>
+                  {state}
+                </option>
               ))}
             </select>
           </div>
@@ -589,7 +652,7 @@ const UserProfile = () => {
             <button
               onClick={handleCancel}
               disabled={loading}
-              className="flex-1 px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="flex-1 px-6 py-4 bg-gray-100 cursor-pointer hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               <X className="w-5 h-5" />
               <span>Cancel</span>
@@ -597,7 +660,7 @@ const UserProfile = () => {
             <button
               onClick={handleSave}
               disabled={loading || !hasChanges()}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="flex-1 px-6 py-4 bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-xl font-medium transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               {loading ? (
                 <>
@@ -640,16 +703,16 @@ const UserProfile = () => {
         return <EditProfile />;
       case "services":
         return (
-          <ComingSoon 
-            title="My Services" 
+          <ComingSoon
+            title="My Services"
             description="Manage and view all your service subscriptions and packages in one place."
             icon={Briefcase}
           />
         );
       case "bills":
         return (
-          <ComingSoon 
-            title="My Bills" 
+          <ComingSoon
+            title="My Bills"
             description="Access your billing history, invoices, and payment information."
             icon={Receipt}
           />
@@ -679,8 +742,8 @@ const UserProfile = () => {
           {/* Sidebar - Fixed Height */}
           <div className="lg:flex-shrink-0 lg:h-full">
             <div className="h-full lg:sticky lg:top-8">
-              <Sidebar 
-                activeSection={activeSection} 
+              <Sidebar
+                activeSection={activeSection}
                 onSectionChange={handleSectionChange}
                 onLogout={logout}
               />
@@ -689,20 +752,6 @@ const UserProfile = () => {
 
           {/* Main Content - Scrollable */}
           <div className="flex-1 min-w-0 flex flex-col">
-            {/* Header - Fixed at top of content */}
-            {/* <div className="mb-8 flex-shrink-0">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-4xl font-bold text-slate-800 mb-2">Account Dashboard</h1>
-                  <p className="text-slate-600">Manage your profile and account settings</p>
-                </div>
-                <div className="hidden lg:flex items-center space-x-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
-                  <Star className="w-4 h-4 text-amber-500" />
-                  <span className="text-sm font-medium text-gray-700">Premium Member</span>
-                </div>
-              </div>
-            </div> */}
-            
             {/* Scrollable Content Area */}
             <div className="flex-1 overflow-y-auto">
               <div className="transition-all duration-500 ease-in-out">
