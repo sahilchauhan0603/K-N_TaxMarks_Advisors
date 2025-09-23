@@ -204,7 +204,7 @@ const HomePage = () => {
           initial="hidden"
           animate="visible"
           variants={fadeInVariants}
-          className="relative py-20 px-4 overflow-hidden"
+          className="relative py-10 px-4 overflow-hidden"
         >
           <div className="max-w-full mx-auto">
             <div className="flex flex-col lg:flex-row items-center">

@@ -332,7 +332,7 @@ const Navbar = () => {
             {!isAuthenticated && (
               <button
                 onClick={() => navigate("/login")}
-                className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"
+                className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base justify-center font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"
               >
                 <FiLogIn className="text-lg" /> Login
               </button>

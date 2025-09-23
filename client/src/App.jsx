@@ -142,11 +142,11 @@ const App = () => {
       servicePaths.includes(location.pathname) &&
       !isAuthenticated
     ) {
-      setShowAuthPopup(true);
-      setTimeout(() => {
-        navigate(`/login?redirectTo=${encodeURIComponent(location.pathname)}`);
-        setShowAuthPopup(false);
-      }, 1200);
+      // setShowAuthPopup(true);
+      // setTimeout(() => {
+      //   navigate(`/login?redirectTo=${encodeURIComponent(location.pathname)}`);
+      //   setShowAuthPopup(false);
+      // }, 1200);
     }
   }, [location, isAuthenticated, loading, navigate, servicePaths]);
 
@@ -222,8 +222,7 @@ const App = () => {
                 <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 animate-fade-in-up">
                   <p className="font-bold text-lg">Login Required</p>
                   <p className="text-sm">
-                    You must be logged in to access this service. Redirecting to
-                    login...
+                    Log in to access this service.
                   </p>
                 </div>
               </div>
