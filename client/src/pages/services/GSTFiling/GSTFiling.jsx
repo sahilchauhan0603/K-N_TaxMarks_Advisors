@@ -5,6 +5,7 @@ const GSTFilingForm = React.lazy(() => import('./GSTFilingForm'));
 const GSTReturnFilingForm = React.lazy(() => import('./GSTReturnFilingForm'));
 const GSTResolutionForm = React.lazy(() => import('./GSTResolutionForm'));
 import TestimonialSection from '../../../components/TestimonialSection';
+import Modal from '../../../components/Modal';
 
 const GSTFiling = () => {
   // Scroll to services section
@@ -71,11 +72,11 @@ const GSTFiling = () => {
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 1 && (
+              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <GSTFilingForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
 
             {/* Service Card 2 */}
@@ -97,11 +98,11 @@ const GSTFiling = () => {
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 2 && (
+              <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <GSTReturnFilingForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
 
             {/* Service Card 3 */}
@@ -123,11 +124,11 @@ const GSTFiling = () => {
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 3 && (
+              <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <GSTResolutionForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
           </div>
         </div>

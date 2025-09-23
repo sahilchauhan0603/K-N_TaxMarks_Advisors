@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import TestimonialSection from '../../../components/TestimonialSection';
+import Modal from '../../../components/Modal';
 
 const ITRFilingForm = React.lazy(() => import('./ITRFilingForm'));
 const ITRDocumentPrepForm = React.lazy(() => import('./ITRDocumentPrepForm'));
@@ -70,11 +71,11 @@ const ITRFiling = () => {
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 1 && (
+              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <ITRFilingForm type="individual" />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
 
             {/* Service Card 2 */}
@@ -96,11 +97,11 @@ const ITRFiling = () => {
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 2 && (
+              <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <ITRDocumentPrepForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
 
             {/* Service Card 3 */}
@@ -122,11 +123,11 @@ const ITRFiling = () => {
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 3 && (
+              <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <ITRRefundNoticeForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
           </div>
         </div>

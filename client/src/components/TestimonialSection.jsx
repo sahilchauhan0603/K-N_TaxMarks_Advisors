@@ -174,7 +174,7 @@ const TestimonialForm = ({ service, onClose, onSuccess, color }) => {
   }, [user]);
 
   return (
-    <div className="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-lg bg-black/50 flex items-center justify-center z-50">
       <form
         className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-lg relative border border-gray-200 animate-fadeIn`}
         onSubmit={handleSubmit}

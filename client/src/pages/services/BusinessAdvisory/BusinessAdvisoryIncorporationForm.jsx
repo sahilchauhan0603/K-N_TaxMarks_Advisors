@@ -13,13 +13,19 @@ const BusinessAdvisoryIncorporationForm = () => {
     notes: '',
     documents: null,
   });
+  const [fileName, setFileName] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setForm((prev) => ({ ...prev, [name]: files ? files[0] : value }));
+    if (files) {
+      setForm((prev) => ({ ...prev, [name]: files[0] }));
+      setFileName(files[0]?.name || '');
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -82,8 +88,20 @@ const BusinessAdvisoryIncorporationForm = () => {
         </div>
       </div>
       <div className="mt-4">
-        <label className="block text-sm text-pink-700 mb-1">Upload Documents (PDF/JPG/PNG)</label>
-        <input name="documents" type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleChange} className="w-full border border-pink-200 rounded px-3 py-2" />
+        <label className="block text-sm text-pink-700 mb-1 font-semibold">Upload Documents (PDF/JPG/PNG)</label>
+        <div className="flex items-center gap-3">
+          <label className="bg-pink-100 hover:bg-pink-200 text-pink-700 font-semibold py-2 px-4 rounded-lg cursor-pointer border border-pink-300 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-200 file:text-pink-700">
+            Choose File
+            <input
+              name="documents"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={handleChange}
+              className="hidden"
+            />
+          </label>
+          <span className="text-sm text-gray-600 truncate max-w-xs">{fileName || 'No file chosen'}</span>
+        </div>
       </div>
       <div className="mt-4">
         <label className="block text-sm text-pink-700 mb-1">Notes (optional)</label>

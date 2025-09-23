@@ -5,6 +5,7 @@ const BusinessAdvisoryStartupForm = React.lazy(() => import('./BusinessAdvisoryS
 const BusinessAdvisoryIncorporationForm = React.lazy(() => import('./BusinessAdvisoryIncorporationForm'));
 const BusinessAdvisoryAdvisoryForm = React.lazy(() => import('./BusinessAdvisoryAdvisoryForm'));
 import TestimonialSection from '../../../components/TestimonialSection';
+import Modal from '../../../components/Modal';
 
 const BusinessAdvisory = () => {
   const { isAuthenticated } = useAuth();
@@ -68,11 +69,11 @@ const BusinessAdvisory = () => {
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 1 && (
+              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <BusinessAdvisoryStartupForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
             {/* Service Card 2 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-pink-500">
@@ -93,11 +94,11 @@ const BusinessAdvisory = () => {
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 2 && (
+              <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <BusinessAdvisoryIncorporationForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
             {/* Service Card 3 */}
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-pink-500">
@@ -118,11 +119,11 @@ const BusinessAdvisory = () => {
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}
               </button>
-              {isAuthenticated && openForm === 3 && (
+              <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <BusinessAdvisoryAdvisoryForm />
                 </React.Suspense>
-              )}
+              </Modal>
             </div>
           </div>
         </div>

@@ -122,7 +122,7 @@ const Sidebar = ({
                   key={item.key}
                   onClick={() => onSectionChange(item.key)}
                   disabled={item.comingSoon}
-                  className={`w-full group relative overflow-hidden rounded-xl transition-all duration-300 ${
+                  className={`w-full group relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 ${
                     activeSection === item.key
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-[1.02]"
                       : item.comingSoon
