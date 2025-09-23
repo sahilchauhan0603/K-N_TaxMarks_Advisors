@@ -74,7 +74,7 @@ const TestimonialSection = ({ service }) => {
     <div className={`mt-16 ${colors.bg} rounded-xl shadow-md p-8`}>
       <h2 className={`text-3xl font-bold ${colors.text} mb-8 text-center`}>What Our Clients Say</h2>
       <button
-        className={`mb-8 ${colors.button} text-white font-bold py-2 px-6 rounded-lg shadow transition`}
+        className={`mb-8 ${colors.button} text-white font-bold cursor-pointer py-2 px-6 rounded-lg shadow transition`}
         onClick={() => setShowForm(true)}
       >
         Leave Feedback
@@ -174,15 +174,15 @@ const TestimonialForm = ({ service, onClose, onSuccess, color }) => {
   }, [user]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50">
       <form
-        className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-sm relative border border-gray-200 animate-fadeIn`}
+        className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-lg relative border border-gray-200 animate-fadeIn`}
         onSubmit={handleSubmit}
-        style={{ minHeight: 0 }}
+        style={{ minHeight: '480px' }}
       >
         <button
           type="button"
-          className="absolute top-2 right-2 text-gray-400 hover:text-black text-2xl focus:outline-none"
+          className="absolute cursor-pointer top-2 right-2 text-gray-400 hover:text-black text-2xl focus:outline-none"
           onClick={onClose}
           aria-label="Close"
         >
@@ -237,7 +237,7 @@ const TestimonialForm = ({ service, onClose, onSuccess, color }) => {
             name="service"
             value={form.service}
             onChange={handleChange}
-            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white text-gray-800"
+            className="w-full cursor-pointer border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white text-gray-800"
             required
           >
             <option value="">Select Service</option>
@@ -262,7 +262,7 @@ const TestimonialForm = ({ service, onClose, onSuccess, color }) => {
         {success && <p className="text-green-600 mb-2 text-center text-xs">Thank you for your feedback!</p>}
         <button
           type="submit"
-          className={`w-full ${color?.button || 'bg-black hover:bg-gray-800'} text-white font-bold py-2 px-4 rounded-lg shadow transition text-sm mt-1`}
+          className={`w-full ${color?.button || 'bg-black hover:bg-gray-800'} text-white cursor-pointer font-bold py-2 px-4 rounded-lg shadow transition text-sm mt-1`}
           disabled={loading}
         >
           {loading ? 'Submitting...' : 'Submit'}
