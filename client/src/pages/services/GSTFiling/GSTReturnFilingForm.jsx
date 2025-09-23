@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
 
@@ -43,6 +43,7 @@ const GSTReturnFilingForm = () => {
       if (res.data.message) {
         setSuccess('Your GST Return Filing request has been submitted successfully!');
         setForm((prev) => ({ ...prev, gstin: '', notes: '', documents: null }));
+        window.removeEventListener('beforeunload', handleBeforeUnload);
       } else {
         setError(res.data.error || 'Submission failed.');
       }
@@ -52,6 +53,19 @@ const GSTReturnFilingForm = () => {
       setLoading(false);
     }
   };
+
+  // Warn user about data loss on refresh
+  function handleBeforeUnload(e) {
+    e.preventDefault();
+    e.returnValue = 'Your data might be lost if you refresh';
+    return 'Your data might be lost if you refresh';
+  }
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 bg-gradient-to-br from-yellow-50 to-white border-l-4 border-yellow-500 rounded-xl p-6 shadow-md">

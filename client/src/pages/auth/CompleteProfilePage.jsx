@@ -66,21 +66,19 @@ const CompleteProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!formData.phone || !formData.state) {
       setMessageType("error");
       setMessage("Please fill all required fields");
       return;
     }
-
     setIsLoading(true);
     setMessage("");
-
     try {
       const result = await completeGoogleProfile(token, formData.phone, formData.state);
       if (result.success) {
         setMessageType("success");
         setMessage("Profile completed successfully! Redirecting...");
+        window.removeEventListener('beforeunload', handleBeforeUnload);
         setTimeout(() => {
           navigate("/", { replace: true });
         }, 1500);
@@ -95,6 +93,19 @@ const CompleteProfilePage = () => {
       setIsLoading(false);
     }
   };
+
+  // Warn user about data loss on refresh
+  function handleBeforeUnload(e) {
+    e.preventDefault();
+    e.returnValue = 'Your data might be lost if you refresh';
+    return 'Your data might be lost if you refresh';
+  }
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import { useAuth } from '/src/context/AuthContext';
 import { useAuth } from '../../../context/AuthContext';
 // import axios from '../utils/axios';
@@ -47,6 +47,7 @@ const ITRFilingForm = ({ type = 'individual' }) => {
       if (res.data.success) {
         setSuccess('Your ITR request has been submitted successfully!');
         setForm((prev) => ({ ...prev, pan: '', annualIncome: '', notes: '', documents: null }));
+        window.removeEventListener('beforeunload', handleBeforeUnload);
       } else {
         setError(res.data.message || 'Submission failed.');
       }
@@ -56,6 +57,19 @@ const ITRFilingForm = ({ type = 'individual' }) => {
       setLoading(false);
     }
   };
+
+  // Warn user about data loss on refresh
+  function handleBeforeUnload(e) {
+    e.preventDefault();
+    e.returnValue = 'Your data might be lost if you refresh';
+    return 'Your data might be lost if you refresh';
+  }
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 bg-gradient-to-br from-green-50 to-white border-l-4 border-green-500 rounded-xl p-6 shadow-md">

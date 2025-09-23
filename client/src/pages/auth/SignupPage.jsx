@@ -267,6 +267,21 @@ const SignupPage = () => {
     }
   };
 
+  // Warn user about data loss on refresh only on step 2 (profile completion)
+  useEffect(() => {
+    function handleBeforeUnload(e) {
+      e.preventDefault();
+      e.returnValue = 'Your data might be lost if you refresh';
+      return 'Your data might be lost if you refresh';
+    }
+    if (step === 2) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }
+  }, [step]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Back to Home Link */}
@@ -751,7 +766,11 @@ const SignupPage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={handleRegister}
+                  onClick={() => {
+                    // Remove beforeunload warning on successful register
+                    window.removeEventListener('beforeunload', () => {});
+                    handleRegister();
+                  }}
                   disabled={isLoading}
                   className="flex-1 group relative flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
                 >
