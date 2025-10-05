@@ -88,7 +88,8 @@ const ReportsPage = () => {
   // Helper to get date range
   const getDateRange = () => {
     const now = new Date();
-    let start = null, end = null;
+    let start = null,
+      end = null;
     if (dateRange === "last7") {
       start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       end = now;
@@ -101,7 +102,7 @@ const ReportsPage = () => {
     } else if (dateRange === "custom" && customStart && customEnd) {
       start = new Date(customStart);
       end = new Date(customEnd);
-      end.setHours(23,59,59,999); // include full end day
+      end.setHours(23, 59, 59, 999); // include full end day
     }
     return { start, end };
   };
@@ -186,14 +187,14 @@ const ReportsPage = () => {
                 type="date"
                 className="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={customStart}
-                onChange={e => setCustomStart(e.target.value)}
+                onChange={(e) => setCustomStart(e.target.value)}
               />
               <span className="text-gray-500">to</span>
               <input
                 type="date"
                 className="bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={customEnd}
-                onChange={e => setCustomEnd(e.target.value)}
+                onChange={(e) => setCustomEnd(e.target.value)}
               />
             </div>
           )}
@@ -201,7 +202,7 @@ const ReportsPage = () => {
           <div className="ml-auto">
             {activeTab === "users" && (
               <button
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
+                className="flex items-center cursor-pointer gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
                 onClick={() => downloadExcel("users")}
               >
                 <FaDownload /> Export Users to Excel
@@ -209,7 +210,7 @@ const ReportsPage = () => {
             )}
             {activeTab === "services" && (
               <button
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
+                className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
                 onClick={() => downloadExcel("services")}
               >
                 <FaDownload /> Export Services to Excel
@@ -256,7 +257,12 @@ const ReportsPage = () => {
                 <tbody>
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-4 text-gray-500">No records found</td>
+                      <td
+                        colSpan="4"
+                        className="text-center py-4 text-gray-500"
+                      >
+                        No records found
+                      </td>
                     </tr>
                   ) : (
                     filteredUsers
@@ -286,7 +292,7 @@ const ReportsPage = () => {
               {/* Pagination Controls */}
               <div className="flex justify-center items-center mt-4 gap-2">
                 <button
-                  className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                  className="px-3 py-1 rounded cursor-pointer bg-gray-200 hover:bg-gray-300"
                   disabled={userPage === 1}
                   onClick={() => setUserPage(userPage - 1)}
                 >
@@ -297,7 +303,7 @@ const ReportsPage = () => {
                   {Math.ceil(filteredUsers.length / PAGE_SIZE) || 1}
                 </span>
                 <button
-                  className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                  className="px-3 py-1 rounded cursor-pointer bg-gray-200 hover:bg-gray-300"
                   disabled={
                     userPage === Math.ceil(filteredUsers.length / PAGE_SIZE) ||
                     filteredUsers.length === 0
@@ -323,7 +329,12 @@ const ReportsPage = () => {
                 <tbody>
                   {filteredServices.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="text-center py-4 text-gray-500">No records found</td>
+                      <td
+                        colSpan="5"
+                        className="text-center py-4 text-gray-500"
+                      >
+                        No records found
+                      </td>
                     </tr>
                   ) : (
                     filteredServices
@@ -352,7 +363,7 @@ const ReportsPage = () => {
               {/* Pagination Controls */}
               <div className="flex justify-center items-center mt-4 gap-2">
                 <button
-                  className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                  className="px-3 py-1 cursor-pointer rounded bg-gray-200 hover:bg-gray-300"
                   disabled={servicePage === 1}
                   onClick={() => setServicePage(servicePage - 1)}
                 >
@@ -363,7 +374,7 @@ const ReportsPage = () => {
                   {Math.ceil(filteredServices.length / PAGE_SIZE) || 1}
                 </span>
                 <button
-                  className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                  className="px-3 py-1 cursor-pointer rounded bg-gray-200 hover:bg-gray-300"
                   disabled={
                     servicePage ===
                       Math.ceil(filteredServices.length / PAGE_SIZE) ||

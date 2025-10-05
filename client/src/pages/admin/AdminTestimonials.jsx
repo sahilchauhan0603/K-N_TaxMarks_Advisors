@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../utils/axios';
+import Swal from 'sweetalert2';
 
 const AdminTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -30,6 +31,21 @@ const AdminTestimonials = () => {
   };
 
   const approveTestimonial = async (id) => {
+    const result = await Swal.fire({
+      title: 'Approve Testimonial?',
+      text: 'This testimonial will be visible to users on the website.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10B981',
+      cancelButtonColor: '#EF4444',
+      confirmButtonText: 'Yes, approve it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
     try {
       // Explicitly use admin token for approve request
       const adminToken = localStorage.getItem('adminToken');
@@ -57,13 +73,39 @@ const AdminTestimonials = () => {
       
       // Refresh data to ensure consistency
       fetchTestimonials();
+      
+      // Show success message
+      Swal.fire({
+        title: 'Approved!',
+        text: 'The testimonial has been approved successfully.',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to approve testimonial');
+      Swal.fire({
+        title: 'Error!',
+        text: err.response?.data?.message || 'Failed to approve testimonial',
+        icon: 'error',
+        confirmButtonColor: '#EF4444'
+      });
     }
   };
 
   const deleteTestimonial = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this testimonial?')) {
+    const result = await Swal.fire({
+      title: 'Delete Testimonial?',
+      text: 'This action cannot be undone. The testimonial will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -90,8 +132,23 @@ const AdminTestimonials = () => {
       } else {
         setTestimonials(testimonials.filter(t => t._id !== id));
       }
+      
+      // Show success message
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'The testimonial has been deleted successfully.',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete testimonial');
+      Swal.fire({
+        title: 'Error!',
+        text: err.response?.data?.message || 'Failed to delete testimonial',
+        icon: 'error',
+        confirmButtonColor: '#EF4444'
+      });
     }
   };
 
@@ -139,7 +196,7 @@ const AdminTestimonials = () => {
           <button
             onClick={fetchTestimonials}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 cursor-pointer rounded-lg font-medium flex items-center space-x-2 transition-colors"
           >
             <svg 
               className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 

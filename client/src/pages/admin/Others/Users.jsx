@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from '../../../utils/axios';
 import { FaTrash, FaSearch, FaFilter, FaChevronDown, FaChevronLeft, FaChevronRight, FaEye, FaEdit, FaSyncAlt } from 'react-icons/fa';
 import { format, parseISO, subDays } from 'date-fns';
+import Swal from 'sweetalert2';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -91,14 +92,41 @@ const AdminUsers = () => {
   }, [searchTerm, selectedState, dateRange, users]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
+    const result = await Swal.fire({
+      title: 'Delete User?',
+      text: 'This action cannot be undone. The user and all their data will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Yes, delete user!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
     try {
       await axios.delete(`/api/admin/users/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
       });
       setUsers(users.filter(u => u._id !== id));
+      
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'The user has been deleted successfully.',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false
+      });
     } catch {
-      alert('Failed to delete user');
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to delete user. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#EF4444'
+      });
     }
   };
 
@@ -164,7 +192,7 @@ const AdminUsers = () => {
           </div>
           <button
             onClick={fetchUsers}
-            className={`flex items-center gap-2 px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow transition ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+            className={`flex items-center gap-2 cursor-pointer px-5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow transition ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
             title="Refresh user list"
             disabled={loading}
           >
@@ -260,7 +288,7 @@ const AdminUsers = () => {
                     setSelectedState('all');
                     setDateRange('all');
                   }}
-                  className="px-6 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition w-full"
+                  className="px-6 py-2.5 cursor-pointer bg-sky-600 hover:bg-sky-700 text-white rounded-lg transition w-full"
                 >
                   Reset Filters
                 </button>
@@ -344,7 +372,7 @@ const AdminUsers = () => {
                         </button> */}
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className="text-red-500 hover:text-red-700 p-2 rounded-full transition hover:bg-red-50"
+                          className="text-red-500 hover:text-red-700 p-2 rounded-full cursor-pointer transition hover:bg-red-50"
                           title="Delete user"
                         >
                           <FaTrash />

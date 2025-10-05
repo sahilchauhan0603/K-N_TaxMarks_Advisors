@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { 
   FaTachometerAlt, 
   FaUsers, 
@@ -32,11 +33,31 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   });
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'Logout Confirmation',
+      text: 'Are you sure you want to logout from the admin panel?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
       localStorage.removeItem('adminToken');
       localStorage.removeItem('adminEmail');
       localStorage.removeItem('adminLoginTime');
+      
+      Swal.fire({
+        title: 'Logged Out!',
+        text: 'You have been successfully logged out.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      
       navigate('/admin/login');
     }
   };
