@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
 
-const ITRDocumentPrepForm = () => {
+const ITRDocumentPrepForm = ({ onClose }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     documentType: '',
@@ -41,6 +41,13 @@ const ITRDocumentPrepForm = () => {
         setSuccess('Your document preparation request has been submitted!');
         setForm((prev) => ({ ...prev, documentType: '', notes: '', documents: null }));
         window.removeEventListener('beforeunload', handleBeforeUnload);
+        
+        // Close the form after successful submission
+        setTimeout(() => {
+          if (onClose) {
+            onClose();
+          }
+        }, 1500); // Wait 1.5 seconds to show success message before closing
       } else {
         setError(res.data.message || 'Submission failed.');
       }

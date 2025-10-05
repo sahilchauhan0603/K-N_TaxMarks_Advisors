@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
 
-const BusinessAdvisoryStartupForm = () => {
+const BusinessAdvisoryStartupForm = ({ onClose }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     businessName: '',
@@ -42,6 +42,13 @@ const BusinessAdvisoryStartupForm = () => {
         setSuccess('Your Startup & MSME Registration request has been submitted successfully!');
         setForm((prev) => ({ ...prev, businessName: '', businessType: '', notes: '', documents: null }));
         window.removeEventListener('beforeunload', handleBeforeUnload);
+        
+        // Close the form after successful submission
+        setTimeout(() => {
+          if (onClose) {
+            onClose();
+          }
+        }, 1500); // Wait 1.5 seconds to show success message before closing
       } else {
         setError(res.data.message || 'Submission failed.');
       }

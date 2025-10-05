@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
 
-const GSTResolutionForm = () => {
+const GSTResolutionForm = ({ onClose }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     name: user?.name || '',
@@ -45,6 +45,13 @@ const GSTResolutionForm = () => {
         setSuccess('Your GST resolution request has been submitted!');
         setForm((prev) => ({ ...prev, gstNumber: '', issue: '', notes: '', documents: null }));
         window.removeEventListener('beforeunload', handleBeforeUnload);
+        
+        // Close the form after successful submission
+        setTimeout(() => {
+          if (onClose) {
+            onClose();
+          }
+        }, 1500); // Wait 1.5 seconds to show success message before closing
       } else {
         setError(res.data.message || 'Submission failed.');
       }

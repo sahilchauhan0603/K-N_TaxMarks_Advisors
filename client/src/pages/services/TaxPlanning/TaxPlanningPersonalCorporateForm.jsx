@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
 
-const TaxPlanningPersonalCorporateForm = () => {
+const TaxPlanningPersonalCorporateForm = ({ onClose }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     entityType: '',
@@ -42,6 +42,13 @@ const TaxPlanningPersonalCorporateForm = () => {
         setSuccess('Your Personal & Corporate Tax request has been submitted successfully!');
         setForm((prev) => ({ ...prev, entityType: '', incomeDetails: '', notes: '', documents: null }));
         window.removeEventListener('beforeunload', handleBeforeUnload);
+        
+        // Close the form after successful submission
+        setTimeout(() => {
+          if (onClose) {
+            onClose();
+          }
+        }, 1500); // Wait 1.5 seconds to show success message before closing
       } else {
         setError(res.data.message || 'Submission failed.');
       }

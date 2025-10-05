@@ -71,7 +71,7 @@ const BusinessAdvisory = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <BusinessAdvisoryStartupForm />
+                  <BusinessAdvisoryStartupForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
@@ -96,7 +96,7 @@ const BusinessAdvisory = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <BusinessAdvisoryIncorporationForm />
+                  <BusinessAdvisoryIncorporationForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
@@ -121,7 +121,7 @@ const BusinessAdvisory = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <BusinessAdvisoryAdvisoryForm />
+                  <BusinessAdvisoryAdvisoryForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>

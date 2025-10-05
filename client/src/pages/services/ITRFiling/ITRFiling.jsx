@@ -73,7 +73,7 @@ const ITRFiling = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <ITRFilingForm type="individual" />
+                  <ITRFilingForm type="individual" onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
@@ -99,7 +99,7 @@ const ITRFiling = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <ITRDocumentPrepForm />
+                  <ITRDocumentPrepForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
@@ -125,7 +125,7 @@ const ITRFiling = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <ITRRefundNoticeForm />
+                  <ITRRefundNoticeForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>

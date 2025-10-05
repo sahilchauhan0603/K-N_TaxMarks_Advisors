@@ -4,7 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 // import axios from '../utils/axios';
 import axios from '../../../utils/axios'; // Adjust the import path as necessary
 
-const ITRFilingForm = ({ type = 'individual' }) => {
+const ITRFilingForm = ({ type = 'individual', onClose }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
     pan: '',
@@ -45,6 +45,13 @@ const ITRFilingForm = ({ type = 'individual' }) => {
         setSuccess('Your ITR request has been submitted successfully!');
         setForm((prev) => ({ ...prev, pan: '', annualIncome: '', notes: '', documents: null }));
         window.removeEventListener('beforeunload', handleBeforeUnload);
+        
+        // Close the form after successful submission
+        setTimeout(() => {
+          if (onClose) {
+            onClose();
+          }
+        }, 1500); // Wait 1.5 seconds to show success message before closing
       } else {
         setError(res.data.message || 'Submission failed.');
       }

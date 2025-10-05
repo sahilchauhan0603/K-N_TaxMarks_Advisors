@@ -72,7 +72,7 @@ const TaxPlanning = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <TaxPlanningPersonalCorporateForm />
+                  <TaxPlanningPersonalCorporateForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
@@ -97,7 +97,7 @@ const TaxPlanning = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <TaxPlanningYearRoundForm />
+                  <TaxPlanningYearRoundForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
@@ -122,7 +122,7 @@ const TaxPlanning = () => {
               </button>
               <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
-                  <TaxPlanningComplianceForm />
+                  <TaxPlanningComplianceForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
             </div>
