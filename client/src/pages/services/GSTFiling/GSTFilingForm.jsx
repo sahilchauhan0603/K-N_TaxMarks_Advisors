@@ -5,11 +5,7 @@ import axios from '../../../utils/axios';
 const GSTFilingForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    mobile: user?.phone || '',
     gstNumber: '',
-    filingType: 'Registration',
     businessName: '',
     notes: '',
     documents: null,
@@ -39,12 +35,12 @@ const GSTFilingForm = () => {
       Object.entries(form).forEach(([key, value]) => {
         formData.append(key, value);
       });
-      const res = await axios.post('/api/gst-filing', formData, {
+      const res = await axios.post('/api/gst-registration', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (res.data.success) {
         setSuccess('Your GST request has been submitted successfully!');
-        setForm((prev) => ({ ...prev, gstNumber: '', businessName: '', notes: '', documents: null }));
+        setForm({ gstNumber: '', businessName: '', notes: '', documents: null });
         window.removeEventListener('beforeunload', handleBeforeUnload);
       } else {
         setError(res.data.message || 'Submission failed.');
@@ -76,28 +72,8 @@ const GSTFilingForm = () => {
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-yellow-700 mb-1">Full Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Email</label>
-          <input name="email" type="email" value={form.email} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Mobile</label>
-          <input name="mobile" value={form.mobile} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
-        </div>
-        <div>
           <label className="block text-sm text-yellow-700 mb-1">GST Number</label>
           <input name="gstNumber" value={form.gstNumber} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400 uppercase" />
-        </div>
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Type</label>
-          <select name="filingType" value={form.filingType} onChange={handleChange} className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400">
-            <option value="Registration">Registration & Amendments</option>
-            <option value="Return Filing">Return Filing</option>
-            <option value="Resolution">Resolution</option>
-          </select>
         </div>
         <div>
           <label className="block text-sm text-yellow-700 mb-1">Business Name</label>

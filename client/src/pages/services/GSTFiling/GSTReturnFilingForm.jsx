@@ -5,9 +5,6 @@ import axios from '../../../utils/axios';
 const GSTReturnFilingForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    mobile: user?.phone || '',
     gstin: '',
     notes: '',
     documents: null,
@@ -42,7 +39,7 @@ const GSTReturnFilingForm = () => {
       });
       if (res.data.message) {
         setSuccess('Your GST Return Filing request has been submitted successfully!');
-        setForm((prev) => ({ ...prev, gstin: '', notes: '', documents: null }));
+        setForm({ gstin: '', notes: '', documents: null });
         window.removeEventListener('beforeunload', handleBeforeUnload);
       } else {
         setError(res.data.error || 'Submission failed.');
@@ -73,18 +70,6 @@ const GSTReturnFilingForm = () => {
       {success && <div className="mb-3 p-2 bg-yellow-100 text-yellow-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Full Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Email</label>
-          <input name="email" type="email" value={form.email} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-yellow-700 mb-1">Mobile</label>
-          <input name="mobile" value={form.mobile} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400" />
-        </div>
         <div>
           <label className="block text-sm text-yellow-700 mb-1">GSTIN</label>
           <input name="gstin" value={form.gstin} onChange={handleChange} required className="w-full border border-yellow-200 rounded px-3 py-2 focus:ring-2 focus:ring-yellow-400 uppercase" />

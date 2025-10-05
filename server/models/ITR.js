@@ -1,44 +1,19 @@
 const mongoose = require('mongoose');
 
-// ITR Filing
-const ITRFilingSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  mobile: { type: String, required: true },
-  pan: { type: String, required: true },
-  itrType: { type: String, enum: ['Individual', 'Business'] },
-  annualIncome: { type: String },
+const ITRSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  serviceType: { type: String, enum: ['Filing', 'Refund/Notice', 'Document Preparation'], required: true },
+  pan: { type: String }, // For Filing and Refund/Notice
+  itrType: { type: String, enum: ['Individual', 'Business'] }, // For Filing
+  annualIncome: { type: String }, // For Filing
+  refundYear: { type: String }, // For Refund/Notice
+  noticeType: { type: String }, // For Refund/Notice
+  documentType: { type: String }, // For Document Preparation
   notes: { type: String },
-  documents: { type: String },
+  documentPath: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
-// ITR Refund/Notice
-const ITRRefundNoticeSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  mobile: { type: String, required: true },
-  pan: { type: String, required: true },
-  refundYear: { type: String },
-  noticeType: { type: String },
-  notes: { type: String },
-  documents: { type: String },
-  createdAt: { type: Date, default: Date.now },
-});
+const ITR = mongoose.model('ITR', ITRSchema);
 
-// ITR Document Preparation
-const ITRDocumentPrepSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  mobile: { type: String, required: true },
-  documentType: { type: String },
-  notes: { type: String },
-  documents: { type: String },
-  createdAt: { type: Date, default: Date.now },
-});
-
-const ITRFiling = mongoose.model('ITRFiling', ITRFilingSchema);
-const ITRRefundNotice = mongoose.model('ITRRefundNotice', ITRRefundNoticeSchema);
-const ITRDocumentPrep = mongoose.model('ITRDocumentPrep', ITRDocumentPrepSchema);
-
-module.exports = { ITRFiling, ITRRefundNotice, ITRDocumentPrep };
+module.exports = ITR;

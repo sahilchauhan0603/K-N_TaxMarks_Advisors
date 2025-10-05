@@ -7,9 +7,6 @@ import axios from '../../../utils/axios'; // Adjust the import path as necessary
 const ITRFilingForm = ({ type = 'individual' }) => {
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    mobile: user?.phone || '',
     pan: '',
     itrType: type === 'business' ? 'Business' : 'Individual',
     annualIncome: '',
@@ -77,18 +74,6 @@ const ITRFilingForm = ({ type = 'individual' }) => {
       {success && <div className="mb-3 p-2 bg-green-100 text-green-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-green-700 mb-1">Full Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-green-200 rounded px-3 py-2 focus:ring-2 focus:ring-green-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-green-700 mb-1">Email</label>
-          <input name="email" type="email" value={form.email} onChange={handleChange} required className="w-full border border-green-200 rounded px-3 py-2 focus:ring-2 focus:ring-green-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-green-700 mb-1">Mobile</label>
-          <input name="mobile" value={form.mobile} onChange={handleChange} required className="w-full border border-green-200 rounded px-3 py-2 focus:ring-2 focus:ring-green-400" />
-        </div>
         <div>
           <label className="block text-sm text-green-700 mb-1">PAN</label>
           <input name="pan" value={form.pan} onChange={handleChange} required className="w-full border border-green-200 rounded px-3 py-2 focus:ring-2 focus:ring-green-400 uppercase" />

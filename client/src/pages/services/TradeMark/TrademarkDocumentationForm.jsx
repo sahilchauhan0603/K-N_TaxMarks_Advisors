@@ -5,9 +5,6 @@ import axios from '../../../utils/axios';
 const TrademarkDocumentationForm = () => {
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    mobile: user?.phone || '',
     documentType: '',
     notes: '',
     documents: null,
@@ -73,18 +70,6 @@ const TrademarkDocumentationForm = () => {
       {success && <div className="mb-3 p-2 bg-purple-100 text-purple-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm text-purple-700 mb-1">Full Name</label>
-          <input name="name" value={form.name} onChange={handleChange} required className="w-full border border-purple-200 rounded px-3 py-2 focus:ring-2 focus:ring-purple-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-purple-700 mb-1">Email</label>
-          <input name="email" type="email" value={form.email} onChange={handleChange} required className="w-full border border-purple-200 rounded px-3 py-2 focus:ring-2 focus:ring-purple-400" />
-        </div>
-        <div>
-          <label className="block text-sm text-purple-700 mb-1">Mobile</label>
-          <input name="mobile" value={form.mobile} onChange={handleChange} required className="w-full border border-purple-200 rounded px-3 py-2 focus:ring-2 focus:ring-purple-400" />
-        </div>
         <div>
           <label className="block text-sm text-purple-700 mb-1">Document Type</label>
           <input name="documentType" value={form.documentType} onChange={handleChange} className="w-full border border-purple-200 rounded px-3 py-2 focus:ring-2 focus:ring-purple-400" />

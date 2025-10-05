@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Testimonial = require('../models/Testimonial');
-const testimonialUpload = require('../middleware/testimonialUpload');
+const testimonialUpload = require('../utils/testimonialUpload');
 const path = require('path');
 
 // POST /api/testimonials - Add a new testimonial with image upload

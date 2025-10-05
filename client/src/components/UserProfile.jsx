@@ -92,19 +92,19 @@ const Sidebar = ({
       description: "View your profile",
       badge: null,
     },
-    {
-      key: "edit",
-      label: "Edit Profile",
-      icon: (
-        <Edit3
-          className={`transition-all duration-200 ${
-            isCollapsed ? "w-5 h-5" : "w-4 h-4"
-          }`}
-        />
-      ),
-      description: "Update your information",
-      badge: null,
-    },
+    // {
+    //   key: "edit",
+    //   label: "Edit Profile",
+    //   icon: (
+    //     <Edit3
+    //       className={`transition-all duration-200 ${
+    //         isCollapsed ? "w-5 h-5" : "w-4 h-4"
+    //       }`}
+    //     />
+    //   ),
+    //   description: "Update your information",
+    //   badge: null,
+    // },
     // {
     //   key: "security",
     //   label: "Security",
@@ -771,7 +771,7 @@ const UserProfile = () => {
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <button
+          {/* <button
             onClick={() => handleSectionChange("edit")}
             className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
           >
@@ -780,7 +780,7 @@ const UserProfile = () => {
             </div>
             <p className="font-bold text-gray-900 text-lg mb-2">Edit Profile</p>
             <p className="text-sm text-gray-600">Update your information</p>
-          </button>
+          </button> */}
 
           <button className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/30 text-left cursor-not-allowed opacity-75">
             <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">

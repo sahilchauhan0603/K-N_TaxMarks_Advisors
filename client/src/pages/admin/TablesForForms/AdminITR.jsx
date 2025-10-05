@@ -9,8 +9,8 @@ const subTabs = [
 
 const columns = {
   filing: ['name', 'email', 'mobile', 'pan', 'itrType', 'annualIncome', 'notes', 'documentPath', 'createdAt'],
-  document_prep: ['name', 'email', 'mobile', 'pan', 'notes', 'documents', 'createdAt'],
-  refund_notice: ['name', 'email', 'mobile', 'pan', 'notes', 'documents', 'createdAt'],
+  document_prep: ['name', 'email', 'mobile', 'documentType', 'notes', 'documentPath', 'createdAt'],
+  refund_notice: ['name', 'email', 'mobile', 'pan', 'refundYear', 'noticeType', 'notes', 'documentPath', 'createdAt'],
 };
 
 const AdminITR = () => {
@@ -34,7 +34,8 @@ const AdminITR = () => {
         } else {
           setData([]);
         }
-      } catch {
+      } catch (error) {
+        console.error('Error fetching ITR data:', error);
         setData([]);
       } finally {
         setLoading(false);
@@ -46,12 +47,17 @@ const AdminITR = () => {
   // Filtered data
   const filteredData = data.filter(row => {
     const searchStr = search.toLowerCase();
-    return columns[activeTab].some(col => (row[col] || '').toString().toLowerCase().includes(searchStr));
+    return columns[activeTab].some(col => {
+      let value = '';
+      if (col === 'name') value = row.userId?.name || '';
+      else if (col === 'email') value = row.userId?.email || '';
+      else if (col === 'mobile') value = row.userId?.phone || '';
+      else value = row[col] || '';
+      return value.toString().toLowerCase().includes(searchStr);
+    });
   }).filter(row => {
     if (!filter) return true;
-    if (activeTab === 'filing' && row.pan) return row.pan === filter;
-    if (activeTab === 'document_prep' && row.pan) return row.pan === filter;
-    if (activeTab === 'refund_notice' && row.pan) return row.pan === filter;
+    if (row.pan) return row.pan.toLowerCase().includes(filter.toLowerCase());
     return true;
   });
 
@@ -63,12 +69,18 @@ const AdminITR = () => {
 
   // Helper to format column names
   const formatColHeader = (col) => {
+    if (col === 'name') return 'NAME'; 
+    if (col === 'email') return 'EMAIL';
+    if (col === 'mobile') return 'MOBILE';
     if (col === 'pan') return 'PAN';
     if (col === 'itrType') return 'ITR Type';
     if (col === 'annualIncome') return 'Annual Income';
-    if (col === 'documentPath' || col === 'documents') return 'Documents';
+    if (col === 'documentType') return 'Document Type';
+    if (col === 'refundYear') return 'Refund Year';
+    if (col === 'noticeType') return 'Notice Type';
+    if (col === 'documentPath' || col === 'documents') return 'DOCUMENTS';
     if (col === 'createdAt') return 'Created At';
-    if (col === 'notes') return 'Notes';
+    if (col === 'notes') return 'NOTES';
     // Capitalize first letter and add spaces before uppercase letters
     return col.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
   };
@@ -228,7 +240,19 @@ const AdminITR = () => {
                               }`}
                             >
                               <div className="overflow-hidden">
-                                {col === 'createdAt' ? (
+                                {col === 'name' ? (
+                                  <span className="block truncate" title={row.userId?.name}>
+                                    {row.userId?.name || '-'}
+                                  </span>
+                                ) : col === 'email' ? (
+                                  <a href={`mailto:${row.userId?.email}`} className="text-green-600 hover:text-green-800 block truncate" title={row.userId?.email}>
+                                    {row.userId?.email || '-'}
+                                  </a>
+                                ) : col === 'mobile' ? (
+                                  <a href={`tel:${row.userId?.phone}`} className="text-gray-700 block truncate">
+                                    {row.userId?.phone || '-'}
+                                  </a>
+                                ) : col === 'createdAt' ? (
                                   <span className="text-gray-500 block truncate">{formatDate(row[col])}</span>
                                 ) : col === 'documentPath' || col === 'documents' ? (
                                   row[col] ? (
@@ -244,14 +268,6 @@ const AdminITR = () => {
                                   ) : (
                                     <span className="block truncate">-</span>
                                   )
-                                ) : col === 'email' ? (
-                                  <a href={`mailto:${row[col]}`} className="text-green-600 hover:text-green-800 block truncate" title={row[col]}>
-                                    {row[col] || '-'}
-                                  </a>
-                                ) : col === 'mobile' ? (
-                                  <a href={`tel:${row[col]}`} className="text-gray-700 block truncate">
-                                    {row[col] || '-'}
-                                  </a>
                                 ) : col === 'annualIncome' ? (
                                   <span className="block truncate" title={row[col] ? `₹${parseInt(row[col]).toLocaleString('en-IN')}` : '-'}>
                                     {row[col] ? `₹${parseInt(row[col]).toLocaleString('en-IN')}` : '-'}

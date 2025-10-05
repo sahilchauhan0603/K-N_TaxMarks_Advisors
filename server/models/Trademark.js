@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 
 const TrademarkSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  mobile: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   serviceType: { type: String },
   brandName: { type: String }, // For Search
   docType: { type: String }, // For Documentation

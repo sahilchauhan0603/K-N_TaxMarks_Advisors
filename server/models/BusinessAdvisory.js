@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 
 const BusinessAdvisorySchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  mobile: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   advisoryType: { type: String },
   businessName: { type: String }, // For Startup
   businessType: { type: String }, // For Startup

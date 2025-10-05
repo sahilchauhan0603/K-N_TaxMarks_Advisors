@@ -4,10 +4,11 @@ const cors = require('cors');
 const session = require('express-session');
 const passport = require('./config/passport');
 const connectDB = require('./db/dbConnection');
-const authRoutes = require('./routes/auth');
-const googleAuthRoutes = require('./routes/googleAuth');
-const contactRoutes = require('./routes/contact');
+
+const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
+
+const googleAuthRoutes = require('./routes/googleAuth');
 
 const trademarkForms = require('./routes/Forms/trademarkForms');
 const businessForms = require('./routes/Forms/businessForms');
@@ -16,6 +17,7 @@ const gstForms = require('./routes/Forms/gstForms');
 const itrForms = require('./routes/Forms/itrForms');
 
 const settingsRouter = require('./routes/settings');
+const contactRoutes = require('./routes/contact');
 const testimonialsRoutes = require('./routes/testimonials');
 const path = require('path');
 
@@ -50,7 +52,7 @@ app.use(passport.session());
 app.use('/uploads/testimonials', express.static(path.join(__dirname, 'uploads/testimonials')));
 
 // Routes
-app.use('/api', authRoutes);
+app.use('/api', userRoutes);
 app.use('/api/auth', googleAuthRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);

@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 
 const TaxPlanningSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  mobile: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   planningType: { type: String },
   entityType: { type: String }, // For Personal & Corporate
   incomeDetails: { type: String }, // For Personal & Corporate
