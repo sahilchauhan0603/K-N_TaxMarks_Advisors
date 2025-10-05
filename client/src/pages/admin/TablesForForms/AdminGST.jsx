@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from '../../../utils/axios';
 
 const subTabs = [
-  { key: 'filing', label: 'GST Filing (Registration & Amendments)', endpoint: '/api/gst-filing', columns: ['name', 'email', 'mobile', 'gstNumber', 'filingType', 'businessName', 'notes', 'documents', 'createdAt'] },
-  { key: 'return_filing', label: 'GST Return Filing', endpoint: '/api/gst-return-filing', columns: ['name', 'email', 'mobile', 'gstin', 'notes', 'documents', 'createdAt'] },
-  { key: 'resolution', label: 'GST Resolution', endpoint: '/api/gst-resolution', columns: ['name', 'email', 'mobile', 'gstNumber', 'issue', 'notes', 'documents', 'createdAt'] },
+  { key: 'registration', label: 'GST Registration', endpoint: '/api/gst-registration', columns: ['user', 'gstNumber', 'businessName', 'notes', 'documents', 'createdAt'] },
+  { key: 'return_filing', label: 'GST Return Filing', endpoint: '/api/gst-return-filing', columns: ['user', 'gstin', 'notes', 'documents', 'createdAt'] },
+  { key: 'resolution', label: 'GST Resolution', endpoint: '/api/gst-resolution', columns: ['user', 'gstNumber', 'issue', 'notes', 'documents', 'createdAt'] },
 ];
 
 // Helper to format column names
 const formatColHeader = (col) => {
+  if (col === 'user') return 'User Details';
   if (col === 'gstin') return 'GSTIN';
   if (col === 'gstNumber') return 'GST Number';
   if (col === 'filingType') return 'Filing Type';
@@ -55,12 +56,20 @@ const AdminGST = () => {
   const columns = subTabs.find(t => t.key === activeTab)?.columns || [];
   const filteredData = data.filter(row => {
     const searchStr = search.toLowerCase();
-    return columns.some(col => (row[col] || '').toString().toLowerCase().includes(searchStr));
+    return columns.some(col => {
+      if (col === 'user') {
+        const user = row.userId || {};
+        return (user.name || '').toLowerCase().includes(searchStr) ||
+               (user.email || '').toLowerCase().includes(searchStr) ||
+               (user.phone || '').toLowerCase().includes(searchStr);
+      }
+      return (row[col] || '').toString().toLowerCase().includes(searchStr);
+    });
   }).filter(row => {
     if (!filter) return true;
     if (activeTab === 'return_filing' && row.gstin) return row.gstin === filter;
     if (activeTab === 'resolution' && row.gstNumber) return row.gstNumber === filter;
-    if (activeTab === 'filing' && row.gstNumber) return row.gstNumber === filter;
+    if (activeTab === 'registration' && row.gstNumber) return row.gstNumber === filter;
     return true;
   });
 
@@ -78,11 +87,49 @@ const AdminGST = () => {
     }
   };
 
+  // Handle refresh
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(subTabs.find(t => t.key === activeTab).endpoint + '/all');
+      if (res.data && Array.isArray(res.data.data)) {
+        setData(res.data.data);
+      } else if (Array.isArray(res.data)) {
+        setData(res.data);
+      } else {
+        setData([]);
+      }
+    } catch {
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-2 bg-gray-50 min-h-screen">
       <div className="max-w-[960px] mx-auto">
-        <h2 className="text-3xl font-bold mb-2 text-gray-800">GST Service Requests</h2>
-        <p className="text-gray-600 mb-6">Manage and review all GST service requests</p>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h2 className="text-3xl font-bold mb-2 text-gray-800">GST Service Requests</h2>
+            <p className="text-gray-600">Manage and review all GST service requests</p>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg 
+              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
         
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 pb-2">
@@ -177,8 +224,7 @@ const AdminGST = () => {
                         <th 
                           key={col} 
                           className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300 ${
-                            col === 'name' || col === 'email' ? 'w-40' :
-                            col === 'mobile' ? 'w-32' :
+                            col === 'user' ? 'w-56' :
                             col === 'businessName' || col === 'companyName' ? 'w-48' :
                             col === 'businessType' || col === 'companyType' || col === 'gstNumber' ? 'w-36' :
                             col === 'turnover' ? 'w-32' :
@@ -216,8 +262,7 @@ const AdminGST = () => {
                             <td 
                               key={col} 
                               className={`px-4 py-4 text-sm text-gray-700 border-r border-gray-200 ${
-                                col === 'name' || col === 'email' ? 'w-40' :
-                                col === 'mobile' ? 'w-32' :
+                                col === 'user' ? 'w-56' :
                                 col === 'businessName' || col === 'companyName' ? 'w-48' :
                                 col === 'businessType' || col === 'companyType' || col === 'gstNumber' ? 'w-36' :
                                 col === 'turnover' ? 'w-32' :
@@ -227,12 +272,26 @@ const AdminGST = () => {
                               }`}
                             >
                               <div className="overflow-hidden">
-                                {col === 'createdAt' ? (
+                                {col === 'user' ? (
+                                  <div className="space-y-1">
+                                    <div className="font-medium text-gray-900 truncate">{row.userId?.name || '-'}</div>
+                                    <div className="text-gray-500 truncate">
+                                      <a href={`mailto:${row.userId?.email}`} className="hover:text-yellow-600" title={row.userId?.email}>
+                                        {row.userId?.email || '-'}
+                                      </a>
+                                    </div>
+                                    <div className="text-gray-500 truncate">
+                                      <a href={`tel:${row.userId?.phone}`} className="hover:text-yellow-600">
+                                        {row.userId?.phone || '-'}
+                                      </a>
+                                    </div>
+                                  </div>
+                                ) : col === 'createdAt' ? (
                                   <span className="text-gray-500 block truncate">{formatDate(row[col])}</span>
                                 ) : col === 'documents' ? (
-                                  row[col] ? (
+                                  row.documentPath ? (
                                     <button
-                                      onClick={() => handleDownload(row[col])}
+                                      onClick={() => handleDownload(row.documentPath)}
                                       className="text-yellow-600 hover:text-yellow-800 flex items-center gap-1 truncate"
                                     >
                                       <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -243,14 +302,6 @@ const AdminGST = () => {
                                   ) : (
                                     <span className="block truncate">-</span>
                                   )
-                                ) : col === 'email' ? (
-                                  <a href={`mailto:${row[col]}`} className="text-yellow-600 hover:text-yellow-800 block truncate" title={row[col]}>
-                                    {row[col] || '-'}
-                                  </a>
-                                ) : col === 'mobile' ? (
-                                  <a href={`tel:${row[col]}`} className="text-gray-700 block truncate">
-                                    {row[col] || '-'}
-                                  </a>
                                 ) : (
                                   <span className="block truncate" title={row[col]}>
                                     {row[col] || '-'}

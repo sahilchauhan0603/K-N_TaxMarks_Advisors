@@ -8,9 +8,9 @@ const subTabs = [
 ];
 
 const columns = {
-  personal_corporate: ['name', 'email', 'mobile', 'entityType', 'incomeDetails', 'notes', 'documentPath', 'createdAt'],
-  year_round: ['name', 'email', 'mobile', 'investmentPlans', 'yearGoals', 'notes', 'documentPath', 'createdAt'],
-  compliance: ['name', 'email', 'mobile', 'complianceType', 'query', 'notes', 'documentPath', 'createdAt'],
+  personal_corporate: ['user', 'entityType', 'incomeDetails', 'notes', 'documentPath', 'createdAt'],
+  year_round: ['user', 'investmentPlans', 'yearGoals', 'notes', 'documentPath', 'createdAt'],
+  compliance: ['user', 'complianceType', 'query', 'notes', 'documentPath', 'createdAt'],
 };
 
 // Entity type options for dropdown
@@ -80,7 +80,15 @@ const AdminTaxPlanning = () => {
   // Filtered data
   const filteredData = data.filter(row => {
     const searchStr = search.toLowerCase();
-    return columns[activeTab].some(col => (row[col] || '').toString().toLowerCase().includes(searchStr));
+    return columns[activeTab].some(col => {
+      if (col === 'user') {
+        const user = row.userId || {};
+        return (user.name || '').toLowerCase().includes(searchStr) ||
+               (user.email || '').toLowerCase().includes(searchStr) ||
+               (user.phone || '').toLowerCase().includes(searchStr);
+      }
+      return (row[col] || '').toString().toLowerCase().includes(searchStr);
+    });
   }).filter(row => {
     if (!filter) return true;
     if (activeTab === 'personal_corporate' && row.entityType) return row.entityType === filter;
@@ -97,6 +105,7 @@ const AdminTaxPlanning = () => {
 
   // Helper to format column names
   const formatColHeader = (col) => {
+    if (col === 'user') return 'User Details';
     if (col === 'entityType') return 'Entity Type';
     if (col === 'incomeDetails') return 'Income Details';
     if (col === 'investmentPlans') return 'Investment Plans';
@@ -118,11 +127,49 @@ const AdminTaxPlanning = () => {
     }
   };
 
+  // Handle refresh
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(subTabs.find(t => t.key === activeTab).endpoint + '/all');
+      if (res.data && Array.isArray(res.data.data)) {
+        setData(res.data.data);
+      } else if (Array.isArray(res.data)) {
+        setData(res.data);
+      } else {
+        setData([]);
+      }
+    } catch {
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-2 bg-gray-50 min-h-screen">
       <div className="max-w-[960px] mx-auto">
-        <h2 className="text-3xl font-bold mb-2 text-gray-800">Tax Planning Requests</h2>
-        <p className="text-gray-600 mb-6">Manage and review all tax planning service requests</p>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h2 className="text-3xl font-bold mb-2 text-gray-800">Tax Planning Requests</h2>
+            <p className="text-gray-600">Manage and review all tax planning service requests</p>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg 
+              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
         
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 pb-2">
@@ -250,8 +297,7 @@ const AdminTaxPlanning = () => {
                         <th 
                           key={col} 
                           className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300 ${
-                            col === 'name' || col === 'email' ? 'w-40' :
-                            col === 'mobile' ? 'w-32' :
+                            col === 'user' ? 'w-56' :
                             col === 'entityType' || col === 'complianceType' ? 'w-36' :
                             col === 'incomeDetails' || col === 'investmentPlans' || col === 'yearGoals' || col === 'query' || col === 'notes' ? 'w-64' :
                             col === 'documentPath' ? 'w-32' :
@@ -287,8 +333,7 @@ const AdminTaxPlanning = () => {
                             <td 
                               key={col} 
                               className={`px-4 py-4 text-sm text-gray-700 border-r border-gray-200 ${
-                                col === 'name' || col === 'email' ? 'w-40' :
-                                col === 'mobile' ? 'w-32' :
+                                col === 'user' ? 'w-56' :
                                 col === 'entityType' || col === 'complianceType' ? 'w-36' :
                                 col === 'incomeDetails' || col === 'investmentPlans' || col === 'yearGoals' || col === 'query' || col === 'notes' ? 'w-64' :
                                 col === 'documentPath' ? 'w-32' :
@@ -296,12 +341,26 @@ const AdminTaxPlanning = () => {
                               }`}
                             >
                               <div className="overflow-hidden">
-                                {col === 'createdAt' ? (
+                                {col === 'user' ? (
+                                  <div className="space-y-1">
+                                    <div className="font-medium text-gray-900 truncate">{row.userId?.name || '-'}</div>
+                                    <div className="text-gray-500 truncate">
+                                      <a href={`mailto:${row.userId?.email}`} className="hover:text-blue-600" title={row.userId?.email}>
+                                        {row.userId?.email || '-'}
+                                      </a>
+                                    </div>
+                                    <div className="text-gray-500 truncate">
+                                      <a href={`tel:${row.userId?.phone}`} className="hover:text-blue-600">
+                                        {row.userId?.phone || '-'}
+                                      </a>
+                                    </div>
+                                  </div>
+                                ) : col === 'createdAt' ? (
                                   <span className="text-gray-500 block truncate">{formatDate(row[col])}</span>
                                 ) : col === 'documentPath' ? (
-                                  row[col] ? (
+                                  row.documentPath ? (
                                     <button
-                                      onClick={() => handleDownload(row[col])}
+                                      onClick={() => handleDownload(row.documentPath)}
                                       className="text-blue-600 hover:text-blue-800 flex items-center gap-1 truncate"
                                     >
                                       <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -312,14 +371,6 @@ const AdminTaxPlanning = () => {
                                   ) : (
                                     <span className="block truncate">-</span>
                                   )
-                                ) : col === 'email' ? (
-                                  <a href={`mailto:${row[col]}`} className="text-blue-600 hover:text-blue-800 block truncate" title={row[col]}>
-                                    {row[col] || '-'}
-                                  </a>
-                                ) : col === 'mobile' ? (
-                                  <a href={`tel:${row[col]}`} className="text-gray-700 block truncate">
-                                    {row[col] || '-'}
-                                  </a>
                                 ) : (
                                   <span className="block truncate" title={row[col]}>
                                     {row[col] || '-'}
