@@ -30,8 +30,9 @@ import {
   Lock,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import axios from "../utils/axios";
+import { useAuth } from "../../context/AuthContext";
+import axios from "../../utils/axios";
+import UserTestimonials from "./UserTestimonials";
 
 // States of India
 const STATES_OF_INDIA = [
@@ -145,6 +146,19 @@ const Sidebar = ({
       description: "Manage services",
       comingSoon: true,
       badge: "3",
+    },
+    {
+      key: "testimonials",
+      label: "My Testimonials",
+      icon: (
+        <Star
+          className={`transition-all duration-200 ${
+            isCollapsed ? "w-5 h-5" : "w-4 h-4"
+          }`}
+        />
+      ),
+      description: "Manage testimonials",
+      badge: null,
     },
     {
       key: "bills",
@@ -1154,6 +1168,8 @@ const UserProfile = () => {
             icon={Briefcase}
           />
         );
+      case "testimonials":
+        return <UserTestimonials />;
       case "bills":
         return (
           <ComingSoon

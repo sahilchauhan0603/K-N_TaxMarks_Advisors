@@ -29,7 +29,7 @@ import Footer from "./components/Footer";
 import LoadingBar from "./components/LoadingBar";
 import ScrollToTop from "./components/ScrollToTop";
 import LoadFromTop from "./components/LoadFromTop";
-import UserProfile from "./components/UserProfile";
+import UserProfile from "./pages/user/UserProfile";
 
 import TaxPlanning from "./pages/services/TaxPlanning/TaxPlanning";
 import ITRFiling from "./pages/services/ITRFiling/ITRFiling";
@@ -48,6 +48,7 @@ import AdminBusiness from "./pages/admin/TablesForForms/AdminBusiness";
 import AdminTaxPlanning from "./pages/admin/TablesForForms/AdminTaxPlanning";
 import AdminGST from "./pages/admin/TablesForForms/AdminGST";
 import AdminITR from "./pages/admin/TablesForForms/AdminITR";
+import AdminTestimonials from "./pages/admin/AdminTestimonials";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -270,6 +271,7 @@ const App = () => {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="testimonials" element={<AdminTestimonials />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="trademark" element={<AdminTrademark />} />

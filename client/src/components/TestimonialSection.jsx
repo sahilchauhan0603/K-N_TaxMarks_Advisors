@@ -147,14 +147,28 @@ const TestimonialForm = ({ service, onClose, onSuccess, color }) => {
       if (imageFile) {
         formData.append('photo', imageFile);
       }
+      
       const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-      await axios.post('/api/testimonials', formData, config);
+      
+      // Use appropriate endpoint based on authentication status
+      const endpoint = user ? '/api/testimonials' : '/api/testimonials/public';
+      
+      const response = await axios.post(endpoint, formData, config);
+      
       setSuccess(true);
+      setError(''); // Clear any previous errors
+      
+      // Show success message with appropriate text
+      const successMessage = user 
+        ? 'Testimonial submitted successfully!' 
+        : 'Thank you! Your testimonial has been submitted and will be reviewed before being published.';
+      
       setTimeout(() => {
         setSuccess(false);
         onClose();
         onSuccess();
-      }, 1200);
+      }, 2000); // Increased timeout to show the message longer
+      
     } catch (err) {
       setError(err.response?.data?.message || 'Submission failed');
     } finally {

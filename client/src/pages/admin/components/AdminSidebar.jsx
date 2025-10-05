@@ -13,7 +13,8 @@ import {
   FaChevronDown,
   FaChevronRight,
   FaChevronLeft,
-  FaBars
+  FaBars,
+  FaComments
 } from 'react-icons/fa';
 import { GiCash } from 'react-icons/gi';
 import './AdminSidebar.css';
@@ -133,6 +134,18 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     >
                       <FaUsers /> 
                       {!isCollapsed && <span>User Management</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/testimonials" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Testimonials"
+                    >
+                      <FaComments /> 
+                      {!isCollapsed && <span>Testimonials</span>}
                     </NavLink>
                   </li>
                 </ul>

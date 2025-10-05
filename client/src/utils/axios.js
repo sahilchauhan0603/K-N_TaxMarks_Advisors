@@ -11,7 +11,18 @@ const instance = axios.create({
 // Add request interceptor to include auth token
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    // Check if this is an admin route
+    const isAdminRoute = config.url?.includes('/admin') || config.url?.includes('admin');
+    
+    let token;
+    if (isAdminRoute) {
+      // Use admin token for admin routes
+      token = localStorage.getItem('adminToken');
+    } else {
+      // Use regular user token for user routes
+      token = localStorage.getItem('token');
+    }
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,10 +38,21 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Check if this was an admin route
+      const isAdminRoute = error.config?.url?.includes('/admin') || error.config?.url?.includes('admin');
+      
+      if (isAdminRoute) {
+        // Admin token expired or invalid
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminEmail');
+        localStorage.removeItem('adminLoginTime');
+        window.location.href = '/admin/login';
+      } else {
+        // User token expired or invalid
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
