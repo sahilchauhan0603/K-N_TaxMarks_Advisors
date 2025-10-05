@@ -125,7 +125,7 @@ const ForgotPasswordPage = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-8 ml-4 mr-4 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
           {message && (
             <div className={`mb-4 p-4 rounded-lg flex items-start gap-3 ${
