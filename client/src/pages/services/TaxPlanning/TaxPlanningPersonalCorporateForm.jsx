@@ -81,14 +81,14 @@ const TaxPlanningPersonalCorporateForm = () => {
         </div>
       </div>
       <div className="mt-4">
-        <label className="block text-sm text-blue-700 mb-1 font-semibold">Upload Documents (PDF/JPG/PNG)</label>
+        <label className="block text-sm text-blue-700 mb-1 font-semibold">Upload Images (JPG/PNG/GIF/WEBP)</label>
         <div className="flex items-center gap-3">
           <label className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-2 px-4 rounded-lg cursor-pointer border border-blue-300 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-200 file:text-blue-700">
             Choose File
             <input
               name="documents"
               type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
+              accept=".jpg,.jpeg,.png,.gif,.webp"
               onChange={handleChange}
               className="hidden"
             />

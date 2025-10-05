@@ -8,7 +8,8 @@ const GSTSchema = new mongoose.Schema({
   businessName: { type: String }, // For Registration
   issue: { type: String }, // For Resolution
   notes: { type: String },
-  documentPath: { type: String },
+  documentPath: { type: String }, // Cloudinary public_id
+  documentUrl: { type: String }, // Cloudinary secure_url
   createdAt: { type: Date, default: Date.now },
 });
 

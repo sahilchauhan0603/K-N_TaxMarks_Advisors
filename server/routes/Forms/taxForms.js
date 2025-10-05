@@ -1,31 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const TaxPlanning = require('../../models/TaxPlanning');
 const auth = require('../../middleware/userAuth');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads/tax'));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
-const upload = multer({ storage });
+const upload = require('../../middleware/upload');
+const { uploadImage } = require('../../config/cloudinary');
 
 // Personal & Corporate Tax
 router.post('/tax-personal-corporate', auth, upload.single('documents'), async (req, res) => {
   try {
     const { entityType, incomeDetails, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'tax/personal-corporate');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const taxService = new TaxPlanning({
       userId: req.user._id,
       entityType,
       incomeDetails,
       notes,
       documentPath,
+      documentUrl,
       planningType: 'personal_corporate',
     });
     await taxService.save();
@@ -39,13 +38,22 @@ router.post('/tax-personal-corporate', auth, upload.single('documents'), async (
 router.post('/tax-year-round', auth, upload.single('documents'), async (req, res) => {
   try {
     const { investmentPlans, yearGoals, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'tax/year-round');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const taxService = new TaxPlanning({
       userId: req.user._id,
       investmentPlans,
       yearGoals,
       notes,
       documentPath,
+      documentUrl,
       planningType: 'year_round',
     });
     await taxService.save();
@@ -59,13 +67,22 @@ router.post('/tax-year-round', auth, upload.single('documents'), async (req, res
 router.post('/tax-compliance', auth, upload.single('documents'), async (req, res) => {
   try {
     const { complianceType, query, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'tax/compliance');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const taxService = new TaxPlanning({
       userId: req.user._id,
       complianceType,
       query,
       notes,
       documentPath,
+      documentUrl,
       planningType: 'compliance',
     });
     await taxService.save();

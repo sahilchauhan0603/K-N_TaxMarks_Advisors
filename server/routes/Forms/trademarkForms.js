@@ -1,30 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const Trademark = require('../../models/Trademark');
 const auth = require('../../middleware/userAuth');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads/trademark'));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
-const upload = multer({ storage });
+const upload = require('../../middleware/upload');
+const { uploadImage } = require('../../config/cloudinary');
 
 // Trademark Search & Registration
 router.post('/trademark-search', auth, upload.single('documents'), async (req, res) => {
   try {
     const { brandName, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'trademark/search');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const trademarkService = new Trademark({
       userId: req.user._id,
       brandName,
       notes,
       documentPath,
+      documentUrl,
       serviceType: 'search',
     });
     await trademarkService.save();
@@ -38,12 +37,21 @@ router.post('/trademark-search', auth, upload.single('documents'), async (req, r
 router.post('/trademark-documentation', auth, upload.single('documents'), async (req, res) => {
   try {
     const { docType, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'trademark/documentation');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const trademarkService = new Trademark({
       userId: req.user._id,
       docType,
       notes,
       documentPath,
+      documentUrl,
       serviceType: 'documentation',
     });
     await trademarkService.save();
@@ -57,12 +65,21 @@ router.post('/trademark-documentation', auth, upload.single('documents'), async 
 router.post('/trademark-protection', auth, upload.single('documents'), async (req, res) => {
   try {
     const { disputeType, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'trademark/protection');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const trademarkService = new Trademark({
       userId: req.user._id,
       disputeType,
       notes,
       documentPath,
+      documentUrl,
       serviceType: 'protection',
     });
     await trademarkService.save();

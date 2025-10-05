@@ -1,31 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const BusinessAdvisory = require('../../models/BusinessAdvisory');
 const auth = require('../../middleware/userAuth');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads/business'));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
-const upload = multer({ storage });
+const upload = require('../../middleware/upload');
+const { uploadImage } = require('../../config/cloudinary');
 
 // Startup & MSME Registration
 router.post('/business-startup', auth, upload.single('documents'), async (req, res) => {
   try {
     const { businessName, businessType, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'business/startup');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const businessService = new BusinessAdvisory({
       userId: req.user._id,
       businessName,
       businessType,
       notes,
       documentPath,
+      documentUrl,
       advisoryType: 'startup',
     });
     await businessService.save();
@@ -39,13 +38,22 @@ router.post('/business-startup', auth, upload.single('documents'), async (req, r
 router.post('/business-incorporation', auth, upload.single('documents'), async (req, res) => {
   try {
     const { companyName, companyType, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'business/incorporation');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const businessService = new BusinessAdvisory({
       userId: req.user._id,
       companyName,
       companyType,
       notes,
       documentPath,
+      documentUrl,
       advisoryType: 'incorporation',
     });
     await businessService.save();
@@ -59,12 +67,21 @@ router.post('/business-incorporation', auth, upload.single('documents'), async (
 router.post('/business-advisory', auth, upload.single('documents'), async (req, res) => {
   try {
     const { query, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'business/advisory');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const businessService = new BusinessAdvisory({
       userId: req.user._id,
       query,
       notes,
       documentPath,
+      documentUrl,
       advisoryType: 'advisory',
     });
     await businessService.save();

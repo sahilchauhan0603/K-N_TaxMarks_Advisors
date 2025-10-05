@@ -7,7 +7,8 @@ const TrademarkSchema = new mongoose.Schema({
   docType: { type: String }, // For Documentation
   disputeType: { type: String }, // For Protection
   notes: { type: String },
-  documentPath: { type: String },
+  documentPath: { type: String }, // Cloudinary public_id
+  documentUrl: { type: String }, // Cloudinary secure_url
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -1,32 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const GST = require('../../models/GST');
 const auth = require('../../middleware/userAuth');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads/gst'));
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
-const upload = multer({ storage });
+const upload = require('../../middleware/upload');
+const { uploadImage } = require('../../config/cloudinary');
 
 // GST Registration
 router.post('/gst-registration', auth, upload.single('documents'), async (req, res) => {
   try {
     const { gstNumber, businessName, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'gst/registration');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const gstService = new GST({ 
       userId: req.user._id,
       serviceType: 'Registration',
       gstNumber,
       businessName,
       notes,
-      documentPath
+      documentPath,
+      documentUrl
     });
     await gstService.save();
     res.json({ success: true, message: 'GST Registration request submitted.' });
@@ -48,13 +47,22 @@ router.get('/gst-registration/all', async (req, res) => {
 router.post('/gst-return-filing', auth, upload.single('documents'), async (req, res) => {
   try {
     const { gstin, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'gst/return-filing');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const gstService = new GST({ 
       userId: req.user._id,
       serviceType: 'Return Filing',
       gstin,
       notes,
-      documentPath
+      documentPath,
+      documentUrl
     });
     await gstService.save();
     res.status(201).json({ success: true, message: 'GST Return Filing request submitted.' });
@@ -76,14 +84,23 @@ router.get('/gst-return-filing/all', async (req, res) => {
 router.post('/gst-resolution', auth, upload.single('documents'), async (req, res) => {
   try {
     const { gstNumber, issue, notes } = req.body;
-    const documentPath = req.file ? req.file.filename : '';
+    let documentPath = '';
+    let documentUrl = '';
+    
+    if (req.file) {
+      const result = await uploadImage(req.file.buffer, 'gst/resolution');
+      documentPath = result.public_id;
+      documentUrl = result.secure_url;
+    }
+    
     const gstService = new GST({ 
       userId: req.user._id,
       serviceType: 'Resolution',
       gstNumber,
       issue,
       notes,
-      documentPath
+      documentPath,
+      documentUrl
     });
     await gstService.save();
     res.status(201).json({ success: true, message: 'GST Resolution request submitted.' });

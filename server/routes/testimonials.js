@@ -1,18 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const Testimonial = require('../models/Testimonial');
-const testimonialUpload = require('../utils/testimonialUpload');
-const path = require('path');
+const upload = require('../middleware/upload');
+const { uploadImage } = require('../config/cloudinary');
 
 // POST /api/testimonials - Add a new testimonial with image upload
-router.post('/', testimonialUpload.single('photo'), async (req, res) => {
+router.post('/', upload.single('photo'), async (req, res) => {
   try {
     const { name, role, service, feedback } = req.body;
     let photoUrl = req.body.photoUrl || '';
+    
     if (req.file) {
-      // Serve from /uploads/testimonials/...
-      photoUrl = `/uploads/testimonials/${req.file.filename}`;
+      const result = await uploadImage(req.file.buffer, 'testimonials');
+      photoUrl = result.secure_url;
     }
+    
     if (!name || !role || !service || !feedback) {
       return res.status(400).json({ message: 'All required fields must be filled.' });
     }

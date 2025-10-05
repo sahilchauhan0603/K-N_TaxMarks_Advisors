@@ -10,7 +10,8 @@ const ITRSchema = new mongoose.Schema({
   noticeType: { type: String }, // For Refund/Notice
   documentType: { type: String }, // For Document Preparation
   notes: { type: String },
-  documentPath: { type: String },
+  documentPath: { type: String }, // Cloudinary public_id
+  documentUrl: { type: String }, // Cloudinary secure_url
   createdAt: { type: Date, default: Date.now },
 });
 
