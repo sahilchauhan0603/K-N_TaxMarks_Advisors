@@ -19,6 +19,7 @@ const itrForms = require('./routes/Forms/itrForms');
 const settingsRouter = require('./routes/settings');
 const contactRoutes = require('./routes/contact');
 const testimonialsRoutes = require('./routes/testimonials');
+const servicesRoutes = require('./routes/services');
 const path = require('path');
 
 const app = express();
@@ -63,6 +64,7 @@ app.use('/api', gstForms);
 app.use('/api', itrForms);
 app.use('/api/admin/settings', settingsRouter);
 app.use('/api/testimonials', testimonialsRoutes);
+app.use('/api/services', servicesRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

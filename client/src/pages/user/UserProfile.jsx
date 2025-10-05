@@ -33,6 +33,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "../../utils/axios";
 import UserTestimonials from "./UserTestimonials";
+import MyServices from "./MyServices";
 
 // States of India
 const STATES_OF_INDIA = [
@@ -76,6 +77,7 @@ const Sidebar = ({
   setShowLogoutModal,
   isCollapsed,
   setIsCollapsed,
+  serviceCount = 0,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -143,9 +145,8 @@ const Sidebar = ({
           }`}
         />
       ),
-      description: "Manage services",
-      comingSoon: true,
-      badge: "3",
+      description: "View applied services",
+      badge: serviceCount > 0 ? serviceCount.toString() : null,
     },
     {
       key: "testimonials",
@@ -457,6 +458,8 @@ const UserProfile = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [serviceCount, setServiceCount] = useState(0);
+  const [satisfactionRate, setSatisfactionRate] = useState(null);
 
   //  Fetch user profile (runs only when user.email changes or on manual refresh)
   const fetchUserProfile = useCallback(
@@ -497,6 +500,52 @@ const UserProfile = () => {
       fetchUserProfile(false);
     }
   }, [user?.email, userProfile, fetchUserProfile]);
+
+  // Fetch service count for badge
+  useEffect(() => {
+    const fetchServiceCount = async () => {
+      try {
+        const response = await axios.get('/api/services/user-services');
+        setServiceCount(response.data.data.totalServices || 0);
+      } catch (err) {
+        console.error('Failed to fetch service count:', err);
+        // Set count to 0 if there's an error, but don't show error to user
+        setServiceCount(0);
+      }
+    };
+
+    if (user?.email) {
+      fetchServiceCount();
+    }
+  }, [user?.email]);
+
+  // Fetch testimonials and calculate satisfaction rate
+  useEffect(() => {
+    const fetchSatisfactionRate = async () => {
+      try {
+        const response = await axios.get('/api/testimonials/my');
+        const testimonials = response.data;
+        
+        if (testimonials.length === 0) {
+          // If no testimonials, show "--" or 0%
+          setSatisfactionRate(null);
+          return;
+        }
+        
+        const approvedCount = testimonials.filter(t => t.isApproved).length;
+        const rate = Math.round((approvedCount / testimonials.length) * 100);
+        setSatisfactionRate(rate);
+      } catch (err) {
+        console.error('Failed to fetch testimonials for satisfaction rate:', err);
+        // Default to null if error fetching testimonials
+        setSatisfactionRate(null);
+      }
+    };
+
+    if (user?.email) {
+      fetchSatisfactionRate();
+    }
+  }, [user?.email]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -679,11 +728,24 @@ const UserProfile = () => {
             {/* Quick Stats */}
             <div className="flex lg:flex-col space-x-4 lg:space-x-0 lg:space-y-2">
               <div className="text-center">
-                <div className="text-lg font-bold">12</div>
+                <div 
+                  className="text-lg font-bold"
+                  title={`You have applied for ${serviceCount} service${serviceCount !== 1 ? 's' : ''}`}
+                >
+                  {serviceCount}
+                </div>
                 <div className="text-blue-200 text-xs">Services</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold">98%</div>
+                <div 
+                  className="text-lg font-bold"
+                  title={satisfactionRate !== null ? 
+                    `${satisfactionRate}% of your testimonials have been approved` : 
+                    'No testimonials submitted yet'
+                  }
+                >
+                  {satisfactionRate !== null ? `${satisfactionRate}%` : '--'}
+                </div>
                 <div className="text-blue-200 text-xs">Satisfaction</div>
               </div>
             </div>
@@ -1161,13 +1223,7 @@ const UserProfile = () => {
       case "edit":
         return <EditProfile />;
       case "services":
-        return (
-          <ComingSoon
-            title="My Services"
-            description="Manage and view all your service subscriptions and packages in one place."
-            icon={Briefcase}
-          />
-        );
+        return <MyServices />;
       case "testimonials":
         return <UserTestimonials />;
       case "bills":
@@ -1212,6 +1268,7 @@ const UserProfile = () => {
                 onLogout={logout}
                 showLogoutModal={showLogoutModal}
                 setShowLogoutModal={setShowLogoutModal}
+                serviceCount={serviceCount}
               />
             </div>
           </div>
@@ -1226,6 +1283,7 @@ const UserProfile = () => {
               onLogout={logout}
               showLogoutModal={showLogoutModal}
               setShowLogoutModal={setShowLogoutModal}
+              serviceCount={serviceCount}
             />
           </div>
 

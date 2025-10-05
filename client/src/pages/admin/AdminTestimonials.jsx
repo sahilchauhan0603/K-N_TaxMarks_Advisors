@@ -39,11 +39,10 @@ const AdminTestimonials = () => {
         return;
       }
       
-      console.log('Approving testimonial with admin token:', adminToken.substring(0, 20) + '...');
-      
       const config = {
         headers: {
-          'Authorization': `Bearer ${adminToken}`
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
         }
       };
       
@@ -79,7 +78,8 @@ const AdminTestimonials = () => {
       
       const config = {
         headers: {
-          'Authorization': `Bearer ${adminToken}`
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
         }
       };
       
@@ -131,8 +131,32 @@ const AdminTestimonials = () => {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Testimonials Management</h1>
-        <p className="text-gray-600">Review, approve, and manage user testimonials.</p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Testimonials Management</h1>
+            <p className="text-gray-600">Review, approve, and manage user testimonials.</p>
+          </div>
+          <button
+            onClick={fetchTestimonials}
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+          >
+            <svg 
+              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth="2" 
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Tab Navigation */}

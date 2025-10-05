@@ -12,7 +12,10 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     // Check if this is an admin route
-    const isAdminRoute = config.url?.includes('/admin') || config.url?.includes('admin');
+    const isAdminRoute = config.url?.includes('/admin') || 
+                        config.url?.includes('admin') ||
+                        config.url?.includes('/approve') ||  // Testimonial approve endpoint
+                        (config.method?.toLowerCase() === 'delete' && config.url?.includes('/testimonials/')); // Testimonial delete by admin
     
     let token;
     if (isAdminRoute) {
@@ -39,7 +42,10 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Check if this was an admin route
-      const isAdminRoute = error.config?.url?.includes('/admin') || error.config?.url?.includes('admin');
+      const isAdminRoute = error.config?.url?.includes('/admin') || 
+                          error.config?.url?.includes('admin') ||
+                          error.config?.url?.includes('/approve') ||
+                          (error.config?.method?.toLowerCase() === 'delete' && error.config?.url?.includes('/testimonials/'));
       
       if (isAdminRoute) {
         // Admin token expired or invalid

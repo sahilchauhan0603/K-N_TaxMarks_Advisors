@@ -158,18 +158,13 @@ router.get('/admin/all', adminAuth, async (req, res) => {
   }
 });
 
-// DELETE /api/testimonials/:id - Delete testimonial (admin or testimonial owner)
-router.delete('/:id', auth, async (req, res) => {
+// DELETE /api/testimonials/:id - Delete testimonial (admin only)
+router.delete('/:id', adminAuth, async (req, res) => {
   try {
     const testimonial = await Testimonial.findById(req.params.id);
     
     if (!testimonial) {
       return res.status(404).json({ message: 'Testimonial not found' });
-    }
-    
-    // Only admin or the testimonial owner can delete
-    if (req.user.role !== 'admin' && testimonial.userId?.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Access denied' });
     }
     
     await Testimonial.findByIdAndDelete(req.params.id);
