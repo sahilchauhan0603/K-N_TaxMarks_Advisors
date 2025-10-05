@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../utils/axios";
+import ImageModal from "../../../components/ImageModal";
 
 const subTabs = [
   {
@@ -20,27 +21,9 @@ const subTabs = [
 ];
 
 const columns = {
-  search: [
-    "user",
-    "brandName",
-    "notes",
-    "documentPath",
-    "createdAt",
-  ],
-  documentation: [
-    "user",
-    "docType",
-    "notes",
-    "documentPath",
-    "createdAt",
-  ],
-  protection: [
-    "user",
-    "disputeType",
-    "notes",
-    "documentPath",
-    "createdAt",
-  ],
+  search: ["user", "brandName", "notes", "documents", "createdAt"],
+  documentation: ["user", "docType", "notes", "documents", "createdAt"],
+  protection: ["user", "disputeType", "notes", "documents", "createdAt"],
 };
 
 // Document type options for dropdown
@@ -72,6 +55,13 @@ const AdminTrademark = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
 
+  // Image modal state
+  const [imageModal, setImageModal] = useState({
+    isOpen: false,
+    imageUrl: "",
+    title: "",
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -102,11 +92,13 @@ const AdminTrademark = () => {
     .filter((row) => {
       const searchStr = search.toLowerCase();
       return columns[activeTab].some((col) => {
-        if (col === 'user') {
+        if (col === "user") {
           const user = row.userId || {};
-          return (user.name || '').toLowerCase().includes(searchStr) ||
-                 (user.email || '').toLowerCase().includes(searchStr) ||
-                 (user.phone || '').toLowerCase().includes(searchStr);
+          return (
+            (user.name || "").toLowerCase().includes(searchStr) ||
+            (user.email || "").toLowerCase().includes(searchStr) ||
+            (user.phone || "").toLowerCase().includes(searchStr)
+          );
         }
         return (row[col] || "").toString().toLowerCase().includes(searchStr);
       });
@@ -140,29 +132,40 @@ const AdminTrademark = () => {
     if (col === "brandName") return "Brand Name";
     if (col === "docType") return "Document Type";
     if (col === "disputeType") return "Dispute Type";
-    if (col === "documentPath" || col === "documents") return "Documents";
+    if (col === "documents") return "Documents";
     if (col === "createdAt") return "Created At";
     if (col === "notes") return "Notes";
     // Capitalize first letter and add spaces before uppercase letters
     return col.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
   };
 
-  // Handle document download
-  const handleDownload = (documentPath) => {
-    if (documentPath) {
-      // In a real app, this would be the actual download URL
-      window.open(
-        `/api/download?path=${encodeURIComponent(documentPath)}`,
-        "_blank"
-      );
+  // Handle viewing document image
+  const handleViewDocument = (row) => {
+    if (row.documentUrl) {
+      setImageModal({
+        isOpen: true,
+        imageUrl: row.documentUrl,
+        title: `Trademark Document - ${row.userId?.name || "Unknown"}`,
+      });
     }
+  };
+
+  // Close image modal
+  const closeImageModal = () => {
+    setImageModal({
+      isOpen: false,
+      imageUrl: "",
+      title: "",
+    });
   };
 
   // Handle refresh
   const handleRefresh = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(subTabs.find(t => t.key === activeTab).endpoint + '/all');
+      const res = await axios.get(
+        subTabs.find((t) => t.key === activeTab).endpoint + "/all"
+      );
       if (res.data && Array.isArray(res.data.data)) {
         setData(res.data.data);
       } else if (Array.isArray(res.data)) {
@@ -194,15 +197,20 @@ const AdminTrademark = () => {
             disabled={loading}
             className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <svg 
-              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
-            {loading ? 'Refreshing...' : 'Refresh'}
+            {loading ? "Refreshing..." : "Refresh"}
           </button>
         </div>
 
@@ -364,7 +372,7 @@ const AdminTrademark = () => {
                               ? "w-44"
                               : col === "notes"
                               ? "w-64"
-                              : col === "documentPath"
+                              : col === "documents"
                               ? "w-32"
                               : col === "createdAt"
                               ? "w-44"
@@ -429,7 +437,7 @@ const AdminTrademark = () => {
                                   ? "w-44"
                                   : col === "notes"
                                   ? "w-64"
-                                  : col === "documentPath"
+                                  : col === "documents"
                                   ? "w-32"
                                   : col === "createdAt"
                                   ? "w-44"
@@ -439,15 +447,24 @@ const AdminTrademark = () => {
                               <div className="overflow-hidden">
                                 {col === "user" ? (
                                   <div className="space-y-1">
-                                    <div className="font-medium text-gray-900 truncate">{row.userId?.name || '-'}</div>
+                                    <div className="font-medium text-gray-900 truncate">
+                                      {row.userId?.name || "-"}
+                                    </div>
                                     <div className="text-gray-500 truncate">
-                                      <a href={`mailto:${row.userId?.email}`} className="hover:text-purple-600" title={row.userId?.email}>
-                                        {row.userId?.email || '-'}
+                                      <a
+                                        href={`mailto:${row.userId?.email}`}
+                                        className="hover:text-purple-600"
+                                        title={row.userId?.email}
+                                      >
+                                        {row.userId?.email || "-"}
                                       </a>
                                     </div>
                                     <div className="text-gray-500 truncate">
-                                      <a href={`tel:${row.userId?.phone}`} className="hover:text-purple-600">
-                                        {row.userId?.phone || '-'}
+                                      <a
+                                        href={`tel:${row.userId?.phone}`}
+                                        className="hover:text-purple-600"
+                                      >
+                                        {row.userId?.phone || "-"}
                                       </a>
                                     </div>
                                   </div>
@@ -455,11 +472,11 @@ const AdminTrademark = () => {
                                   <span className="text-gray-500 block truncate">
                                     {formatDate(row[col])}
                                   </span>
-                                ) : col === "documentPath" ? (
-                                  row.documentPath ? (
+                                ) : col === "documents" ? (
+                                  row.documentUrl ? (
                                     <button
-                                      onClick={() => handleDownload(row.documentPath)}
-                                      className="text-purple-600 hover:text-purple-800 flex items-center gap-1 truncate"
+                                      onClick={() => handleViewDocument(row)}
+                                      className="text-purple-600 hover:text-purple-800 flex cursor-pointer items-center gap-1 truncate"
                                     >
                                       <svg
                                         className="w-4 h-4 flex-shrink-0"
@@ -472,10 +489,18 @@ const AdminTrademark = () => {
                                           strokeLinecap="round"
                                           strokeLinejoin="round"
                                           strokeWidth="2"
-                                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                        ></path>
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                                         ></path>
                                       </svg>
-                                      <span className="truncate">Download</span>
+                                      <span className="truncate">
+                                        View Image
+                                      </span>
                                     </button>
                                   ) : (
                                     <span className="block truncate">-</span>
@@ -500,6 +525,14 @@ const AdminTrademark = () => {
             </div>
           )}
         </div>
+
+        {/* Image Modal */}
+        <ImageModal
+          isOpen={imageModal.isOpen}
+          onClose={closeImageModal}
+          imageUrl={imageModal.imageUrl}
+          title={imageModal.title}
+        />
       </div>
     </div>
   );
