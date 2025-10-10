@@ -177,14 +177,14 @@ const Navbar = () => {
                     onClick={() => setShowUserDropdown(!showUserDropdown)}
                     className="flex items-center text-sm cursor-pointer rounded-full focus:outline-none user-dropdown-btn"
                   >
-                    {user?.picture ? (
+                    {user?.profileImage || user?.picture ? (
                       <img
-                        src={user.picture}
+                        src={user.profileImage || user.picture}
                         alt="Profile"
-                        className="h-8 w-8 rounded-full object-cover"
+                        className="h-8 w-8 rounded-full object-cover border-2 border-white shadow-md hover:shadow-lg transition-shadow duration-200"
                       />
                     ) : (
-                      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md hover:shadow-lg transition-shadow duration-200">
                         <FiUser size={16} />
                       </div>
                     )}
@@ -343,7 +343,47 @@ const Navbar = () => {
             >
               Contact Us
             </button>
-            {!isAuthenticated && (
+            
+            {isAuthenticated ? (
+              <>
+                {/* Mobile Profile Section */}
+                <div className="pt-4 pb-3 border-t border-gray-200">
+                  <div className="flex items-center px-3 py-2">
+                    {user?.profileImage || user?.picture ? (
+                      <img
+                        src={user.profileImage || user.picture}
+                        alt="Profile"
+                        className="h-10 w-10 rounded-full object-cover border-2 border-blue-200"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
+                        <FiUser size={20} />
+                      </div>
+                    )}
+                    <div className="ml-3">
+                      <div className="text-base font-medium text-gray-800">
+                        {user?.name || user?.given_name || user?.first_name || "User"}
+                      </div>
+                      <div className="text-sm text-gray-500">{user?.email}</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 space-y-1 px-2">
+                    <button
+                      onClick={() => { setIsOpen(false); navigate('/profile'); }}
+                      className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 flex items-center"
+                    >
+                      <FiUser className="mr-3" /> User Profile
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 flex items-center"
+                    >
+                      <FiLogOut className="mr-3" /> Sign out
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
               <button
                 onClick={() => navigate("/login")}
                 className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base justify-center font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"

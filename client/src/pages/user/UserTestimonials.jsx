@@ -152,7 +152,7 @@ const UserTestimonials = () => {
                       {getStatusBadge(testimonial.isApproved)}
                       <button
                         onClick={() => deleteTestimonial(testimonial._id)}
-                        className="text-red-600 hover:text-red-800 p-1"
+                        className="text-red-600 hover:text-red-800 cursor-pointer p-1"
                         title="Delete testimonial"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

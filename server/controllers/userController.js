@@ -221,3 +221,129 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Upload profile image
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file provided' });
+    }
+
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Upload to Cloudinary
+    const { uploadImage } = require('../config/cloudinary');
+    const result = await uploadImage(req.file.buffer, 'profile-images', {
+      transformation: {
+        width: 400,
+        height: 400,
+        crop: 'fill',
+        gravity: 'face',
+        quality: 'auto',
+        fetch_format: 'auto'
+      }
+    });
+
+    // Delete old profile image from Cloudinary if exists
+    if (user.profileImage) {
+      const { cloudinary } = require('cloudinary').v2;
+      const publicId = user.profileImage.split('/').pop().split('.')[0];
+      try {
+        await cloudinary.uploader.destroy(`tax-marks-advisors/profile-images/${publicId}`);
+      } catch (deleteError) {
+        console.log('Error deleting old image:', deleteError);
+      }
+    }
+
+    // Update user profile image
+    user.profileImage = result.secure_url;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Profile image updated successfully',
+      profileImage: result.secure_url,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        state: user.state,
+        profileImage: user.profileImage
+      }
+    });
+  } catch (err) {
+    console.error('Error uploading profile image:', err);
+    res.status(500).json({ message: 'Failed to upload profile image. Please try again.' });
+  }
+};
+
+// Delete user account
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    const userEmail = req.user?.email;
+    
+    if (!userId && !userEmail) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    // Find user by ID or email
+    const user = await User.findOne(userId ? { _id: userId } : { email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Delete profile image from Cloudinary if exists
+    if (user.profileImage) {
+      const { cloudinary } = require('cloudinary').v2;
+      const publicId = user.profileImage.split('/').pop().split('.')[0];
+      try {
+        await cloudinary.uploader.destroy(`tax-marks-advisors/profile-images/${publicId}`);
+      } catch (deleteError) {
+        console.log('Error deleting profile image:', deleteError);
+      }
+    }
+
+    // Delete user's associated data
+    const Testimonial = require('../models/Testimonial');
+    const Suggestion = require('../models/Suggestion');
+    const GST = require('../models/GST');
+    const ITR = require('../models/ITR');
+    const Trademark = require('../models/Trademark');
+    const TaxPlanning = require('../models/TaxPlanning');
+    const BusinessAdvisory = require('../models/BusinessAdvisory');
+
+    // Delete all user's data
+    await Promise.all([
+      Testimonial.deleteMany({ userId: user._id }),
+      Suggestion.deleteMany({ email: user.email }),
+      GST.deleteMany({ userId: user._id }),
+      ITR.deleteMany({ userId: user._id }),
+      Trademark.deleteMany({ userId: user._id }),
+      TaxPlanning.deleteMany({ userId: user._id }),
+      BusinessAdvisory.deleteMany({ userId: user._id })
+    ]);
+
+    // Finally delete the user
+    await User.findByIdAndDelete(user._id);
+
+    res.json({ 
+      success: true, 
+      message: 'Account and all associated data deleted successfully' 
+    });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ message: 'Failed to delete account. Please try again.' });
+  }
+};

@@ -28,10 +28,12 @@ import {
   Activity,
   TrendingUp,
   Lock,
+  Trash2,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "../../utils/axios";
+import Swal from 'sweetalert2';
 import UserTestimonials from "./UserTestimonials";
 import MyServices from "./MyServices";
 
@@ -460,6 +462,8 @@ const UserProfile = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [serviceCount, setServiceCount] = useState(0);
   const [satisfactionRate, setSatisfactionRate] = useState(null);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   //  Fetch user profile (runs only when user.email changes or on manual refresh)
   const fetchUserProfile = useCallback(
@@ -476,6 +480,7 @@ const UserProfile = () => {
           email: userData.email || "",
           phone: userData.phone || "",
           state: userData.state || "",
+          profileImage: userData.profileImage || "",
         };
 
         setUserProfile(userData);
@@ -647,6 +652,316 @@ const UserProfile = () => {
     setFieldErrors({});
   };
 
+  // Edit Account Function
+  const handleEditAccount = async () => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Edit Account Details',
+      html: `
+        <div style="text-align: left; margin-bottom: 20px;">
+          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin: 0 0 10px 0; color: #1e293b;">Current Account Info</h4>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Email:</strong> ${userProfile?.email || 'N/A'}</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Phone:</strong> ${userProfile?.phone || 'N/A'}</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>State:</strong> ${userProfile?.state || 'N/A'}</p>
+          </div>
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
+          <input id="swal-input1" class="swal2-input" placeholder="Full Name" value="${userProfile?.name || ''}" style="margin-bottom: 15px;">
+          
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Phone:</label>
+          <input id="swal-input2" class="swal2-input" placeholder="Phone Number" value="${userProfile?.phone || ''}" style="margin-bottom: 15px;">
+          
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">State:</label>
+          <select id="swal-input3" class="swal2-input" style="margin-bottom: 15px;">
+            <option value="">Select State</option>
+            ${STATES_OF_INDIA.map(state => 
+              `<option value="${state}" ${userProfile?.state === state ? 'selected' : ''}>${state}</option>`
+            ).join('')}
+          </select>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Update Profile',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#3b82f6',
+      width: '500px',
+      preConfirm: () => {
+        const name = document.getElementById('swal-input1').value;
+        const phone = document.getElementById('swal-input2').value;
+        const state = document.getElementById('swal-input3').value;
+        
+        if (!name.trim()) {
+          Swal.showValidationMessage('Name is required');
+          return false;
+        }
+        
+        return { name: name.trim(), phone: phone.trim(), state };
+      }
+    });
+
+    if (formValues) {
+      try {
+        const response = await axios.put("/api/user", {
+          email: userProfile.email,
+          name: formValues.name,
+          phone: formValues.phone,
+          state: formValues.state,
+        });
+
+        if (response.data.success) {
+          setUserProfile(response.data.user);
+          const updatedUser = { ...user, ...formValues };
+          updateUser(updatedUser);
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated!',
+            text: 'Your account details have been updated successfully.',
+            confirmButtonColor: '#10b981'
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Update Failed',
+          text: error.response?.data?.message || 'Failed to update profile. Please try again.',
+          confirmButtonColor: '#ef4444'
+        });
+      }
+    }
+  };
+
+  // Delete Account Function
+  const handleDeleteAccount = async () => {
+    const result = await Swal.fire({
+      title: 'Delete Account',
+      html: `
+        <div style="text-align: left; margin-bottom: 20px;">
+          <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin: 0 0 10px 0; color: #dc2626;">⚠️ Account Deletion Warning</h4>
+            <p style="margin: 5px 0; color: #7f1d1d;">This action will permanently delete your account and all associated data.</p>
+          </div>
+          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin: 0 0 10px 0; color: #1e293b;">Account to be deleted:</h4>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Name:</strong> ${userProfile?.name || 'N/A'}</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Email:</strong> ${userProfile?.email || 'N/A'}</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Phone:</strong> ${userProfile?.phone || 'N/A'}</p>
+          </div>
+          <div style="background: #fffbeb; border: 1px solid #fed7aa; padding: 15px; border-radius: 8px;">
+            <h4 style="margin: 0 0 10px 0; color: #d97706;">What will be deleted:</h4>
+            <ul style="margin: 0; padding-left: 20px; color: #92400e;">
+              <li>Your profile information</li>
+              <li>All service form submissions</li>
+              <li>Your testimonials and suggestions</li>
+              <li>Account access and login credentials</li>
+            </ul>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete My Account',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      width: '550px',
+      icon: 'warning'
+    });
+
+    if (result.isConfirmed) {
+      // Second confirmation
+      const finalConfirm = await Swal.fire({
+        title: 'Final Confirmation',
+        text: 'Are you absolutely sure? This action cannot be undone.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, I understand',
+        cancelButtonText: 'No, keep my account',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280'
+      });
+
+      if (finalConfirm.isConfirmed) {
+        try {
+          await axios.delete('/api/user/delete');
+          
+          // Clear user data and logout
+          logout();
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Account Deleted',
+            text: 'Your account has been permanently deleted.',
+            confirmButtonColor: '#10b981'
+          }).then(() => {
+            navigate('/');
+          });
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Deletion Failed',
+            text: error.response?.data?.message || 'Failed to delete account. Please try again.',
+            confirmButtonColor: '#ef4444'
+          });
+        }
+      }
+    }
+  };
+
+  // Support Modal Function
+  const handleSupportModal = () => {
+    Swal.fire({
+      title: '📋 User Profile Guide',
+      html: `
+        <div style="text-align: left; max-height: 400px; overflow-y: auto; padding: 10px;">
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #1e293b; margin-bottom: 15px; display: flex; align-items: center;">
+              <span style="background: #3b82f6; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px;">👤</span>
+              Profile Management
+            </h4>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• View and update your personal information</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Edit name, phone number, and state details</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Track your profile completion status</p>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #1e293b; margin-bottom: 15px; display: flex; align-items: center;">
+              <span style="background: #10b981; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px;">🛠️</span>
+              My Services
+            </h4>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• View all your submitted service requests</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Track GST, ITR, Trademark applications</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Monitor service status and progress</p>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #1e293b; margin-bottom: 15px; display: flex; align-items: center;">
+              <span style="background: #f59e0b; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px;">⭐</span>
+              Testimonials
+            </h4>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Share your experience with our services</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Rate our service quality and support</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• Help other users with your feedback</p>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #1e293b; margin-bottom: 15px; display: flex; align-items: center;">
+              <span style="background: #8b5cf6; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px;">⚡</span>
+              Quick Actions
+            </h4>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• <strong>Edit Account:</strong> Update your profile information quickly</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• <strong>Delete Account:</strong> Permanently remove your account and data</p>
+            <p style="color: #64748b; margin: 5px 0; padding-left: 32px;">• <strong>Support:</strong> Get help and guidance (this modal!)</p>
+          </div>
+
+          <div style="background: #f0f9ff; border: 1px solid #bae6fd; padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <h4 style="color: #0c4a6e; margin: 0 0 10px 0; display: flex; align-items: center;">
+              <span style="margin-right: 8px;">💡</span>
+              Pro Tips
+            </h4>
+            <p style="color: #0c4a6e; margin: 5px 0; font-size: 14px;">• Keep your profile updated for better service delivery</p>
+            <p style="color: #0c4a6e; margin: 5px 0; font-size: 14px;">• Check 'My Services' regularly for status updates</p>
+            <p style="color: #0c4a6e; margin: 5px 0; font-size: 14px;">• Share testimonials to help improve our services</p>
+          </div>
+
+          <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <h4 style="color: #dc2626; margin: 0 0 10px 0; display: flex; align-items: center;">
+              <span style="margin-right: 8px;">📞</span>
+              Need More Help?
+            </h4>
+            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">Contact our support team:</p>
+            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">📧 Email: support@kntaxmarkadvisors.com</p>
+            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">📱 Phone: +91-XXXXXXXXXX</p>
+          </div>
+        </div>
+      `,
+      confirmButtonText: 'Got it!',
+      confirmButtonColor: '#3b82f6',
+      width: '600px',
+      showCloseButton: true,
+      focusConfirm: false
+    });
+  };
+
+  // Profile Image Upload Function
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid File Type',
+        text: 'Please select an image file (JPG, PNG, GIF, WEBP)',
+        confirmButtonColor: '#ef4444'
+      });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire({
+        icon: 'error',
+        title: 'File Too Large',
+        text: 'Please select an image smaller than 5MB',
+        confirmButtonColor: '#ef4444'
+      });
+      return;
+    }
+
+    try {
+      setImageUploading(true);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target.result);
+      reader.readAsDataURL(file);
+
+      // Create FormData for upload
+      const formData = new FormData();
+      formData.append('profileImage', file);
+
+      // Upload to backend
+      const response = await axios.post('/api/user/upload-profile-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        // Update user profile with new image
+        setUserProfile(prev => ({
+          ...prev,
+          profileImage: response.data.profileImage
+        }));
+
+        // Update user in context
+        const updatedUser = { ...user, profileImage: response.data.profileImage };
+        updateUser(updatedUser);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Profile Image Updated!',
+          text: 'Your profile image has been updated successfully.',
+          confirmButtonColor: '#10b981',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setImagePreview(null);
+      Swal.fire({
+        icon: 'error',
+        title: 'Upload Failed',
+        text: error.response?.data?.message || 'Failed to upload image. Please try again.',
+        confirmButtonColor: '#ef4444'
+      });
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
   const handleSectionChange = (section) => {
     setActiveSection(section);
     setError("");
@@ -689,12 +1004,32 @@ const UserProfile = () => {
           <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
             {/* Avatar Section */}
             <div className="relative group">
-              <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/30 shadow-xl group-hover:scale-105 transition-transform duration-300">
-                <User className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/30 shadow-xl group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                {userProfile?.profileImage || imagePreview ? (
+                  <img
+                    src={imagePreview || userProfile.profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                ) : (
+                  <User className="w-10 h-10 text-white" />
+                )}
+                {imageUploading && (
+                  <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
               </div>
-              <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-white text-blue-600 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110">
+              <label className="absolute -bottom-2 -right-2 w-8 h-8 bg-white text-blue-600 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer">
                 <Camera className="w-4 h-4" />
-              </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={imageUploading}
+                />
+              </label>
               <div className="absolute -top-1 -left-1 w-5 h-5 bg-emerald-400 rounded-full flex items-center justify-center border-2 border-white shadow-lg">
                 <Check className="w-2 h-2 text-white" />
               </div>
@@ -847,34 +1182,40 @@ const UserProfile = () => {
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* <button
-            onClick={() => handleSectionChange("edit")}
+          <button
+            onClick={handleEditAccount}
             className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
           >
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Edit3 className="w-6 h-6 text-white" />
             </div>
-            <p className="font-bold text-gray-900 text-lg mb-2">Edit Profile</p>
-            <p className="text-sm text-gray-600">Update your information</p>
-          </button> */}
-
-          <button className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/30 text-left cursor-not-allowed opacity-75">
-            <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-              <Settings className="w-6 h-6 text-white" />
-            </div>
-            <p className="font-bold text-gray-700 text-lg mb-2">Settings</p>
-            <p className="text-sm text-gray-500">Coming soon</p>
+            <p className="font-bold text-gray-900 text-lg mb-2">Edit Account</p>
+            <p className="text-sm text-gray-600">Update your details</p>
           </button>
 
-          <button className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/30 text-left cursor-not-allowed opacity-75">
-            <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <button
+            onClick={handleDeleteAccount}
+            className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
+          >
+            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <Trash2 className="w-6 h-6 text-white" />
+            </div>
+            <p className="font-bold text-gray-900 text-lg mb-2">Delete Account</p>
+            <p className="text-sm text-gray-600">Permanently remove</p>
+          </button>
+
+          <button
+            onClick={handleSupportModal}
+            className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
+          >
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <HelpCircle className="w-6 h-6 text-white" />
             </div>
-            <p className="font-bold text-gray-700 text-lg mb-2">Support</p>
-            <p className="text-sm text-gray-500">Get help</p>
+            <p className="font-bold text-gray-900 text-lg mb-2">Support</p>
+            <p className="text-sm text-gray-600">Get help & guide</p>
           </button>
 
-          <button className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/30 text-left cursor-not-allowed opacity-75">
+          {/* <button className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/30 text-left cursor-not-allowed opacity-75">
             <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
               <Bell className="w-6 h-6 text-white" />
             </div>
@@ -882,7 +1223,7 @@ const UserProfile = () => {
               Notifications
             </p>
             <p className="text-sm text-gray-500">Manage alerts</p>
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
@@ -955,21 +1296,38 @@ const UserProfile = () => {
           {/* Mobile-Optimized Profile Picture Section */}
           <div className="text-center pb-6 lg:pb-8 border-b border-gray-100">
             <div className="relative inline-block">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl lg:rounded-3xl flex items-center justify-center shadow-2xl mx-auto mb-3 lg:mb-4">
-                <User className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
+              <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl lg:rounded-3xl flex items-center justify-center shadow-2xl mx-auto mb-3 lg:mb-4 overflow-hidden">
+                {userProfile?.profileImage || imagePreview ? (
+                  <img
+                    src={imagePreview || userProfile.profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-2xl lg:rounded-3xl"
+                  />
+                ) : (
+                  <User className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
+                )}
+                {imageUploading && (
+                  <div className="absolute inset-0 bg-black/50 rounded-2xl lg:rounded-3xl flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
               </div>
-              <button
-                type="button"
-                className="absolute -bottom-1 -right-1 lg:-bottom-2 lg:-right-2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white text-blue-600 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-blue-100"
-              >
+              <label className="absolute -bottom-1 -right-1 lg:-bottom-2 lg:-right-2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white text-blue-600 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-blue-100 cursor-pointer">
                 <Camera className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-              </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={imageUploading}
+                />
+              </label>
             </div>
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
               Profile Picture
             </h3>
             <p className="text-gray-500 text-xs sm:text-sm">
-              Click the camera icon to upload a new photo
+              {imageUploading ? 'Uploading...' : 'Click the camera icon to upload a new photo'}
             </p>
           </div>
 

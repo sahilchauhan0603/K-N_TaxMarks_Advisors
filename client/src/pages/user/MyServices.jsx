@@ -228,7 +228,7 @@ const MyServices = () => {
           </div>
           <button
             onClick={fetchUserServices}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Refresh</span>
@@ -266,7 +266,7 @@ const MyServices = () => {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedService('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
               selectedService === 'all'
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -278,7 +278,7 @@ const MyServices = () => {
             <button
               key={serviceType}
               onClick={() => setSelectedService(serviceType)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
                 selectedService === serviceType
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -337,7 +337,7 @@ const MyServices = () => {
                     {service.documentUrl && (
                       <button
                         onClick={() => window.open(service.documentUrl, '_blank')}
-                        className="text-blue-600 hover:text-blue-800 p-1 rounded"
+                        className="text-blue-600 hover:text-blue-800 p-1 cursor-pointer rounded"
                         title="View document"
                       >
                         <Eye className="w-5 h-5" />
@@ -351,7 +351,7 @@ const MyServices = () => {
                           link.download = `${service.title}-document`;
                           link.click();
                         }}
-                        className="text-green-600 hover:text-green-800 p-1 rounded"
+                        className="text-green-600 hover:text-green-800 p-1 cursor-pointer rounded"
                         title="Download document"
                       >
                         <Download className="w-5 h-5" />
