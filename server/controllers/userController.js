@@ -256,7 +256,7 @@ exports.uploadProfileImage = async (req, res) => {
 
     // Delete old profile image from Cloudinary if exists
     if (user.profileImage) {
-      const { cloudinary } = require('cloudinary').v2;
+      const cloudinary = require('cloudinary').v2;
       const publicId = user.profileImage.split('/').pop().split('.')[0];
       try {
         await cloudinary.uploader.destroy(`tax-marks-advisors/profile-images/${publicId}`);
@@ -306,7 +306,7 @@ exports.deleteUser = async (req, res) => {
 
     // Delete profile image from Cloudinary if exists
     if (user.profileImage) {
-      const { cloudinary } = require('cloudinary').v2;
+      const cloudinary = require('cloudinary').v2;
       const publicId = user.profileImage.split('/').pop().split('.')[0];
       try {
         await cloudinary.uploader.destroy(`tax-marks-advisors/profile-images/${publicId}`);

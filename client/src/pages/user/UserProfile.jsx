@@ -33,7 +33,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "../../utils/axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import UserTestimonials from "./UserTestimonials";
 import MyServices from "./MyServices";
 
@@ -97,46 +97,6 @@ const Sidebar = ({
       description: "View your profile",
       badge: null,
     },
-    // {
-    //   key: "edit",
-    //   label: "Edit Profile",
-    //   icon: (
-    //     <Edit3
-    //       className={`transition-all duration-200 ${
-    //         isCollapsed ? "w-5 h-5" : "w-4 h-4"
-    //       }`}
-    //     />
-    //   ),
-    //   description: "Update your information",
-    //   badge: null,
-    // },
-    // {
-    //   key: "security",
-    //   label: "Security",
-    //   icon: (
-    //     <Shield
-    //       className={`transition-all duration-200 ${
-    //         isCollapsed ? "w-5 h-5" : "w-4 h-4"
-    //       }`}
-    //     />
-    //   ),
-    //   description: "Privacy & security",
-    //   comingSoon: true,
-    //   badge: "New",
-    // },
-    // {
-    //   key: "notifications",
-    //   label: "Notifications",
-    //   icon: (
-    //     <Bell
-    //       className={`transition-all duration-200 ${
-    //         isCollapsed ? "w-5 h-5" : "w-4 h-4"
-    //       }`}
-    //     />
-    //   ),
-    //   description: "Manage notifications",
-    //   comingSoon: true,
-    // },
     {
       key: "services",
       label: "My Services",
@@ -174,7 +134,7 @@ const Sidebar = ({
         />
       ),
       description: "Billing & payments",
-      comingSoon: true,
+      badge: null,
     },
   ];
 
@@ -439,6 +399,405 @@ const Sidebar = ({
   );
 };
 
+// MyBills Component - Comprehensive Billing Dashboard
+const MyBills = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [dateFilter, setDateFilter] = useState("All Time");
+
+  // Sample billing data
+  const sampleBills = [
+    {
+      id: "INV-2024-001",
+      service: "ITR Filing - Individual",
+      date: "2024-01-15",
+      dueDate: "2024-01-30",
+      amount: 2500,
+      status: "Paid",
+      paymentMethod: "UPI",
+      description: "Annual Income Tax Return Filing for FY 2023-24",
+    },
+    {
+      id: "INV-2024-002",
+      service: "GST Registration",
+      date: "2024-02-10",
+      dueDate: "2024-02-25",
+      amount: 5000,
+      status: "Pending",
+      paymentMethod: "Bank Transfer",
+      description: "New GST Registration for Business",
+    },
+    {
+      id: "INV-2024-003",
+      service: "Trademark Registration",
+      date: "2024-02-20",
+      dueDate: "2024-03-05",
+      amount: 8000,
+      status: "Overdue",
+      paymentMethod: "Credit Card",
+      description: "Brand Trademark Registration Application",
+    },
+    {
+      id: "INV-2024-004",
+      service: "Business Advisory - Premium",
+      date: "2024-03-01",
+      dueDate: "2024-03-15",
+      amount: 6000,
+      status: "Paid",
+      paymentMethod: "UPI",
+      description: "Monthly Business Consultation Package",
+    },
+    {
+      id: "INV-2024-005",
+      service: "Tax Planning Consultation",
+      date: "2024-03-10",
+      dueDate: "2024-03-25",
+      amount: 2000,
+      status: "Pending",
+      paymentMethod: "Cash",
+      description: "Annual Tax Planning Strategy Session",
+    },
+  ];
+
+  // Filter bills based on search and filters
+  const filteredBills = sampleBills.filter((bill) => {
+    const matchesSearch =
+      bill.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      bill.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      bill.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "All" || bill.status === statusFilter;
+
+    const matchesDate =
+      dateFilter === "All Time" ||
+      (dateFilter === "This Month" &&
+        new Date(bill.date).getMonth() === new Date().getMonth()) ||
+      (dateFilter === "Last 3 Months" &&
+        new Date(bill.date) >= new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
+
+    return matchesSearch && matchesStatus && matchesDate;
+  });
+
+  // Calculate summary statistics
+  const totalAmount = filteredBills.reduce((sum, bill) => sum + bill.amount, 0);
+  const paidAmount = filteredBills
+    .filter((bill) => bill.status === "Paid")
+    .reduce((sum, bill) => sum + bill.amount, 0);
+  const pendingAmount = filteredBills
+    .filter((bill) => bill.status === "Pending")
+    .reduce((sum, bill) => sum + bill.amount, 0);
+  const overdueAmount = filteredBills
+    .filter((bill) => bill.status === "Overdue")
+    .reduce((sum, bill) => sum + bill.amount, 0);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Paid":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "Pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "Overdue":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getPaymentMethodIcon = (method) => {
+    switch (method) {
+      case "UPI":
+        return "📱";
+      case "Credit Card":
+        return "💳";
+      case "Bank Transfer":
+        return "🏦";
+      case "Cash":
+        return "💵";
+      default:
+        return "💰";
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-xl p-6 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">My Bills & Payments</h2>
+            <p className="text-blue-100">
+              Manage your invoices and payment history
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl mb-2">💳</div>
+            <div className="text-sm text-blue-200">
+              Total Bills: {filteredBills.length}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Amount</p>
+              <p className="text-xl font-bold text-gray-900">
+                ₹{totalAmount.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-blue-100 p-2 rounded-lg">
+              <Receipt className="w-5 h-5 text-blue-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Paid</p>
+              <p className="text-xl font-bold text-green-600">
+                ₹{paidAmount.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-green-100 p-2 rounded-lg">
+              <Check className="w-5 h-5 text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Pending</p>
+              <p className="text-xl font-bold text-yellow-600">
+                ₹{pendingAmount.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-yellow-100 p-2 rounded-lg">
+              <Clock className="w-5 h-5 text-yellow-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Overdue</p>
+              <p className="text-xl font-bold text-red-600">
+                ₹{overdueAmount.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-red-100 p-2 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters and Search */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search bills..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <div className="absolute left-3 top-2.5">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="All">All Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+
+            <select
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="All Time">All Time</option>
+              <option value="This Month">This Month</option>
+              <option value="Last 3 Months">Last 3 Months</option>
+            </select>
+          </div>
+
+          <button className="bg-blue-600 text-white px-6 cursor-pointer py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2">
+            <CreditCard className="w-4 h-4" />
+            Download All
+          </button>
+        </div>
+      </div>
+
+      {/* Bills Table */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Invoice
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Service
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Due Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Payment
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredBills.map((bill) => (
+                <tr
+                  key={bill.id}
+                  className="hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium text-gray-900">{bill.id}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900 font-medium">
+                      {bill.service}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {bill.description}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {new Date(bill.date).toLocaleDateString("en-IN")}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {new Date(bill.dueDate).toLocaleDateString("en-IN")}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ₹{bill.amount.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                        bill.status
+                      )}`}
+                    >
+                      {bill.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="flex items-center gap-2">
+                      <span>{getPaymentMethodIcon(bill.paymentMethod)}</span>
+                      <span>{bill.paymentMethod}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div className="flex items-center gap-2">
+                      <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
+                        View
+                      </button>
+                      <button className="text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200">
+                        Download
+                      </button>
+                      {bill.status === "Pending" && (
+                        <button className="text-green-600 hover:text-green-800 font-medium transition-colors duration-200">
+                          Pay Now
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {filteredBills.length === 0 && (
+          <div className="text-center py-12">
+            <Receipt className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No bills found
+            </h3>
+            <p className="text-gray-500">
+              Try adjusting your search or filter criteria.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Payment Methods Section */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <CreditCard className="w-5 h-5" />
+          Payment Methods
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
+            <div className="text-2xl mb-2">📱</div>
+            <div className="font-medium text-gray-900">UPI</div>
+            <div className="text-sm text-gray-500">
+              Google Pay, PhonePe, Paytm
+            </div>
+          </div>
+          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
+            <div className="text-2xl mb-2">💳</div>
+            <div className="font-medium text-gray-900">Cards</div>
+            <div className="text-sm text-gray-500">Credit & Debit Cards</div>
+          </div>
+          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
+            <div className="text-2xl mb-2">🏦</div>
+            <div className="font-medium text-gray-900">Net Banking</div>
+            <div className="text-sm text-gray-500">All Major Banks</div>
+          </div>
+          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
+            <div className="text-2xl mb-2">💵</div>
+            <div className="font-medium text-gray-900">Cash</div>
+            <div className="text-sm text-gray-500">Office Payment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Main UserProfile Component
 const UserProfile = () => {
   const { user, logout, updateUser } = useAuth();
@@ -510,10 +869,10 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchServiceCount = async () => {
       try {
-        const response = await axios.get('/api/services/user-services');
+        const response = await axios.get("/api/services/user-services");
         setServiceCount(response.data.data.totalServices || 0);
       } catch (err) {
-        console.error('Failed to fetch service count:', err);
+        console.error("Failed to fetch service count:", err);
         // Set count to 0 if there's an error, but don't show error to user
         setServiceCount(0);
       }
@@ -528,20 +887,23 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchSatisfactionRate = async () => {
       try {
-        const response = await axios.get('/api/testimonials/my');
+        const response = await axios.get("/api/testimonials/my");
         const testimonials = response.data;
-        
+
         if (testimonials.length === 0) {
           // If no testimonials, show "--" or 0%
           setSatisfactionRate(null);
           return;
         }
-        
-        const approvedCount = testimonials.filter(t => t.isApproved).length;
+
+        const approvedCount = testimonials.filter((t) => t.isApproved).length;
         const rate = Math.round((approvedCount / testimonials.length) * 100);
         setSatisfactionRate(rate);
       } catch (err) {
-        console.error('Failed to fetch testimonials for satisfaction rate:', err);
+        console.error(
+          "Failed to fetch testimonials for satisfaction rate:",
+          err
+        );
         // Default to null if error fetching testimonials
         setSatisfactionRate(null);
       }
@@ -655,48 +1017,61 @@ const UserProfile = () => {
   // Edit Account Function
   const handleEditAccount = async () => {
     const { value: formValues } = await Swal.fire({
-      title: 'Edit Account Details',
+      title: "Edit Account Details",
       html: `
         <div style="text-align: left; margin-bottom: 20px;">
           <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <h4 style="margin: 0 0 10px 0; color: #1e293b;">Current Account Info</h4>
-            <p style="margin: 5px 0; color: #64748b;"><strong>Email:</strong> ${userProfile?.email || 'N/A'}</p>
-            <p style="margin: 5px 0; color: #64748b;"><strong>Phone:</strong> ${userProfile?.phone || 'N/A'}</p>
-            <p style="margin: 5px 0; color: #64748b;"><strong>State:</strong> ${userProfile?.state || 'N/A'}</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Email:</strong> ${
+              userProfile?.email || "N/A"
+            }</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Phone:</strong> ${
+              userProfile?.phone || "N/A"
+            }</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>State:</strong> ${
+              userProfile?.state || "N/A"
+            }</p>
           </div>
           <label style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
-          <input id="swal-input1" class="swal2-input" placeholder="Full Name" value="${userProfile?.name || ''}" style="margin-bottom: 15px;">
+          <input id="swal-input1" class="swal2-input" placeholder="Full Name" value="${
+            userProfile?.name || ""
+          }" style="margin-bottom: 15px;">
           
           <label style="display: block; margin-bottom: 5px; font-weight: bold;">Phone:</label>
-          <input id="swal-input2" class="swal2-input" placeholder="Phone Number" value="${userProfile?.phone || ''}" style="margin-bottom: 15px;">
+          <input id="swal-input2" class="swal2-input" placeholder="Phone Number" value="${
+            userProfile?.phone || ""
+          }" style="margin-bottom: 15px;">
           
           <label style="display: block; margin-bottom: 5px; font-weight: bold;">State:</label>
           <select id="swal-input3" class="swal2-input" style="margin-bottom: 15px;">
             <option value="">Select State</option>
-            ${STATES_OF_INDIA.map(state => 
-              `<option value="${state}" ${userProfile?.state === state ? 'selected' : ''}>${state}</option>`
-            ).join('')}
+            ${STATES_OF_INDIA.map(
+              (state) =>
+                `<option value="${state}" ${
+                  userProfile?.state === state ? "selected" : ""
+                }>${state}</option>`
+            ).join("")}
           </select>
         </div>
       `,
       focusConfirm: false,
       showCancelButton: true,
-      confirmButtonText: 'Update Profile',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#3b82f6',
-      width: '500px',
+      confirmButtonText: "Update Profile",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#3b82f6",
+      width: "500px",
       preConfirm: () => {
-        const name = document.getElementById('swal-input1').value;
-        const phone = document.getElementById('swal-input2').value;
-        const state = document.getElementById('swal-input3').value;
-        
+        const name = document.getElementById("swal-input1").value;
+        const phone = document.getElementById("swal-input2").value;
+        const state = document.getElementById("swal-input3").value;
+
         if (!name.trim()) {
-          Swal.showValidationMessage('Name is required');
+          Swal.showValidationMessage("Name is required");
           return false;
         }
-        
+
         return { name: name.trim(), phone: phone.trim(), state };
-      }
+      },
     });
 
     if (formValues) {
@@ -712,20 +1087,22 @@ const UserProfile = () => {
           setUserProfile(response.data.user);
           const updatedUser = { ...user, ...formValues };
           updateUser(updatedUser);
-          
+
           Swal.fire({
-            icon: 'success',
-            title: 'Profile Updated!',
-            text: 'Your account details have been updated successfully.',
-            confirmButtonColor: '#10b981'
+            icon: "success",
+            title: "Profile Updated!",
+            text: "Your account details have been updated successfully.",
+            confirmButtonColor: "#10b981",
           });
         }
       } catch (error) {
         Swal.fire({
-          icon: 'error',
-          title: 'Update Failed',
-          text: error.response?.data?.message || 'Failed to update profile. Please try again.',
-          confirmButtonColor: '#ef4444'
+          icon: "error",
+          title: "Update Failed",
+          text:
+            error.response?.data?.message ||
+            "Failed to update profile. Please try again.",
+          confirmButtonColor: "#ef4444",
         });
       }
     }
@@ -734,7 +1111,7 @@ const UserProfile = () => {
   // Delete Account Function
   const handleDeleteAccount = async () => {
     const result = await Swal.fire({
-      title: 'Delete Account',
+      title: "Delete Account",
       html: `
         <div style="text-align: left; margin-bottom: 20px;">
           <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -743,9 +1120,15 @@ const UserProfile = () => {
           </div>
           <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <h4 style="margin: 0 0 10px 0; color: #1e293b;">Account to be deleted:</h4>
-            <p style="margin: 5px 0; color: #64748b;"><strong>Name:</strong> ${userProfile?.name || 'N/A'}</p>
-            <p style="margin: 5px 0; color: #64748b;"><strong>Email:</strong> ${userProfile?.email || 'N/A'}</p>
-            <p style="margin: 5px 0; color: #64748b;"><strong>Phone:</strong> ${userProfile?.phone || 'N/A'}</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Name:</strong> ${
+              userProfile?.name || "N/A"
+            }</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Email:</strong> ${
+              userProfile?.email || "N/A"
+            }</p>
+            <p style="margin: 5px 0; color: #64748b;"><strong>Phone:</strong> ${
+              userProfile?.phone || "N/A"
+            }</p>
           </div>
           <div style="background: #fffbeb; border: 1px solid #fed7aa; padding: 15px; border-radius: 8px;">
             <h4 style="margin: 0 0 10px 0; color: #d97706;">What will be deleted:</h4>
@@ -759,48 +1142,50 @@ const UserProfile = () => {
         </div>
       `,
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete My Account',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#dc2626',
-      cancelButtonColor: '#6b7280',
-      width: '550px',
-      icon: 'warning'
+      confirmButtonText: "Yes, Delete My Account",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      width: "550px",
+      icon: "warning",
     });
 
     if (result.isConfirmed) {
       // Second confirmation
       const finalConfirm = await Swal.fire({
-        title: 'Final Confirmation',
-        text: 'Are you absolutely sure? This action cannot be undone.',
-        icon: 'question',
+        title: "Final Confirmation",
+        text: "Are you absolutely sure? This action cannot be undone.",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonText: 'Yes, I understand',
-        cancelButtonText: 'No, keep my account',
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#6b7280'
+        confirmButtonText: "Yes, I understand",
+        cancelButtonText: "No, keep my account",
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
       });
 
       if (finalConfirm.isConfirmed) {
         try {
-          await axios.delete('/api/user/delete');
-          
+          await axios.delete("/api/user/delete");
+
           // Clear user data and logout
           logout();
-          
+
           Swal.fire({
-            icon: 'success',
-            title: 'Account Deleted',
-            text: 'Your account has been permanently deleted.',
-            confirmButtonColor: '#10b981'
+            icon: "success",
+            title: "Account Deleted",
+            text: "Your account has been permanently deleted.",
+            confirmButtonColor: "#10b981",
           }).then(() => {
-            navigate('/');
+            navigate("/");
           });
         } catch (error) {
           Swal.fire({
-            icon: 'error',
-            title: 'Deletion Failed',
-            text: error.response?.data?.message || 'Failed to delete account. Please try again.',
-            confirmButtonColor: '#ef4444'
+            icon: "error",
+            title: "Deletion Failed",
+            text:
+              error.response?.data?.message ||
+              "Failed to delete account. Please try again.",
+            confirmButtonColor: "#ef4444",
           });
         }
       }
@@ -810,7 +1195,7 @@ const UserProfile = () => {
   // Support Modal Function
   const handleSupportModal = () => {
     Swal.fire({
-      title: '📋 User Profile Guide',
+      title: "📋 User Profile Guide",
       html: `
         <div style="text-align: left; max-height: 400px; overflow-y: auto; padding: 10px;">
           <div style="margin-bottom: 20px;">
@@ -874,11 +1259,11 @@ const UserProfile = () => {
           </div>
         </div>
       `,
-      confirmButtonText: 'Got it!',
-      confirmButtonColor: '#3b82f6',
-      width: '600px',
+      confirmButtonText: "Got it!",
+      confirmButtonColor: "#3b82f6",
+      width: "600px",
       showCloseButton: true,
-      focusConfirm: false
+      focusConfirm: false,
     });
   };
 
@@ -888,12 +1273,12 @@ const UserProfile = () => {
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       Swal.fire({
-        icon: 'error',
-        title: 'Invalid File Type',
-        text: 'Please select an image file (JPG, PNG, GIF, WEBP)',
-        confirmButtonColor: '#ef4444'
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Please select an image file (JPG, PNG, GIF, WEBP)",
+        confirmButtonColor: "#ef4444",
       });
       return;
     }
@@ -901,10 +1286,10 @@ const UserProfile = () => {
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       Swal.fire({
-        icon: 'error',
-        title: 'File Too Large',
-        text: 'Please select an image smaller than 5MB',
-        confirmButtonColor: '#ef4444'
+        icon: "error",
+        title: "File Too Large",
+        text: "Please select an image smaller than 5MB",
+        confirmButtonColor: "#ef4444",
       });
       return;
     }
@@ -919,43 +1304,52 @@ const UserProfile = () => {
 
       // Create FormData for upload
       const formData = new FormData();
-      formData.append('profileImage', file);
+      formData.append("profileImage", file);
 
       // Upload to backend
-      const response = await axios.post('/api/user/upload-profile-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        "/api/user/upload-profile-image",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.data.success) {
         // Update user profile with new image
-        setUserProfile(prev => ({
+        setUserProfile((prev) => ({
           ...prev,
-          profileImage: response.data.profileImage
+          profileImage: response.data.profileImage,
         }));
 
         // Update user in context
-        const updatedUser = { ...user, profileImage: response.data.profileImage };
+        const updatedUser = {
+          ...user,
+          profileImage: response.data.profileImage,
+        };
         updateUser(updatedUser);
 
         Swal.fire({
-          icon: 'success',
-          title: 'Profile Image Updated!',
-          text: 'Your profile image has been updated successfully.',
-          confirmButtonColor: '#10b981',
+          icon: "success",
+          title: "Profile Image Updated!",
+          text: "Your profile image has been updated successfully.",
+          confirmButtonColor: "#10b981",
           timer: 2000,
-          showConfirmButton: false
+          showConfirmButton: false,
         });
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       setImagePreview(null);
       Swal.fire({
-        icon: 'error',
-        title: 'Upload Failed',
-        text: error.response?.data?.message || 'Failed to upload image. Please try again.',
-        confirmButtonColor: '#ef4444'
+        icon: "error",
+        title: "Upload Failed",
+        text:
+          error.response?.data?.message ||
+          "Failed to upload image. Please try again.",
+        confirmButtonColor: "#ef4444",
       });
     } finally {
       setImageUploading(false);
@@ -1063,23 +1457,26 @@ const UserProfile = () => {
             {/* Quick Stats */}
             <div className="flex lg:flex-col space-x-4 lg:space-x-0 lg:space-y-2">
               <div className="text-center">
-                <div 
+                <div
                   className="text-lg font-bold"
-                  title={`You have applied for ${serviceCount} service${serviceCount !== 1 ? 's' : ''}`}
+                  title={`You have applied for ${serviceCount} service${
+                    serviceCount !== 1 ? "s" : ""
+                  }`}
                 >
                   {serviceCount}
                 </div>
                 <div className="text-blue-200 text-xs">Services</div>
               </div>
               <div className="text-center">
-                <div 
+                <div
                   className="text-lg font-bold"
-                  title={satisfactionRate !== null ? 
-                    `${satisfactionRate}% of your testimonials have been approved` : 
-                    'No testimonials submitted yet'
+                  title={
+                    satisfactionRate !== null
+                      ? `${satisfactionRate}% of your testimonials have been approved`
+                      : "No testimonials submitted yet"
                   }
                 >
-                  {satisfactionRate !== null ? `${satisfactionRate}%` : '--'}
+                  {satisfactionRate !== null ? `${satisfactionRate}%` : "--"}
                 </div>
                 <div className="text-blue-200 text-xs">Satisfaction</div>
               </div>
@@ -1136,26 +1533,35 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Account Status Card */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+        {/* Account Status Card - Clickable to Bills */}
+        <button
+          onClick={() => setActiveSection("bills")}
+          className="w-full bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 text-left cursor-pointer"
+        >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <TrendingUp className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">Status</h3>
-                <p className="text-sm text-gray-500">Account level</p>
+                <h3 className="font-bold text-gray-900 text-lg">
+                  Bills & Payments
+                </h3>
+                <p className="text-sm text-gray-500">
+                  View invoices & payment history
+                </p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 cursor-pointer text-gray-400" />
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
           </div>
-          <p className="text-xl font-semibold text-gray-900 mb-2">Premium</p>
+          <p className="text-xl font-semibold text-gray-900 mb-2">
+            ₹23,500 Total
+          </p>
           <div className="flex items-center text-sm text-gray-500">
-            <div className="w-2 h-2 bg-purple-400 rounded-full mr-2" />
-            Active since 2024
+            <div className="w-2 h-2 bg-green-400 rounded-full mr-2" />5 invoices
+            • 3 paid, 2 pending
           </div>
-        </div>
+        </button>
       </div>
 
       {/* Enhanced Quick Actions */}
@@ -1200,7 +1606,9 @@ const UserProfile = () => {
             <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Trash2 className="w-6 h-6 text-white" />
             </div>
-            <p className="font-bold text-gray-900 text-lg mb-2">Delete Account</p>
+            <p className="font-bold text-gray-900 text-lg mb-2">
+              Delete Account
+            </p>
             <p className="text-sm text-gray-600">Permanently remove</p>
           </button>
 
@@ -1327,7 +1735,9 @@ const UserProfile = () => {
               Profile Picture
             </h3>
             <p className="text-gray-500 text-xs sm:text-sm">
-              {imageUploading ? 'Uploading...' : 'Click the camera icon to upload a new photo'}
+              {imageUploading
+                ? "Uploading..."
+                : "Click the camera icon to upload a new photo"}
             </p>
           </div>
 
@@ -1585,13 +1995,7 @@ const UserProfile = () => {
       case "testimonials":
         return <UserTestimonials />;
       case "bills":
-        return (
-          <ComingSoon
-            title="My Bills"
-            description="Access your billing history, invoices, and payment information."
-            icon={Receipt}
-          />
-        );
+        return <MyBills />;
       default:
         return <ProfileOverview />;
     }

@@ -67,7 +67,7 @@ const FloatingFeedbackButton = () => {
       </button>
 
       {/* Additional CSS for enhanced animations */}
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes gentle-bounce {
           0%,
           20%,
