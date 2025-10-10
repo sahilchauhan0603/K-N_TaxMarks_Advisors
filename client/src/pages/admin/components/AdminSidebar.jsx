@@ -15,7 +15,8 @@ import {
   FaChevronRight,
   FaChevronLeft,
   FaBars,
-  FaComments
+  FaComments,
+  FaLightbulb
 } from 'react-icons/fa';
 import { GiCash } from 'react-icons/gi';
 import './AdminSidebar.css';
@@ -167,6 +168,18 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     >
                       <FaComments /> 
                       {!isCollapsed && <span>Testimonials</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/suggestions" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="User Suggestions"
+                    >
+                      <FaLightbulb /> 
+                      {!isCollapsed && <span>User Suggestions</span>}
                     </NavLink>
                   </li>
                 </ul>

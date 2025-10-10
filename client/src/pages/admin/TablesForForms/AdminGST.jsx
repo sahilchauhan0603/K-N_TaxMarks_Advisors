@@ -204,7 +204,7 @@ const AdminGST = () => {
           {subTabs.map((tab) => (
             <button
               key={tab.key}
-              className={`px-5 py-3 rounded-t-lg font-medium transition-all ${
+              className={`px-5 py-3 rounded-t-lg cursor-pointer font-medium transition-all ${
                 activeTab === tab.key
                   ? "bg-white border-t border-l border-r border-gray-200 text-yellow-600 shadow-sm relative"
                   : "text-gray-500 hover:text-yellow-500 hover:bg-yellow-50"

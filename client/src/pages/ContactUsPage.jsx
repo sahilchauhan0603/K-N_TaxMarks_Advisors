@@ -78,8 +78,8 @@ const ContactUsPage = () => {
       <div className="max-w-7xl mx-auto">
         {/* Hero Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl lg:text-6xl">
-            Contact <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700">K&N TaxMark Advisors</span>
+          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
+            Contact K&N TaxMark Advisors
           </h1>
           <p className="mt-5 max-w-2xl mx-auto text-xl text-gray-600">
             We're here to help! Reach out to our team for any questions or support.

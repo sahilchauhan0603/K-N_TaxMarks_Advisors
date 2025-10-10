@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiUser, FiLogOut, FiLogIn, FiStar } from "react-icons/fi";
+import { FiUser, FiLogOut, FiLogIn, FiStar, FiBookmark } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";

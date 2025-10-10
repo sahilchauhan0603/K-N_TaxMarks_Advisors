@@ -123,22 +123,46 @@ exports.getDashboardStats = async (req, res) => {
         };
       });
 
-    // Daily activity (last 7 days)
-    const dailyActivity = Array(7)
-      .fill(0)
-      .map((_, i) => {
-        const day = new Date();
-        day.setDate(day.getDate() - (6 - i));
-        day.setHours(0, 0, 0, 0);
-        const dayStr = day.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        return {
-          name: dayStr,
-          Signups: users.filter((u) => {
-            const d = new Date(u.createdAt);
-            return d >= day && d < new Date(day.getTime() + 24 * 60 * 60 * 1000);
-          }).length,
-        };
-      });
+    // Daily activity (last 7 days) - Real user activity data
+    const Testimonial = require("../models/Testimonial");
+    const Suggestion = require("../models/Suggestion");
+    
+    const dailyActivity = await Promise.all(
+      Array(7)
+        .fill(0)
+        .map(async (_, i) => {
+          const day = new Date();
+          day.setDate(day.getDate() - (6 - i));
+          day.setHours(0, 0, 0, 0);
+          const nextDay = new Date(day.getTime() + 24 * 60 * 60 * 1000);
+          const dayStr = day.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+          // Count various user activities for this day
+          const [signups, gstSubmissions, itrSubmissions, trademarkSubmissions, 
+                 taxSubmissions, businessSubmissions, testimonials, suggestions] = await Promise.all([
+            User.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            GST.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            ITR.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            Trademark.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            TaxPlanning.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            BusinessAdvisory.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            Testimonial.countDocuments({ createdAt: { $gte: day, $lt: nextDay } }),
+            Suggestion.countDocuments({ createdAt: { $gte: day, $lt: nextDay } })
+          ]);
+
+          const totalActivity = signups + gstSubmissions + itrSubmissions + trademarkSubmissions + 
+                               taxSubmissions + businessSubmissions + testimonials + suggestions;
+
+          return {
+            name: dayStr,
+            Signups: signups,
+            "Service Forms": gstSubmissions + itrSubmissions + trademarkSubmissions + taxSubmissions + businessSubmissions,
+            Testimonials: testimonials,
+            Suggestions: suggestions,
+            "Total Activity": totalActivity
+          };
+        })
+    );
 
     // Service counts
     const gst = await GST.countDocuments();

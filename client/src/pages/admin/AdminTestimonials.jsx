@@ -186,9 +186,9 @@ const AdminTestimonials = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <div className="flex justify-between items-start">
+    <div className="p-2 bg-gray-50 min-h-screen">
+      <div className="max-w-[960px] mx-auto">
+        <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Testimonials Management</h1>
             <p className="text-gray-600">Review, approve, and manage user testimonials.</p>
@@ -265,8 +265,9 @@ const AdminTestimonials = () => {
           </p>
         </div>
       ) : (
-        <div className="grid gap-6">
-          {currentTestimonials.map((testimonial) => (
+        <div className="max-h-[600px] overflow-y-auto">
+          <div className="grid gap-6 pr-2">
+            {currentTestimonials.map((testimonial) => (
             <div key={testimonial._id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -334,10 +335,12 @@ const AdminTestimonials = () => {
                 </div>
               </div>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
-    </div>
+      </div>
+    // </div>
   );
 };
 

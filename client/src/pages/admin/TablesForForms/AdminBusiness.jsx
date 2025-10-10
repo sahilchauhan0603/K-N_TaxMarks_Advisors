@@ -211,7 +211,7 @@ const AdminBusiness = () => {
           {subTabs.map((tab) => (
             <button
               key={tab.key}
-              className={`px-5 py-3 rounded-t-lg font-medium transition-all ${
+              className={`px-5 py-3 rounded-t-lg cursor-pointer font-medium transition-all ${
                 activeTab === tab.key
                   ? "bg-white border-t border-l border-r border-gray-200 text-pink-600 shadow-sm relative"
                   : "text-gray-500 hover:text-pink-500 hover:bg-pink-50"

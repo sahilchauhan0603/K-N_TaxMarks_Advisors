@@ -38,37 +38,6 @@ router.post('/', auth, upload.single('photo'), async (req, res) => {
   }
 });
 
-// POST /api/testimonials/public - Add testimonial without authentication (for external users)
-router.post('/public', upload.single('photo'), async (req, res) => {
-  try {
-    const { name, role, service, feedback } = req.body;
-    let photoUrl = req.body.photoUrl || '';
-    
-    if (req.file) {
-      const result = await uploadImage(req.file.buffer, 'testimonials');
-      photoUrl = result.secure_url;
-    }
-    
-    if (!name || !role || !service || !feedback) {
-      return res.status(400).json({ message: 'All required fields must be filled.' });
-    }
-    
-    const testimonial = new Testimonial({ 
-      name, 
-      role, 
-      photoUrl, 
-      service, 
-      feedback,
-      isApproved: false // Requires admin approval
-    });
-    
-    await testimonial.save();
-    res.status(201).json({ message: 'Testimonial submitted successfully. It will be reviewed before being published.' });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
-
 // GET /api/testimonials?service=ServiceName - Get approved testimonials for a service
 router.get('/', async (req, res) => {
   try {

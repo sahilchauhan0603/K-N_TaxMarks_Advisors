@@ -139,13 +139,13 @@ const Reviews = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-zinc-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-slate-100 to-gray-200 text-gray-800 py-20">
+      <div className="bg-gradient-to-r from-slate-100 to-gray-200 text-gray-800 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-90 rounded-full mb-4 shadow-md">
               <FaQuoteLeft className="w-10 h-10 text-slate-600" />
             </div>
-          </div>
+          </div> */}
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-gray-800">
             Client Reviews & Testimonials
           </h1>

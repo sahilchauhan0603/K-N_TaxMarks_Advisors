@@ -18,6 +18,7 @@ import HomePage from "./pages/HomePage";
 import AboutUsPage from "./pages/AboutUsPage";
 import ContactUsPage from "./pages/ContactUsPage";
 import Reviews from "./pages/Reviews";
+import UserSuggestions from "./pages/UserSuggestions";
 
 import FAQPage from "./pages/Others/FAQPage";
 import PrivacyPolicyPage from "./pages/Others/PrivacyPolicyPage";
@@ -30,6 +31,7 @@ import Footer from "./components/Footer";
 import LoadingBar from "./components/LoadingBar";
 import ScrollToTop from "./components/ScrollToTop";
 import LoadFromTop from "./components/LoadFromTop";
+import FloatingFeedbackButton from "./components/FloatingFeedbackButton";
 import UserProfile from "./pages/user/UserProfile";
 
 import TaxPlanning from "./pages/services/TaxPlanning/TaxPlanning";
@@ -50,6 +52,7 @@ import AdminTaxPlanning from "./pages/admin/TablesForForms/AdminTaxPlanning";
 import AdminGST from "./pages/admin/TablesForForms/AdminGST";
 import AdminITR from "./pages/admin/TablesForForms/AdminITR";
 import AdminTestimonials from "./pages/admin/AdminTestimonials";
+import AdminSuggestions from "./pages/admin/AdminSuggestions";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -129,6 +132,9 @@ const App = () => {
         break;
        case "/reviews":
         pageTitle = "User Reviews";
+        break;
+       case "/suggestions":
+        pageTitle = "Share Your Suggestions";
         break;
       default:
         if (location.pathname.startsWith("/admin")) {
@@ -245,6 +251,7 @@ const App = () => {
               <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/contact-us" element={<ContactUsPage />} />
               <Route path="/reviews" element={<Reviews />} />
+              <Route path="/suggestions" element={<UserSuggestions />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -277,6 +284,7 @@ const App = () => {
                 <Route index element={<AdminDashboard />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="testimonials" element={<AdminTestimonials />} />
+                <Route path="suggestions" element={<AdminSuggestions />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="trademark" element={<AdminTrademark />} />
@@ -290,6 +298,7 @@ const App = () => {
         )}
       </main>
       {!isAdminRoute && !isAuthPage && <Footer />}
+      <FloatingFeedbackButton />
     </div>
   );
 };

@@ -28,8 +28,8 @@ const AboutUsPage = () => {
       <div className="max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            About <span className="text-blue-600">K&N TaxMark Advisors</span>
+          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+            About K&N TaxMark Advisors
           </h1>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
             Pioneering the future of customer relationship management

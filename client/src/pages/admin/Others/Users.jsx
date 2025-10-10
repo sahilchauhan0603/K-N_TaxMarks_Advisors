@@ -243,7 +243,7 @@ const AdminUsers = () => {
             
             <button 
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-3 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-lg transition"
+              className="flex items-center gap-2 px-4 cursor-pointer py-3 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-lg transition"
             >
               <FaFilter /> Filters <FaChevronDown className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
             </button>

@@ -245,15 +245,13 @@ const AdminDashboard = () => {
         {/* Recent Activity */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-4">
-            <h4 className="font-semibold text-gray-700 text-lg">Recent Users</h4>
-            <button className="text-gray-400 hover:text-gray-600">
-              <BsThreeDotsVertical />
-            </button>
+            <h4 className="font-semibold text-gray-700 text-lg">Top 5 Recent Users</h4>
+            <div className="text-sm text-gray-500">Latest registrations</div>
           </div>
           <div className="space-y-4">
             {recentUsers.length === 0 ? (
-              <div className="text-gray-400 text-center py-8">No recent users.</div>
-            ) : recentUsers.map(user => (
+              <div className="text-gray-400 text-center py-8">No recent user registrations.</div>
+            ) : recentUsers.slice(0, 5).map(user => (
               <div key={user._id} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <FaUserCheck className="text-blue-500" />
@@ -269,7 +267,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* User Activity (Replaced Monthly Revenue) */}
+        {/* User Activity (Real Activity Data) */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-4">
             <h4 className="font-semibold text-gray-700 text-lg">User Activity</h4>
@@ -277,17 +275,36 @@ const AdminDashboard = () => {
           </div>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.dailyActivity}>
+              <BarChart data={stats.dailyActivity} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="colorSignups" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                  </linearGradient>
+                  <linearGradient id="colorForms" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.2}/>
+                  </linearGradient>
+                  <linearGradient id="colorTestimonials" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2}/>
+                  </linearGradient>
+                  <linearGradient id="colorSuggestions" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
                     <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.2}/>
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`${value} signups`, '']} />
-                <Bar dataKey="Signups" fill="url(#colorSignups)" radius={[4, 4, 0, 0]} />
+                <Tooltip 
+                  formatter={(value, name) => [`${value}`, name]}
+                  labelFormatter={(label) => `Date: ${label}`}
+                />
+                <Legend />
+                <Bar dataKey="Signups" stackId="a" fill="url(#colorSignups)" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="Service Forms" stackId="a" fill="url(#colorForms)" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="Testimonials" stackId="a" fill="url(#colorTestimonials)" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="Suggestions" stackId="a" fill="url(#colorSuggestions)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
