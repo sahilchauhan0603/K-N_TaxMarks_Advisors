@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiUser, FiLogOut, FiLogIn } from "react-icons/fi";
+import { FiUser, FiLogOut, FiLogIn, FiStar } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
@@ -154,6 +154,13 @@ const Navbar = () => {
                     </button>
                   </div>
                 </div>
+                <button
+                  onClick={() => navigate("/reviews")}
+                  className="px-3 py-2 rounded-md cursor-pointer text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center gap-1"
+                >
+                  <FiStar className="w-4 h-4" />
+                  Reviews
+                </button>
                 <button
                   onClick={() => navigate("/contact-us")}
                   className="px-3 py-2 rounded-md cursor-pointer text-sm font-medium text-black hover:text-blue-600 transition duration-300"
@@ -323,6 +330,13 @@ const Navbar = () => {
                 </div>
               )}
             </div>
+            <button
+              onClick={() => navigate("/reviews")}
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
+            >
+              <FiStar className="w-4 h-4" />
+              Reviews
+            </button>
             <button
               onClick={() => navigate("/contact-us")}
               className="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"

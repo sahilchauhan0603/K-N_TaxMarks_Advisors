@@ -17,6 +17,7 @@ import GoogleAuthHandler from "./components/GoogleAuthHandler";
 import HomePage from "./pages/HomePage";
 import AboutUsPage from "./pages/AboutUsPage";
 import ContactUsPage from "./pages/ContactUsPage";
+import Reviews from "./pages/Reviews";
 
 import FAQPage from "./pages/Others/FAQPage";
 import PrivacyPolicyPage from "./pages/Others/PrivacyPolicyPage";
@@ -125,6 +126,9 @@ const App = () => {
         break;
       case "/profile":
         pageTitle = "User Profile";
+        break;
+       case "/reviews":
+        pageTitle = "User Reviews";
         break;
       default:
         if (location.pathname.startsWith("/admin")) {
@@ -240,6 +244,7 @@ const App = () => {
               />
               <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/contact-us" element={<ContactUsPage />} />
+              <Route path="/reviews" element={<Reviews />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
