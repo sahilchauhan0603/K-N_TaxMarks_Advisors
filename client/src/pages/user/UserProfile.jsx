@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   User,
   Mail,
@@ -29,6 +29,7 @@ import {
   TrendingUp,
   Lock,
   Trash2,
+  RefreshCw,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -36,6 +37,8 @@ import axios from "../../utils/axios";
 import Swal from "sweetalert2";
 import UserTestimonials from "./UserTestimonials";
 import MyServices from "./MyServices";
+import MyBills from "./MyBills";
+import UserSidebar from "./components/UserSidebar";
 
 // States of India
 const STATES_OF_INDIA = [
@@ -70,733 +73,7 @@ const STATES_OF_INDIA = [
   "Delhi",
 ];
 
-// Enhanced Responsive Collapsible Sidebar with Improved UI
-const Sidebar = ({
-  activeSection,
-  onSectionChange,
-  onLogout,
-  showLogoutModal,
-  setShowLogoutModal,
-  isCollapsed,
-  setIsCollapsed,
-  serviceCount = 0,
-}) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const menuItems = [
-    {
-      key: "profile",
-      label: "Profile Overview",
-      icon: (
-        <User
-          className={`transition-all duration-200 ${
-            isCollapsed ? "w-5 h-5" : "w-4 h-4"
-          }`}
-        />
-      ),
-      description: "View your profile",
-      badge: null,
-    },
-    {
-      key: "services",
-      label: "My Services",
-      icon: (
-        <Briefcase
-          className={`transition-all duration-200 ${
-            isCollapsed ? "w-5 h-5" : "w-4 h-4"
-          }`}
-        />
-      ),
-      description: "View applied services",
-      badge: serviceCount > 0 ? serviceCount.toString() : null,
-    },
-    {
-      key: "testimonials",
-      label: "My Testimonials",
-      icon: (
-        <Star
-          className={`transition-all duration-200 ${
-            isCollapsed ? "w-5 h-5" : "w-4 h-4"
-          }`}
-        />
-      ),
-      description: "Manage testimonials",
-      badge: null,
-    },
-    {
-      key: "bills",
-      label: "My Bills",
-      icon: (
-        <CreditCard
-          className={`transition-all duration-200 ${
-            isCollapsed ? "w-5 h-5" : "w-4 h-4"
-          }`}
-        />
-      ),
-      description: "Billing & payments",
-      badge: null,
-    },
-  ];
-
-  // Auto-collapse on mobile
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsCollapsed(true);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [setIsCollapsed]);
-
-  const handleLogout = () => {
-    onLogout();
-    setShowLogoutModal(false);
-  };
-
-  return (
-    <>
-      {/* Mobile Menu Toggle Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-12 h-12 bg-white/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl flex items-center justify-center text-gray-600 hover:text-blue-600 transition-all duration-300 hover:scale-110"
-      >
-        <Menu className="w-6 h-6" />
-      </button>
-
-      {/* Mobile Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-md z-40"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Enhanced Full-Screen Glassmorphism Sidebar */}
-      <div
-        className={`
-        ${isCollapsed ? "w-16" : "w-64"} 
-        ${
-          isMobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full lg:translate-x-0"
-        }
-        fixed lg:relative top-0 left-0 lg:top-auto lg:left-auto
-        h-screen lg:h-full transition-all duration-300 ease-in-out z-50 lg:z-auto
-      `}
-      >
-        <div className="h-full bg-white/95 backdrop-blur-2xl border-r border-white/30 lg:border lg:border-white/30 lg:rounded-3xl shadow-2xl overflow-hidden flex flex-col relative">
-          {/* Enhanced Glassmorphism overlay with improved gradients */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-purple-500/10 to-pink-500/15 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent pointer-events-none" />
-
-          {/* Enhanced Sidebar Header */}
-          <div className="relative z-10 bg-gradient-to-r from-blue-600/95 to-purple-600/95 backdrop-blur-2xl text-white flex-shrink-0">
-            <div
-              className={`flex items-center justify-between transition-all duration-300 ${
-                isCollapsed ? "p-2" : "p-4"
-              }`}
-            >
-              <div
-                className={`flex items-center ${
-                  isCollapsed ? "justify-center w-full" : "space-x-3"
-                }`}
-              >
-                {!isCollapsed && (
-                  <div className="flex-1">
-                    <h2 className="text-lg font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-                      Account Hub
-                    </h2>
-                    <p className="text-blue-100/80 text-xs mt-0.5">
-                      Manage your profile
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Collapse Toggle Button - Desktop Only  */}
-              <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className={`hidden lg:flex cursor-pointer w-8 h-8 bg-white/15 hover:bg-white/25 rounded-lg items-center justify-center transition-all duration-300 backdrop-blur-sm border border-white/20 hover:scale-110`}
-              >
-                {isCollapsed ? (
-                  <ChevronRight className="w-4 h-4 text-white" />
-                ) : (
-                  <ArrowLeft className="w-4 h-4 text-white" />
-                )}
-              </button>
-
-              {/* Mobile Close Button */}
-              <button
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="lg:hidden w-8 h-8 bg-white/15 hover:bg-white/25 rounded-lg flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-white/20"
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
-            </div>
-          </div>
-
-          {/* Enhanced Navigation Menu */}
-          <div className="flex-1 overflow-y-auto relative z-10 custom-scrollbar">
-            <div
-              className={`transition-all duration-300 ${
-                isCollapsed ? "p-1" : "p-3"
-              }`}
-            >
-              <nav className={`space-y-1 ${isCollapsed ? "space-y-2" : ""}`}>
-                {menuItems.map((item, index) => (
-                  <button
-                    key={item.key}
-                    onClick={() => {
-                      onSectionChange(item.key);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    disabled={item.comingSoon}
-                    className={`w-full cursor-pointer group relative overflow-hidden rounded-lg transition-all duration-300 transform hover:scale-[1.01] ${
-                      activeSection === item.key
-                        ? "bg-gradient-to-r from-blue-500/95 to-purple-600/95 text-white shadow-lg backdrop-blur-xl border border-blue-400/50"
-                        : item.comingSoon
-                        ? "bg-gray-50/60 text-gray-400 cursor-not-allowed backdrop-blur-sm border border-gray-200/30"
-                        : "bg-white/70 hover:bg-white/90 text-gray-700 hover:text-blue-700 border border-white/40 hover:border-blue-200/60 hover:shadow-lg backdrop-blur-lg"
-                    }`}
-                    title={isCollapsed ? item.label : ""}
-                    style={{
-                      animationDelay: `${index * 50}ms`,
-                    }}
-                  >
-                    <div
-                      className={`flex items-center relative z-10 transition-all duration-300 ${
-                        isCollapsed ? "justify-center p-2" : "p-3"
-                      }`}
-                    >
-                      <div
-                        className={`transition-all duration-300 ${
-                          isCollapsed ? "" : "mr-4"
-                        } ${
-                          activeSection === item.key
-                            ? "scale-110"
-                            : "group-hover:scale-110"
-                        }`}
-                      >
-                        {item.icon}
-                      </div>
-
-                      {!isCollapsed && (
-                        <div className="text-left flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-0.5">
-                            <span className="font-medium text-xs truncate">
-                              {item.label}
-                            </span>
-                            <div className="flex items-center space-x-2 ml-2">
-                              {item.badge && (
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full font-medium shadow-sm ${
-                                    item.badge === "New"
-                                      ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                                      : "bg-blue-100 text-blue-700 border border-blue-200"
-                                  }`}
-                                >
-                                  {item.badge}
-                                </span>
-                              )}
-                              {item.comingSoon && (
-                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium border border-amber-200">
-                                  Soon
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <p
-                            className={`text-xs leading-relaxed ${
-                              activeSection === item.key
-                                ? "text-blue-100/90"
-                                : "text-gray-500"
-                            }`}
-                          >
-                            {item.description}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Active indicator */}
-                    {activeSection === item.key && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/25 to-purple-500/25 backdrop-blur-sm animate-pulse" />
-                    )}
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </div>
-
-          {/* Enhanced Bottom Actions */}
-          <div
-            className={`relative z-10 flex-shrink-0 border-t border-white/30 bg-white/10 backdrop-blur-xl transition-all duration-300 ${
-              isCollapsed ? "p-2 space-y-2" : "p-4 space-y-3"
-            }`}
-          >
-            {/* Back to Home Button */}
-            <Link
-              to="/"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`w-full group bg-gradient-to-r from-slate-50/90 to-blue-50/90 hover:from-slate-100 hover:to-blue-100 border border-blue-200/60 hover:border-blue-300/80 rounded-2xl transition-all duration-300 hover:shadow-xl flex items-center text-blue-600 backdrop-blur-lg hover:scale-[1.02] ${
-                isCollapsed ? "p-3 justify-center" : "p-4"
-              }`}
-              title={isCollapsed ? "Back to Home" : ""}
-            >
-              <Home
-                className={`transition-all duration-300 group-hover:scale-110 ${
-                  isCollapsed ? "w-6 h-6" : "w-5 h-5 mr-4"
-                }`}
-              />
-              {!isCollapsed && (
-                <div className="text-left">
-                  <span className="font-semibold text-sm">Home</span>
-                  <p className="text-xs text-blue-500/80 mt-1">
-                    Back to Dashboard
-                  </p>
-                </div>
-              )}
-            </Link>
-
-            {/* Logout Button */}
-            <button
-              onClick={() => {
-                setShowLogoutModal(true);
-                setIsMobileMenuOpen(false);
-              }}
-              className={`w-full cursor-pointer group bg-gradient-to-r from-red-50/90 to-rose-50/90 hover:from-red-100 hover:to-rose-100 border border-red-200/60 hover:border-red-300/80 rounded-2xl transition-all duration-300 hover:shadow-xl backdrop-blur-lg hover:scale-[1.02] ${
-                isCollapsed ? "p-3 justify-center" : "p-4"
-              }`}
-              title={isCollapsed ? "Sign Out" : ""}
-            >
-              <div
-                className={`flex items-center text-red-600 ${
-                  isCollapsed ? "" : ""
-                }`}
-              >
-                <LogOut
-                  className={`transition-all duration-300 group-hover:scale-110 ${
-                    isCollapsed ? "w-6 h-6" : "w-5 h-5 mr-4"
-                  }`}
-                />
-                {!isCollapsed && (
-                  <div className="text-left">
-                    <span className="font-semibold text-sm">Sign Out</span>
-                    <p className="text-xs text-red-500/80 mt-1">
-                      End your session
-                    </p>
-                  </div>
-                )}
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-// MyBills Component - Comprehensive Billing Dashboard
-const MyBills = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState("All Time");
-
-  // Sample billing data
-  const sampleBills = [
-    {
-      id: "INV-2024-001",
-      service: "ITR Filing - Individual",
-      date: "2024-01-15",
-      dueDate: "2024-01-30",
-      amount: 2500,
-      status: "Paid",
-      paymentMethod: "UPI",
-      description: "Annual Income Tax Return Filing for FY 2023-24",
-    },
-    {
-      id: "INV-2024-002",
-      service: "GST Registration",
-      date: "2024-02-10",
-      dueDate: "2024-02-25",
-      amount: 5000,
-      status: "Pending",
-      paymentMethod: "Bank Transfer",
-      description: "New GST Registration for Business",
-    },
-    {
-      id: "INV-2024-003",
-      service: "Trademark Registration",
-      date: "2024-02-20",
-      dueDate: "2024-03-05",
-      amount: 8000,
-      status: "Overdue",
-      paymentMethod: "Credit Card",
-      description: "Brand Trademark Registration Application",
-    },
-    {
-      id: "INV-2024-004",
-      service: "Business Advisory - Premium",
-      date: "2024-03-01",
-      dueDate: "2024-03-15",
-      amount: 6000,
-      status: "Paid",
-      paymentMethod: "UPI",
-      description: "Monthly Business Consultation Package",
-    },
-    {
-      id: "INV-2024-005",
-      service: "Tax Planning Consultation",
-      date: "2024-03-10",
-      dueDate: "2024-03-25",
-      amount: 2000,
-      status: "Pending",
-      paymentMethod: "Cash",
-      description: "Annual Tax Planning Strategy Session",
-    },
-  ];
-
-  // Filter bills based on search and filters
-  const filteredBills = sampleBills.filter((bill) => {
-    const matchesSearch =
-      bill.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bill.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bill.description.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "All" || bill.status === statusFilter;
-
-    const matchesDate =
-      dateFilter === "All Time" ||
-      (dateFilter === "This Month" &&
-        new Date(bill.date).getMonth() === new Date().getMonth()) ||
-      (dateFilter === "Last 3 Months" &&
-        new Date(bill.date) >= new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
-
-    return matchesSearch && matchesStatus && matchesDate;
-  });
-
-  // Calculate summary statistics
-  const totalAmount = filteredBills.reduce((sum, bill) => sum + bill.amount, 0);
-  const paidAmount = filteredBills
-    .filter((bill) => bill.status === "Paid")
-    .reduce((sum, bill) => sum + bill.amount, 0);
-  const pendingAmount = filteredBills
-    .filter((bill) => bill.status === "Pending")
-    .reduce((sum, bill) => sum + bill.amount, 0);
-  const overdueAmount = filteredBills
-    .filter((bill) => bill.status === "Overdue")
-    .reduce((sum, bill) => sum + bill.amount, 0);
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Paid":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Overdue":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getPaymentMethodIcon = (method) => {
-    switch (method) {
-      case "UPI":
-        return "📱";
-      case "Credit Card":
-        return "💳";
-      case "Bank Transfer":
-        return "🏦";
-      case "Cash":
-        return "💵";
-      default:
-        return "💰";
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-xl p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">My Bills & Payments</h2>
-            <p className="text-blue-100">
-              Manage your invoices and payment history
-            </p>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl mb-2">💳</div>
-            <div className="text-sm text-blue-200">
-              Total Bills: {filteredBills.length}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Amount</p>
-              <p className="text-xl font-bold text-gray-900">
-                ₹{totalAmount.toLocaleString()}
-              </p>
-            </div>
-            <div className="bg-blue-100 p-2 rounded-lg">
-              <Receipt className="w-5 h-5 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Paid</p>
-              <p className="text-xl font-bold text-green-600">
-                ₹{paidAmount.toLocaleString()}
-              </p>
-            </div>
-            <div className="bg-green-100 p-2 rounded-lg">
-              <Check className="w-5 h-5 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-xl font-bold text-yellow-600">
-                ₹{pendingAmount.toLocaleString()}
-              </p>
-            </div>
-            <div className="bg-yellow-100 p-2 rounded-lg">
-              <Clock className="w-5 h-5 text-yellow-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Overdue</p>
-              <p className="text-xl font-bold text-red-600">
-                ₹{overdueAmount.toLocaleString()}
-              </p>
-            </div>
-            <div className="bg-red-100 p-2 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search bills..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <div className="absolute left-3 top-2.5">
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="All">All Status</option>
-              <option value="Paid">Paid</option>
-              <option value="Pending">Pending</option>
-              <option value="Overdue">Overdue</option>
-            </select>
-
-            <select
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="All Time">All Time</option>
-              <option value="This Month">This Month</option>
-              <option value="Last 3 Months">Last 3 Months</option>
-            </select>
-          </div>
-
-          <button className="bg-blue-600 text-white px-6 cursor-pointer py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2">
-            <CreditCard className="w-4 h-4" />
-            Download All
-          </button>
-        </div>
-      </div>
-
-      {/* Bills Table */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Invoice
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Due Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredBills.map((bill) => (
-                <tr
-                  key={bill.id}
-                  className="hover:bg-gray-50 transition-colors duration-150"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-gray-900">{bill.id}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 font-medium">
-                      {bill.service}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {bill.description}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(bill.date).toLocaleDateString("en-IN")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(bill.dueDate).toLocaleDateString("en-IN")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ₹{bill.amount.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
-                        bill.status
-                      )}`}
-                    >
-                      {bill.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <div className="flex items-center gap-2">
-                      <span>{getPaymentMethodIcon(bill.paymentMethod)}</span>
-                      <span>{bill.paymentMethod}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
-                        View
-                      </button>
-                      <button className="text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200">
-                        Download
-                      </button>
-                      {bill.status === "Pending" && (
-                        <button className="text-green-600 hover:text-green-800 font-medium transition-colors duration-200">
-                          Pay Now
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredBills.length === 0 && (
-          <div className="text-center py-12">
-            <Receipt className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No bills found
-            </h3>
-            <p className="text-gray-500">
-              Try adjusting your search or filter criteria.
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Payment Methods Section */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <CreditCard className="w-5 h-5" />
-          Payment Methods
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
-            <div className="text-2xl mb-2">📱</div>
-            <div className="font-medium text-gray-900">UPI</div>
-            <div className="text-sm text-gray-500">
-              Google Pay, PhonePe, Paytm
-            </div>
-          </div>
-          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
-            <div className="text-2xl mb-2">💳</div>
-            <div className="font-medium text-gray-900">Cards</div>
-            <div className="text-sm text-gray-500">Credit & Debit Cards</div>
-          </div>
-          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
-            <div className="text-2xl mb-2">🏦</div>
-            <div className="font-medium text-gray-900">Net Banking</div>
-            <div className="text-sm text-gray-500">All Major Banks</div>
-          </div>
-          <div className="p-4 border border-gray-200 rounded-lg text-center hover:border-blue-300 transition-colors duration-200">
-            <div className="text-2xl mb-2">💵</div>
-            <div className="font-medium text-gray-900">Cash</div>
-            <div className="text-sm text-gray-500">Office Payment</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+// This Sidebar component is now replaced by the separate UserSidebar component
 
 // Main UserProfile Component
 const UserProfile = () => {
@@ -805,8 +82,8 @@ const UserProfile = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [userProfile, setUserProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -823,6 +100,7 @@ const UserProfile = () => {
   const [satisfactionRate, setSatisfactionRate] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
   //  Fetch user profile (runs only when user.email changes or on manual refresh)
   const fetchUserProfile = useCallback(
@@ -1363,275 +641,260 @@ const UserProfile = () => {
     setFieldErrors({});
   };
 
-  // Mobile-Responsive Profile Overview Component
+  // // Helper functions for section titles and descriptions
+  // const getSectionTitle = () => {
+  //   switch (activeSection) {
+  //     case "profile":
+  //       return "Profile Overview";
+  //     case "services":
+  //       return "My Services";
+  //     case "testimonials":
+  //       return "My Testimonials";
+  //     case "bills":
+  //       return "My Bills";
+  //     default:
+  //       return "Profile Overview";
+  //   }
+  // };
+
+  // const getSectionDescription = () => {
+  //   switch (activeSection) {
+  //     case "profile":
+  //       return "Manage your personal information and account settings";
+  //     case "services":
+  //       return "View and track your applied services";
+  //     case "testimonials":
+  //       return "Manage your testimonials and feedback";
+  //     case "bills":
+  //       return "View your billing information and payment history";
+  //     default:
+  //       return "Manage your personal information and account settings";
+  //   }
+  // };
+
+  // Clean Profile Overview matching MyServices pattern
   const ProfileOverview = () => (
-    <div className="space-y-3 sm:space-y-4 lg:space-y-5">
-      {/* Mobile-Responsive Error Message */}
+    <div className="space-y-6 p-6">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Profile Overview</h1>
+          <p className="text-gray-600">Manage your account and personal information</p>
+        </div>
+        <button
+          onClick={() => fetchUserProfile(true)}
+          disabled={profileLoading}
+          className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors disabled:opacity-50 w-fit"
+        >
+          <RefreshCw className={`w-4 h-4 ${profileLoading ? "animate-spin" : ""}`} />
+          <span>Refresh</span>
+        </button>
+      </div>
+
+      {/* Error Message */}
       {error && (
-        <div className="p-4 sm:p-6 bg-red-50/80 backdrop-blur-xl border border-red-200/50 rounded-2xl lg:rounded-3xl flex items-start space-x-3 sm:space-x-4 shadow-xl">
-          <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <h4 className="text-red-800 font-semibold text-base sm:text-lg">
-              Error
-            </h4>
-            <p className="text-red-700 text-xs sm:text-sm mt-1 sm:mt-2">
-              {error}
-            </p>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start">
+            <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3" />
+            <div className="flex-1">
+              <h4 className="text-red-800 font-semibold">Error</h4>
+              <p className="text-red-700 text-sm mt-1">{error}</p>
+            </div>
+            <button
+              onClick={() => setError("")}
+              className="text-red-500 hover:text-red-700 p-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            onClick={() => setError("")}
-            className="text-red-500 hover:text-red-700 p-1 sm:p-2 rounded-xl hover:bg-red-100/50 transition-all duration-200"
-          >
-            <X className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
         </div>
       )}
 
-      {/* Mobile-Optimized Hero Profile Card */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-xl lg:rounded-2xl p-3 sm:p-4 lg:p-5 text-white overflow-hidden shadow-xl">
-        {/* Glassmorphism decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -ml-12 -mb-12" />
-        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-
-        <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
-            {/* Avatar Section */}
-            <div className="relative group">
-              <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/30 shadow-xl group-hover:scale-105 transition-transform duration-300 overflow-hidden">
-                {userProfile?.profileImage || imagePreview ? (
-                  <img
-                    src={imagePreview || userProfile.profileImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover rounded-2xl"
-                  />
-                ) : (
-                  <User className="w-10 h-10 text-white" />
-                )}
-                {imageUploading && (
-                  <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </div>
-              <label className="absolute -bottom-2 -right-2 w-8 h-8 bg-white text-blue-600 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer">
-                <Camera className="w-4 h-4" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  disabled={imageUploading}
-                />
-              </label>
-              <div className="absolute -top-1 -left-1 w-5 h-5 bg-emerald-400 rounded-full flex items-center justify-center border-2 border-white shadow-lg">
-                <Check className="w-2 h-2 text-white" />
-              </div>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+        {/* Services Card */}
+        <div className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Services</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{serviceCount}</p>
             </div>
+            <Activity className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+          </div>
+        </div>
 
-            {/* Profile Info */}
-            <div className="flex-1">
-              <h1 className="text-2xl lg:text-3xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-                {userProfile?.name || "Your Name"}
-              </h1>
-              <p className="text-blue-100 flex items-center mb-3 text-sm lg:text-base">
-                <Mail className="w-4 h-4 mr-2" />
-                {userProfile?.email}
+        {/* Satisfaction Card */}
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Satisfaction</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                {satisfactionRate !== null ? `${satisfactionRate}%` : "--"}
               </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/30 font-medium text-xs">
-                  <Star className="w-3 h-3 inline mr-1" />
-                  Premium User
-                </span>
-                <span className="bg-emerald-500/90 px-3 py-1 rounded-lg backdrop-blur-sm border border-emerald-400/50 font-medium text-xs">
-                  <Shield className="w-3 h-3 inline mr-1" />
-                  Verified Account
-                </span>
-                <span className="bg-purple-500/80 px-3 py-1 rounded-lg backdrop-blur-sm border border-purple-400/50 font-medium text-xs">
-                  <Activity className="w-4 h-4 inline mr-2" />
-                  Active
-                </span>
-              </div>
             </div>
-
-            {/* Quick Stats */}
-            <div className="flex lg:flex-col space-x-4 lg:space-x-0 lg:space-y-2">
-              <div className="text-center">
-                <div
-                  className="text-lg font-bold"
-                  title={`You have applied for ${serviceCount} service${
-                    serviceCount !== 1 ? "s" : ""
-                  }`}
-                >
-                  {serviceCount}
-                </div>
-                <div className="text-blue-200 text-xs">Services</div>
-              </div>
-              <div className="text-center">
-                <div
-                  className="text-lg font-bold"
-                  title={
-                    satisfactionRate !== null
-                      ? `${satisfactionRate}% of your testimonials have been approved`
-                      : "No testimonials submitted yet"
-                  }
-                >
-                  {satisfactionRate !== null ? `${satisfactionRate}%` : "--"}
-                </div>
-                <div className="text-blue-200 text-xs">Satisfaction</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Enhanced Info Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Contact Info Card */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Phone className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">Phone</h3>
-                <p className="text-sm text-gray-500">Contact number</p>
-              </div>
-            </div>
-            {/* <ChevronRight className="w-5 h-5 text-gray-400" /> */}
-          </div>
-          <p className="text-xl font-semibold text-gray-900 mb-2">
-            {userProfile?.phone || "Not provided"}
-          </p>
-          <div className="flex items-center text-sm text-gray-500">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2" />
-            Verified
+            <Star className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
           </div>
         </div>
 
-        {/* Location Card */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <MapPin className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">Location</h3>
-                <p className="text-sm text-gray-500">Current state</p>
-              </div>
+        {/* Account Status Card */}
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Status</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">Active</p>
             </div>
-            {/* <ChevronRight className="w-5 h-5 text-gray-400" /> */}
-          </div>
-          <p className="text-xl font-semibold text-gray-900 mb-2">
-            {userProfile?.state || "Not specified"}
-          </p>
-          <div className="flex items-center text-sm text-gray-500">
-            <div className="w-2 h-2 bg-blue-400 rounded-full mr-2" />
-            India
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500" />
           </div>
         </div>
 
-        {/* Account Status Card - Clickable to Bills */}
+        {/* Bills Summary Card */}
         <button
           onClick={() => setActiveSection("bills")}
-          className="w-full bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 text-left cursor-pointer"
+          className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-left group cursor-pointer"
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <TrendingUp className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">
-                  Bills & Payments
-                </h3>
-                <p className="text-sm text-gray-500">
-                  View invoices & payment history
-                </p>
-              </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Bills</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">₹23.5k</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
-          </div>
-          <p className="text-xl font-semibold text-gray-900 mb-2">
-            ₹23,500 Total
-          </p>
-          <div className="flex items-center text-sm text-gray-500">
-            <div className="w-2 h-2 bg-green-400 rounded-full mr-2" />5 invoices
-            • 3 paid, 2 pending
+            <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 group-hover:text-purple-600" />
           </div>
         </button>
       </div>
 
-      {/* Enhanced Quick Actions */}
-      <div className="bg-gradient-to-br from-purple-50/80 to-pink-50/80 backdrop-blur-xl rounded-3xl p-8 border border-purple-200/50 shadow-xl">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Sparkles className="w-7 h-7 mr-3 text-purple-600" />
-              Quick Actions
-            </h3>
-            <p className="text-gray-600 mt-2">
-              Manage your account efficiently
-            </p>
-          </div>
-          <button
-            onClick={() => fetchUserProfile(true)}
-            disabled={profileLoading}
-            className="bg-purple-100 hover:bg-purple-200 text-purple-700 p-3 cursor-pointer rounded-2xl hover:shadow-lg transition-all duration-200 disabled:opacity-50"
-            title="Refresh profile data"
-          >
-            <div className={`w-6 h-6 ${profileLoading ? "animate-spin" : ""}`}>
-              ↻
-            </div>
-          </button>
+      {/* Profile Information Card */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Profile Information</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <button
-            onClick={handleEditAccount}
-            className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
-          >
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Edit3 className="w-6 h-6 text-white" />
+        <div className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
+            {/* Profile Image */}
+            <div className="relative group flex-shrink-0">
+              <div
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-50 flex items-center justify-center cursor-pointer hover:border-blue-300 transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {userProfile?.profileImage || imagePreview ? (
+                  <img
+                    src={imagePreview || userProfile.profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-12 h-12 text-gray-400" />
+                )}
+                {imageUploading && (
+                  <div className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+                {/* Upload overlay */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                  <Camera className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              {/* Hidden file input for image upload */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+                disabled={imageUploading}
+              />
             </div>
-            <p className="font-bold text-gray-900 text-lg mb-2">Edit Account</p>
-            <p className="text-sm text-gray-600">Update your details</p>
-          </button>
 
-          <button
-            onClick={handleDeleteAccount}
-            className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
-          >
-            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Trash2 className="w-6 h-6 text-white" />
-            </div>
-            <p className="font-bold text-gray-900 text-lg mb-2">
-              Delete Account
-            </p>
-            <p className="text-sm text-gray-600">Permanently remove</p>
-          </button>
+            {/* Profile Details */}
+            <div className="flex-1 space-y-4">
+              <div>
+                <h4 className="text-xl font-semibold text-gray-900">
+                  {userProfile?.name || "User"}
+                </h4>
+                <p className="text-gray-600 flex items-center mt-1">
+                  <Mail className="w-4 h-4 mr-2" />
+                  {userProfile?.email}
+                </p>
+              </div>
 
-          <button
-            onClick={handleSupportModal}
-            className="bg-white/80 hover:bg-white/90 backdrop-blur-sm p-6 cursor-pointer rounded-2xl border border-white/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 text-left group"
-          >
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <HelpCircle className="w-6 h-6 text-white" />
-            </div>
-            <p className="font-bold text-gray-900 text-lg mb-2">Support</p>
-            <p className="text-sm text-gray-600">Get help & guide</p>
-          </button>
+              {/* Status Badges */}
+              <div className="flex flex-wrap gap-2">
+                {/* <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
+                  Premium User
+                </span> */}
+                <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-sm font-medium">
+                  Verified Account
+                </span>
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  Active Status
+                </span>
+              </div>
 
-          {/* <button className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/30 text-left cursor-not-allowed opacity-75">
-            <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-              <Bell className="w-6 h-6 text-white" />
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Phone Number</p>
+                  <p className="text-gray-900 mt-1">{userProfile?.phone || "Not provided"}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Location</p>
+                  <p className="text-gray-900 mt-1">{userProfile?.state || "Not specified"}</p>
+                </div>
+              </div>
             </div>
-            <p className="font-bold text-gray-700 text-lg mb-2">
-              Notifications
-            </p>
-            <p className="text-sm text-gray-500">Manage alerts</p>
-          </button> */}
+          </div>
+        </div>
+      </div>
+
+
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+          <p className="text-gray-600 mt-1">Manage your account settings and preferences</p>
+        </div>
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <button
+              onClick={handleEditAccount}
+              className="flex items-center p-4 cursor-pointer border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors text-left group"
+            >
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <Edit3 className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="ml-3">
+                <p className="font-medium text-gray-900">Edit Profile</p>
+                <p className="text-sm text-gray-600">Update your information</p>
+              </div>
+            </button>
+
+            <button
+              onClick={handleSupportModal}
+              className="flex items-center p-4 cursor-pointer border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors text-left group"
+            >
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                <HelpCircle className="w-5 h-5 text-purple-600" />
+              </div>
+              <div className="ml-3">
+                <p className="font-medium text-gray-900">Get Support</p>
+                <p className="text-sm text-gray-600">Help and guidance</p>
+              </div>
+            </button>
+
+            <button
+              onClick={handleDeleteAccount}
+              className="flex items-center p-4 cursor-pointer border border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition-colors text-left group"
+            >
+              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                <Trash2 className="w-5 h-5 text-red-600" />
+              </div>
+              <div className="ml-3">
+                <p className="font-medium text-gray-900">Delete Account</p>
+                <p className="text-sm text-gray-600">Remove permanently</p>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -2014,139 +1277,29 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-hidden">
-      {/* Fixed Height Container */}
-      <div className="h-full w-full lg:max-w-7xl lg:mx-auto lg:py-2 lg:px-2">
-        {/* Fixed Height Layout */}
-        <div className="flex flex-col lg:flex-row h-full lg:h-[calc(100vh-1rem)] relative">
-          {/* Desktop Sidebar - Fixed Height */}
-          <div className="hidden lg:flex lg:flex-shrink-0">
-            <div className="h-full">
-              <Sidebar
-                isCollapsed={isCollapsed}
-                setIsCollapsed={setIsCollapsed}
-                activeSection={activeSection}
-                onSectionChange={handleSectionChange}
-                onLogout={logout}
-                showLogoutModal={showLogoutModal}
-                setShowLogoutModal={setShowLogoutModal}
-                serviceCount={serviceCount}
-              />
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <UserSidebar
+          activeSection={activeSection}
+          onSectionChange={handleSectionChange}
+          serviceCount={serviceCount}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          isMobileOpen={isMobileOpen}
+          setIsMobileOpen={setIsMobileOpen}
+        />
 
-          {/* Mobile Sidebar - Full Screen Overlay */}
-          <div className="lg:hidden">
-            <Sidebar
-              isCollapsed={isCollapsed}
-              setIsCollapsed={setIsCollapsed}
-              activeSection={activeSection}
-              onSectionChange={handleSectionChange}
-              onLogout={logout}
-              showLogoutModal={showLogoutModal}
-              setShowLogoutModal={setShowLogoutModal}
-              serviceCount={serviceCount}
-            />
-          </div>
-
-          {/* Main Content - Fixed Height with Scrollable Content */}
-          <div className="flex-1 min-w-0 flex flex-col lg:ml-4 h-full">
-            {/* Fixed Height Content Container with Scroll */}
-            <div className="flex-1 bg-white/40 backdrop-blur-xl rounded-none lg:rounded-2xl border-0 lg:border lg:border-white/20 shadow-none lg:shadow-xl overflow-hidden h-full">
-              <div className="h-full overflow-y-auto custom-scrollbar">
-                <div className="p-2 sm:p-3 md:p-4 lg:p-5 pt-3 sm:pt-4 lg:pt-5 pb-4">
-                  {renderContent()}
-                </div>
-              </div>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto bg-gray-50">
+            <div className="p-4 sm:p-6">
+              {renderContent()}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Enhanced Logout Confirmation Modal with Glassmorphism */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-2xl flex items-center justify-center z-[9999] p-4 animate-in fade-in-0 duration-300">
-          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl max-w-md w-full p-8 transform animate-in fade-in-0 zoom-in-95 duration-300 border border-white/20">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-red-100 to-red-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <LogOut className="w-10 h-10 text-red-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                Sign Out Confirmation
-              </h3>
-              <p className="text-gray-600 mb-8 text-lg">
-                Are you sure you want to sign out of your account? Any unsaved
-                changes will be lost.
-              </p>
-
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                <button
-                  onClick={() => setShowLogoutModal(false)}
-                  className="flex-1 cursor-pointer px-6 py-4 bg-gray-100/80 hover:bg-gray-200/80 backdrop-blur-sm text-gray-700 rounded-2xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    logout();
-                    setShowLogoutModal(false);
-                  }}
-                  className="flex-1 cursor-pointer px-6 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-2xl font-semibold transition-all duration-200 shadow-xl hover:shadow-2xl"
-                >
-                  <div className="flex items-center justify-center space-x-2">
-                    <LogOut className="w-5 h-5" />
-                    <span>Sign Out</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Enhanced Global Styles with Responsive Improvements */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.4);
-            border-radius: 10px;
-            transition: background 0.3s ease;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.6);
-          }
-          
-          /* Responsive animations */
-          @media (max-width: 1024px) {
-            .custom-scrollbar::-webkit-scrollbar {
-              width: 4px;
-            }
-          }
-          
-          /* Smooth transitions for mobile */
-          @media (max-width: 768px) {
-            * {
-              -webkit-tap-highlight-color: transparent;
-            }
-          }
-          
-          /* Enhanced glassmorphism backdrop effects */
-          @supports (backdrop-filter: blur(20px)) {
-            .backdrop-blur-2xl {
-              backdrop-filter: blur(20px);
-            }
-          }
-        `,
-        }}
-      />
     </div>
   );
 };
