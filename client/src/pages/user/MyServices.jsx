@@ -66,46 +66,40 @@ const MyServices = () => {
   };
 
   const getStatusBadge = (service) => {
-    // Since we don't have explicit status field, we'll show based on creation date and document presence
-    const daysSinceCreated = Math.floor((new Date() - new Date(service.createdAt)) / (1000 * 60 * 60 * 24));
-    const hasDocument = service.documentUrl || service.documentPath;
+    // Use actual status field if available, otherwise fall back to date-based logic
+    const status = service.status || 'Pending';
     
-    if (daysSinceCreated === 0) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          <Clock className="w-3 h-3 mr-1" />
-          Just Submitted
-        </span>
-      );
-    } else if (daysSinceCreated <= 3 && hasDocument) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Document Submitted
-        </span>
-      );
-    } else if (daysSinceCreated <= 7) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          Under Review
-        </span>
-      );
-    } else if (daysSinceCreated <= 30) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-          <Clock className="w-3 h-3 mr-1" />
-          In Progress
-        </span>
-      );
-    } else {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Archived
-        </span>
-      );
-    }
+    const statusConfig = {
+      'Pending': {
+        className: 'bg-yellow-100 text-yellow-800',
+        icon: <Clock className="w-3 h-3 mr-1" />,
+        text: 'Pending'
+      },
+      'In Progress': {
+        className: 'bg-blue-100 text-blue-800',
+        icon: <RefreshCw className="w-3 h-3 mr-1" />,
+        text: 'In Progress'
+      },
+      'Approved': {
+        className: 'bg-green-100 text-green-800',
+        icon: <CheckCircle className="w-3 h-3 mr-1" />,
+        text: 'Approved'
+      },
+      'Declined': {
+        className: 'bg-red-100 text-red-800',
+        icon: <AlertCircle className="w-3 h-3 mr-1" />,
+        text: 'Declined'
+      }
+    };
+
+    const config = statusConfig[status] || statusConfig['Pending'];
+    
+    return (
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.className}`}>
+        {config.icon}
+        {config.text}
+      </span>
+    );
   };
 
   const formatDate = (dateString) => {
@@ -320,6 +314,13 @@ const MyServices = () => {
                       {service.notes && (
                         <p className="text-sm text-gray-500 mt-1">Notes: {service.notes}</p>
                       )}
+                      {service.adminNotes && (
+                        <div className="mt-2 p-2 bg-blue-50 rounded-md border-l-4 border-blue-400">
+                          <p className="text-sm text-blue-800">
+                            <span className="font-semibold">Admin Response:</span> {service.adminNotes}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -343,7 +344,7 @@ const MyServices = () => {
                         <Eye className="w-5 h-5" />
                       </button>
                     )}
-                    {service.documentUrl && (
+                    {/* {service.documentUrl && (
                       <button
                         onClick={() => {
                           const link = document.createElement('a');
@@ -356,7 +357,7 @@ const MyServices = () => {
                       >
                         <Download className="w-5 h-5" />
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>

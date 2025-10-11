@@ -9,7 +9,10 @@ const {
   getDashboardStats,
   exportUsersExcel,
   exportServicesExcel,
-  getServicesReport
+  getServicesReport,
+  getAllServices,
+  getServiceDetails,
+  updateServiceStatus
 } = require("../controllers/adminController");
 
 // Send OTP endpoint
@@ -36,5 +39,14 @@ router.get('/export-services-excel', adminAuth, exportServicesExcel);
 
 // Return all services data as JSON for frontend table
 router.get('/services-report', adminAuth, getServicesReport);
+
+// Get all services with status for admin panel
+router.get('/services', adminAuth, getAllServices);
+
+// Get specific service details
+router.get('/services/:serviceType/:serviceId', adminAuth, getServiceDetails);
+
+// Update service status
+router.put('/services/:serviceType/:serviceId/status', adminAuth, updateServiceStatus);
 
 module.exports = router;

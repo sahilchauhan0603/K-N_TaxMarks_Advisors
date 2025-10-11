@@ -332,3 +332,124 @@ exports.getServicesReport = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch services report', error: err.message });
   }
 };
+
+// Get all services with status for admin panel
+exports.getAllServices = async (req, res) => {
+  try {
+    const Trademark = require('../models/Trademark');
+    const TaxPlanning = require('../models/TaxPlanning');
+    const BusinessAdvisory = require('../models/BusinessAdvisory');
+    const GST = require('../models/GST');
+    const ITR = require('../models/ITR');
+
+    // Collect all service data with status
+    const [gstServices, itrServices, taxServices, businessServices, trademarkServices] = await Promise.all([
+      GST.find().populate('userId', 'name email phone').sort({ createdAt: -1 }),
+      ITR.find().populate('userId', 'name email phone').sort({ createdAt: -1 }),
+      TaxPlanning.find().populate('userId', 'name email phone').sort({ createdAt: -1 }),
+      BusinessAdvisory.find().populate('userId', 'name email phone').sort({ createdAt: -1 }),
+      Trademark.find().populate('userId', 'name email phone').sort({ createdAt: -1 })
+    ]);
+
+    const services = {
+      gst: gstServices,
+      itr: itrServices,
+      tax: taxServices,
+      business: businessServices,
+      trademark: trademarkServices
+    };
+
+    res.json(services);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch services', error: err.message });
+  }
+};
+
+// Get specific service details
+exports.getServiceDetails = async (req, res) => {
+  try {
+    const { serviceType, serviceId } = req.params;
+    
+    let Model;
+    switch (serviceType) {
+      case 'gst':
+        Model = require('../models/GST');
+        break;
+      case 'itr':
+        Model = require('../models/ITR');
+        break;
+      case 'tax':
+        Model = require('../models/TaxPlanning');
+        break;
+      case 'business':
+        Model = require('../models/BusinessAdvisory');
+        break;
+      case 'trademark':
+        Model = require('../models/Trademark');
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid service type' });
+    }
+
+    const service = await Model.findById(serviceId).populate('userId', 'name email phone');
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    res.json(service);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch service details', error: err.message });
+  }
+};
+
+// Update service status
+exports.updateServiceStatus = async (req, res) => {
+  try {
+    const { serviceType, serviceId } = req.params;
+    const { status, adminNotes } = req.body;
+
+    // Validate status
+    if (!['Pending', 'In Progress', 'Approved', 'Declined'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    let Model;
+    switch (serviceType) {
+      case 'gst':
+        Model = require('../models/GST');
+        break;
+      case 'itr':
+        Model = require('../models/ITR');
+        break;
+      case 'tax':
+        Model = require('../models/TaxPlanning');
+        break;
+      case 'business':
+        Model = require('../models/BusinessAdvisory');
+        break;
+      case 'trademark':
+        Model = require('../models/Trademark');
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid service type' });
+    }
+
+    const service = await Model.findByIdAndUpdate(
+      serviceId,
+      { 
+        status, 
+        adminNotes: adminNotes || '',
+        updatedAt: new Date()
+      },
+      { new: true }
+    ).populate('userId', 'name email phone');
+
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    res.json({ message: 'Service status updated successfully', service });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update service status', error: err.message });
+  }
+};

@@ -53,6 +53,7 @@ import AdminGST from "./pages/admin/TablesForForms/AdminGST";
 import AdminITR from "./pages/admin/TablesForForms/AdminITR";
 import AdminTestimonials from "./pages/admin/AdminTestimonials";
 import AdminSuggestions from "./pages/admin/AdminSuggestions";
+import AdminServices from "./pages/admin/AdminServices";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -287,6 +288,7 @@ const App = () => {
                 <Route path="suggestions" element={<AdminSuggestions />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
+                <Route path="services" element={<AdminServices />} />
                 <Route path="trademark" element={<AdminTrademark />} />
                 <Route path="business-advisory" element={<AdminBusiness />} />
                 <Route path="tax-planning" element={<AdminTaxPlanning />} />

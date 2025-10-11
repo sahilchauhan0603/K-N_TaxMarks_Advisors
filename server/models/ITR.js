@@ -12,7 +12,10 @@ const ITRSchema = new mongoose.Schema({
   notes: { type: String },
   documentPath: { type: String }, // Cloudinary public_id
   documentUrl: { type: String }, // Cloudinary secure_url
+  status: { type: String, enum: ['Pending', 'In Progress', 'Approved', 'Declined'], default: 'Pending' },
+  adminNotes: { type: String }, // Notes from admin
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const ITR = mongoose.model('ITR', ITRSchema);

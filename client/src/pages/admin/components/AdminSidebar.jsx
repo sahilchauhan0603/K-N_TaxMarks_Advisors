@@ -200,53 +200,17 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 <ul className="admin-sidebar-menu">
                   <li>
                     <NavLink 
-                      to="/admin/gst" 
+                      to="/admin/services" 
                       className={({ isActive }) =>
                         `admin-sidebar-link ${isActive ? 'active' : ''}`
                       }
-                      title="GST Services"
+                      title="Service Management"
                     >
-                      <FaFileInvoiceDollar /> 
-                      {!isCollapsed && <span>GST Services</span>}
+                      <FaCog /> 
+                      {!isCollapsed && <span>Service Management</span>}
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink 
-                      to="/admin/itr" 
-                      className={({ isActive }) =>
-                        `admin-sidebar-link ${isActive ? 'active' : ''}`
-                      }
-                      title="ITR Services"
-                    >
-                      <FaFileInvoiceDollar /> 
-                      {!isCollapsed && <span>ITR Services</span>}
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink 
-                      to="/admin/trademark" 
-                      className={({ isActive }) =>
-                        `admin-sidebar-link ${isActive ? 'active' : ''}`
-                      }
-                      title="Trademark"
-                    >
-                      <FaBusinessTime /> 
-                      {!isCollapsed && <span>Trademark</span>}
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink 
-                      to="/admin/business-advisory" 
-                      className={({ isActive }) =>
-                        `admin-sidebar-link ${isActive ? 'active' : ''}`
-                      }
-                      title="Business Advisory"
-                    >
-                      <FaBusinessTime /> 
-                      {!isCollapsed && <span>Business Advisory</span>}
-                    </NavLink>
-                  </li>
-                  <li>
+                  {/* <li>
                     <NavLink 
                       to="/admin/tax-planning" 
                       className={({ isActive }) =>
@@ -257,7 +221,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <GiCash /> 
                       {!isCollapsed && <span>Tax Planning</span>}
                     </NavLink>
-                  </li>
+                  </li> */}
                 </ul>
               )}
             </div>
