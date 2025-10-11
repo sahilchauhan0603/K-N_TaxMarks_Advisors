@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const FAQPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -49,6 +50,18 @@ const FAQPage = () => {
     }
   ];
 
+  // Filter FAQs based on search term
+  const filteredFaqs = faqs.filter(faq => 
+    faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    faq.answer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (faq.list && faq.list.some(item => item.toLowerCase().includes(searchTerm.toLowerCase())))
+  );
+
+  // Reset active index when search term changes
+  useEffect(() => {
+    setActiveIndex(null);
+  }, [searchTerm]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <style>{`
@@ -84,10 +97,35 @@ const FAQPage = () => {
             <input 
               type="text" 
               placeholder="Search questions..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full py-2 px-2 outline-none text-gray-700 placeholder-gray-400"
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="mx-2 p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                title="Clear search"
+              >
+                <svg className="w-5 h-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
+
+        {/* Search Results Count */}
+        {searchTerm && (
+          <div className={`mb-4 text-center transition-all duration-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <p className="text-gray-600">
+              {filteredFaqs.length > 0 
+                ? `Found ${filteredFaqs.length} result${filteredFaqs.length === 1 ? '' : 's'} for "${searchTerm}"`
+                : `No results found for "${searchTerm}"`
+              }
+            </p>
+          </div>
+        )}
 
         {/* Main Content */}
         <div className={`bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -120,7 +158,8 @@ const FAQPage = () => {
             
             {/* FAQ Items */}
             <div className="space-y-4">
-              {faqs.map((faq, index) => (
+              {filteredFaqs.length > 0 ? (
+                filteredFaqs.map((faq, index) => (
                 <div 
                   key={index} 
                   className={`border border-blue-100 rounded-xl overflow-hidden transition-all duration-300 ${activeIndex === index ? 'faq-active bg-blue-50 shadow-md' : 'bg-white'}`}
@@ -147,7 +186,24 @@ const FAQPage = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No results found</h3>
+                  <p className="text-gray-500 mb-4">We couldn't find any FAQs matching "{searchTerm}"</p>
+                  <button 
+                    onClick={() => setSearchTerm('')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  >
+                    Clear search
+                  </button>
+                </div>
+              )}
             </div>
             
             {/* Visual element */}

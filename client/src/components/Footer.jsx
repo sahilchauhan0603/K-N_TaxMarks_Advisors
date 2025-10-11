@@ -11,10 +11,31 @@ import {
   FaInstagram
 } from 'react-icons/fa';
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
 
 const Footer = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Handle protected navigation for services - same as navbar
+  const handleProtectedRoute = (route) => {
+    if (!user) {
+      if (typeof window.setShowAuthPopup === "function") {
+        window.setShowAuthPopup(true);
+        setTimeout(() => {
+          navigate(`/login?redirectTo=${encodeURIComponent(route)}`);
+          window.setShowAuthPopup(false);
+        }, 1200);
+      } else {
+        navigate(`/login?redirectTo=${encodeURIComponent(route)}`);
+      }
+    } else {
+      navigate(route);
+    }
+  };
+
   const links = [
     {
       title: "Services",
@@ -107,6 +128,14 @@ const Footer = () => {
                           <FaArrowRight className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform group-hover:translate-x-1" />
                         )}
                       </a>
+                    ) : item.href.startsWith('/services/') ? (
+                      <button
+                        onClick={() => handleProtectedRoute(item.href)}
+                        className="flex items-center cursor-pointer justify-center md:justify-start text-gray-300 hover:text-white transition-colors duration-200 group w-full text-left"
+                      >
+                        {item.icon && <span className="mr-2">{item.icon}</span>}
+                        <span>{item.name}</span>
+                      </button>
                     ) : (
                       <Link
                         to={item.href}
@@ -125,7 +154,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-start items-center md:items-start text-center md:text-left">
+            <div className="mb-6 md:mb-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-start items-center text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start w-full">
                 <img src={logo} alt="K&N TaxMark Logo" className="h-15 w-15 mr-4 rounded-lg bg-white shadow" />
                 <div>
