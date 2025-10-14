@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, AreaChart, Area } from 'recharts';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 import { 
   FaUsers, 
   FaChartBar, 

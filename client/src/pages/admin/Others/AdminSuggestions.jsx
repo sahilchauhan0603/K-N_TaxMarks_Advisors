@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 import { 
   FaEye, FaEyeSlash, FaTrash, FaEdit, FaFilter, FaSearch, 
   FaLightbulb, FaExclamationTriangle, FaCalendarAlt, FaUser,
@@ -8,7 +8,7 @@ import {
 import { MdMessage, MdSubject } from 'react-icons/md';
 import Swal from 'sweetalert2';
 
-const AdminSuggestions = () => {
+const AdminSuggestions = ({ setSidebarVisible }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +42,13 @@ const AdminSuggestions = () => {
   useEffect(() => {
     applySearchFilter();
   }, [suggestions, filters.searchTerm]);
+
+  // Hide sidebar when modal is open
+  useEffect(() => {
+    if (setSidebarVisible) {
+      setSidebarVisible(!showModal);
+    }
+  }, [showModal, setSidebarVisible]);
 
   const fetchSuggestions = async () => {
     try {
@@ -395,6 +402,9 @@ const AdminSuggestions = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  S.No
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -418,8 +428,11 @@ const AdminSuggestions = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSuggestions.map((suggestion) => (
+              {filteredSuggestions.map((suggestion, index) => (
                 <tr key={suggestion._id} className={`hover:bg-gray-50 ${!suggestion.isRead ? 'bg-blue-50' : ''}`}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {index + 1}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       suggestion.isRead ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
@@ -491,7 +504,7 @@ const AdminSuggestions = () => {
 
       {/* Modal for viewing suggestion details */}
       {showModal && selectedSuggestion && (
-        <div className="fixed inset-0 z-50 overflow-y-auto ml-10">
+        <div className="fixed inset-0 z-[9999] overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen py-4 px-4">
             {/* Backdrop with blur effect */}
             <div 

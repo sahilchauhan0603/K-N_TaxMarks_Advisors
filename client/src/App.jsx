@@ -42,18 +42,17 @@ import BusinessAdvisory from "./pages/services/BusinessAdvisory/BusinessAdvisory
 
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminLogin from "./pages/admin/auth/Login";
-import AdminDashboard from "./pages/admin/Dashboard";
+import AdminDashboard from "./pages/admin/Others/Dashboard";
 import AdminUsers from "./pages/admin/Others/Users";
 import ReportsPage from "./pages/admin/Others/Reports";
-import SettingsPage from "./pages/admin/Others/Settings";
 import AdminTrademark from "./pages/admin/TablesForForms/AdminTrademark";
 import AdminBusiness from "./pages/admin/TablesForForms/AdminBusiness";
 import AdminTaxPlanning from "./pages/admin/TablesForForms/AdminTaxPlanning";
 import AdminGST from "./pages/admin/TablesForForms/AdminGST";
 import AdminITR from "./pages/admin/TablesForForms/AdminITR";
-import AdminTestimonials from "./pages/admin/AdminTestimonials";
-import AdminSuggestions from "./pages/admin/AdminSuggestions";
-import AdminServices from "./pages/admin/AdminServices";
+import AdminTestimonials from "./pages/admin/Others/AdminTestimonials";
+import AdminSuggestions from "./pages/admin/Others/AdminSuggestions";
+import AdminServices from "./pages/admin/Others/AdminServices";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -287,7 +286,6 @@ const App = () => {
                 <Route path="testimonials" element={<AdminTestimonials />} />
                 <Route path="suggestions" element={<AdminSuggestions />} />
                 <Route path="reports" element={<ReportsPage />} />
-                <Route path="settings" element={<SettingsPage />} />
                 <Route path="services" element={<AdminServices />} />
                 <Route path="trademark" element={<AdminTrademark />} />
                 <Route path="business-advisory" element={<AdminBusiness />} />

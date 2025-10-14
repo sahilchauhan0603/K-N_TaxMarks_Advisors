@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../../utils/axios';
+import axios from '../../../utils/axios';
 import Swal from 'sweetalert2';
 import { 
   FaEye, 
@@ -14,10 +14,11 @@ import {
   FaSearch,
   FaFilter,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
+  FaEdit
 } from 'react-icons/fa';
 
-const AdminServices = () => {
+const AdminServices = ({ setSidebarVisible }) => {
   const [services, setServices] = useState({
     gst: [],
     itr: [],
@@ -55,6 +56,13 @@ const AdminServices = () => {
     fetchServices();
   }, []);
 
+  // Hide sidebar when modal is open
+  useEffect(() => {
+    if (setSidebarVisible) {
+      setSidebarVisible(!showModal);
+    }
+  }, [showModal, setSidebarVisible]);
+
   const fetchServices = async () => {
     try {
       setLoading(true);
@@ -79,7 +87,7 @@ const AdminServices = () => {
     }
   };
 
-  const handleStatusUpdate = async (status, adminNotes = '') => {
+  const handleStatusUpdate = async (status, adminNotes = '', closeModal = true) => {
     try {
       setUpdating(true);
       const { serviceType, _id } = selectedService;
@@ -89,30 +97,51 @@ const AdminServices = () => {
         adminNotes
       });
 
-      Swal.fire('Success', 'Service status updated successfully', 'success');
-      setShowModal(false);
+      // Only close modal if requested (for direct status updates like "In Progress")
+      if (closeModal) {
+        setShowModal(false);
+        setTimeout(() => {
+          Swal.fire('Success', 'Service status updated successfully', 'success');
+        }, 100);
+      } else {
+        // Modal already closed, show alert immediately
+        Swal.fire('Success', 'Service status updated successfully', 'success');
+      }
       fetchServices(); // Refresh the services list
     } catch (err) {
-      Swal.fire('Error', 'Failed to update service status', 'error');
+      if (closeModal) {
+        setShowModal(false);
+        setTimeout(() => {
+          Swal.fire('Error', 'Failed to update service status', 'error');
+        }, 100);
+      } else {
+        Swal.fire('Error', 'Failed to update service status', 'error');
+      }
     } finally {
       setUpdating(false);
     }
   };
 
   const handleStatusUpdateWithNotes = async (status) => {
-    const { value: adminNotes } = await Swal.fire({
-      title: `${status} Service`,
-      input: 'textarea',
-      inputLabel: 'Admin Notes (Optional)',
-      inputPlaceholder: 'Add any notes for this status update...',
-      showCancelButton: true,
-      confirmButtonText: `Mark as ${status}`,
-      confirmButtonColor: status === 'Approved' ? '#10b981' : '#ef4444'
-    });
+    // Close the modal first, then show the admin notes dialog
+    setShowModal(false);
+    
+    // Wait for modal to close, then show SweetAlert
+    setTimeout(async () => {
+      const { value: adminNotes } = await Swal.fire({
+        title: `${status} Service`,
+        input: 'textarea',
+        inputLabel: 'Admin Notes (Optional)',
+        inputPlaceholder: 'Add any notes for this status update...',
+        showCancelButton: true,
+        confirmButtonText: `Mark as ${status}`,
+        confirmButtonColor: status === 'Approved' ? '#10b981' : '#ef4444'
+      });
 
-    if (adminNotes !== undefined) {
-      await handleStatusUpdate(status, adminNotes);
-    }
+      if (adminNotes !== undefined) {
+        await handleStatusUpdate(status, adminNotes, false);
+      }
+    }, 100);
   };
 
   // Get all services in a flat array for filtering
@@ -188,8 +217,8 @@ const AdminServices = () => {
     const serviceInfo = serviceTypeMap[selectedService.serviceType];
 
     return (
-      <div className="fixed inset-0 backdrop-blur-sm bg-black/40 bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 backdrop-blur-sm bg-black/40 bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+        <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -431,6 +460,7 @@ const AdminServices = () => {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.No</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
@@ -439,10 +469,14 @@ const AdminServices = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {paginatedServices.map((service) => {
+                {paginatedServices.map((service, index) => {
                   const serviceInfo = serviceTypeMap[service.serviceType];
+                  const serialNumber = (currentPage - 1) * servicesPerPage + index + 1;
                   return (
                     <tr key={`${service.serviceType}-${service._id}`} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {serialNumber}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{service.userId?.name}</div>
                         <div className="text-sm text-gray-500">{service.userId?.email}</div>
@@ -466,8 +500,8 @@ const AdminServices = () => {
                           onClick={() => handleViewService(service.serviceType, service._id)}
                           className="text-blue-600 hover:text-blue-900 cursor-pointer flex items-center space-x-1"
                         >
-                          <FaEye />
-                          <span>View Details</span>
+                          {service.status === 'Pending' ? <FaEye /> : <FaEdit />}
+                          <span>{service.status === 'Pending' ? 'View Details' : 'Change Status'}</span>
                         </button>
                       </td>
                     </tr>

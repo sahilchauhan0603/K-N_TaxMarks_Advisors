@@ -10,6 +10,9 @@
   background: #f8fafc;
   min-height: 100vh;
 }
+.admin-panel-content.no-sidebar {
+  margin-left: 0;
+}
 @media (max-width: 900px) {
   .admin-panel-content {
     margin-left: 0;
