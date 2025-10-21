@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  // baseURL: 'http://localhost:5000', 
-  baseURL: 'https://k-n-taxmarks-advisors-backend.onrender.com', 
+  baseURL: import.meta.env.VITE_API_URL || 'https://k-n-taxmarks-advisors-backend.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },

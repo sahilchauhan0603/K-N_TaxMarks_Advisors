@@ -96,14 +96,14 @@ const UserSidebar = ({
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-white border border-gray-200 rounded-lg p-2 shadow-lg"
+        className="md:hidden fixed cursor-pointer top-4 left-4 z-50 bg-white border border-gray-200 rounded-lg p-2 shadow-lg"
       >
         <Menu className="w-5 h-5 text-gray-600" />
       </button>
 
       {/* Sidebar */}
       <div className={`
-        ${isCollapsed ? 'w-16' : 'w-64'}
+        ${isCollapsed ? 'w-18' : 'w-64'}
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         fixed md:static h-screen md:h-auto bg-white border-r border-gray-200 shadow-lg
         transition-all duration-300 z-50 md:z-auto
@@ -127,7 +127,7 @@ const UserSidebar = ({
           {/* Mobile close button */}
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="md:hidden text-gray-500 hover:text-gray-700"
+            className="md:hidden text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -206,14 +206,14 @@ const UserSidebar = ({
             to="/"
             onClick={() => setIsMobileOpen(false)}
             className={`
-              w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-              text-blue-600 hover:bg-blue-50 transition-colors duration-200
+              w-full flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg text-sm font-medium
+              transition-colors duration-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700
               ${isCollapsed ? 'justify-center' : ''}
             `}
             title={isCollapsed ? 'Back to Home' : ''}
           >
             <Home className="w-5 h-5" />
-            {!isCollapsed && <span>Back to Home</span>}
+            {!isCollapsed && <span className="flex-1 text-left">Back to Home</span>}
           </Link>
 
           {/* Logout */}
@@ -221,13 +221,13 @@ const UserSidebar = ({
             onClick={handleLogout}
             className={`
               w-full flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg text-sm font-medium
-              text-red-600 hover:bg-red-50 transition-colors duration-200
+              transition-colors duration-200 text-red-600 hover:bg-red-50 hover:text-red-700
               ${isCollapsed ? 'justify-center' : ''}
             `}
             title={isCollapsed ? 'Sign Out' : ''}
           >
             <LogOut className="w-5 h-5" />
-            {!isCollapsed && <span>Sign Out</span>}
+            {!isCollapsed && <span className="flex-1 text-left">Sign Out</span>}
           </button>
         </div>
       </div>

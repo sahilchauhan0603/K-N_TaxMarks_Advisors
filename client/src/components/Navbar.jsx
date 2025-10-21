@@ -95,10 +95,10 @@ const Navbar = () => {
               <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4 relative">
                 <NavLink to="/" text="Home" />
                 <div className="relative group">
-                  <button className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center focus:outline-none">
+                  <button className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center gap-1 focus:outline-none">
                     Services
                     <svg
-                      className="ml-1 w-4 h-4"
+                      className="w-4 h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -175,7 +175,7 @@ const Navbar = () => {
                 <div className="relative ml-2 flex items-center group">
                   <button
                     onClick={() => setShowUserDropdown(!showUserDropdown)}
-                    className="flex items-center text-sm cursor-pointer rounded-full focus:outline-none user-dropdown-btn"
+                    className="hidden md:flex  items-center text-sm cursor-pointer rounded-full focus:outline-none user-dropdown-btn"
                   >
                     {user?.profileImage || user?.picture ? (
                       <img
@@ -234,7 +234,7 @@ const Navbar = () => {
               <div className="md:hidden ml-4 flex items-center">
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="text-gray-500 hover:text-gray-600 focus:outline-none"
+                  className="text-gray-500 hover:text-gray-600 cursor-pointer focus:outline-none"
                   aria-label="Open menu"
                 >
                   <svg
@@ -274,11 +274,11 @@ const Navbar = () => {
                 onClick={() =>
                   setIsOpen(isOpen === "services" ? false : "services")
                 }
-                className="w-full px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100 flex items-center justify-between"
+                className="px-3 py-2 cursor-pointer rounded-md text-base font-medium text-black hover:bg-gray-100 flex items-center gap-2"
               >
                 Services
                 <svg
-                  className="ml-2 w-4 h-4"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -332,14 +332,14 @@ const Navbar = () => {
             </div>
             <button
               onClick={() => navigate("/reviews")}
-              className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
+              className="flex items-center cursor-pointer gap-2 px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
             >
               <FiStar className="w-4 h-4" />
               Reviews
             </button>
             <button
               onClick={() => navigate("/contact-us")}
-              className="block px-3 py-2 rounded-md text-base font-medium text-black hover:bg-gray-100"
+              className="block px-3 py-2 rounded-md cursor-pointer text-base font-medium text-black hover:bg-gray-100"
             >
               Contact Us
             </button>
@@ -370,15 +370,15 @@ const Navbar = () => {
                   <div className="mt-3 space-y-1 px-2">
                     <button
                       onClick={() => { setIsOpen(false); navigate('/profile'); }}
-                      className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 flex items-center"
+                      className="cursor-pointer px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 flex items-center gap-2"
                     >
-                      <FiUser className="mr-3" /> User Profile
+                      <FiUser className="w-4 h-4" /> User Profile
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left cursor-pointer px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 flex items-center"
+                      className="cursor-pointer px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 flex items-center gap-2"
                     >
-                      <FiLogOut className="mr-3" /> Sign out
+                      <FiLogOut className="w-4 h-4" /> Sign out
                     </button>
                   </div>
                 </div>
@@ -401,7 +401,7 @@ const Navbar = () => {
 const NavLink = ({ to, text }) => (
   <Link
     to={to}
-    className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300"
+    className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center gap-1"
   >
     {text}
   </Link>
