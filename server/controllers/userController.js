@@ -3,7 +3,18 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const sendMail = require('../utils/mailer');
 
-let otpStore = {}; // In-memory OTP store
+let otpStore = {}; // In-memory OTP store with expiration
+
+// Cleanup expired OTPs every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const email in otpStore) {
+    if (otpStore[email].expiresAt < now) {
+      delete otpStore[email];
+    }
+  }
+}, 5 * 60 * 1000);
+
 // Send OTP controller
 exports.sendOTP = async (req, res) => {
   const { email } = req.body;
@@ -16,7 +27,12 @@ exports.sendOTP = async (req, res) => {
     }
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[email] = otp;
+    // Store OTP with expiration time (10 minutes from now)
+    const expirationTime = Date.now() + (10 * 60 * 1000); // 10 minutes in milliseconds
+    otpStore[email] = {
+      otp: otp,
+      expiresAt: expirationTime
+    };
     await sendMail(
       email,
       'Your OTP Code - K&N Taxmark Advisors',
@@ -39,20 +55,58 @@ exports.sendOTP = async (req, res) => {
 // Verify OTP controller
 exports.verifyOTP = async (req, res) => {
   const { email, otp, password, name, phone, state } = req.body;
-  // Implement OTP verification logic here
-  // For now, just register the user after OTP verification
+  
   try {
+    // Validate required fields
+    if (!email || !otp || !password || !name || !phone || !state) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
+    // Verify OTP
+    const storedOTPData = otpStore[email];
+    if (!storedOTPData) {
+      return res.status(400).json({ message: 'OTP not found. Please request a new OTP.' });
+    }
+
+    // Check if OTP has expired
+    if (Date.now() > storedOTPData.expiresAt) {
+      delete otpStore[email]; // Clean up expired OTP
+      return res.status(400).json({ message: 'OTP has expired. Please request a new OTP.' });
+    }
+
+    // Verify OTP matches
+    if (storedOTPData.otp !== otp.toString()) {
+      return res.status(400).json({ message: 'Invalid OTP. Please check and try again.' });
+    }
+
+    // OTP is valid, proceed with user registration
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword, phone, state });
     await newUser.save();
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(201).json({ token, user: newUser });
+    // Clear the OTP from store after successful verification
+    delete otpStore[email];
+
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.status(201).json({ 
+      success: true,
+      message: 'Registration successful',
+      token, 
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        state: newUser.state
+      }
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Server error during registration' });
   }
 };
 

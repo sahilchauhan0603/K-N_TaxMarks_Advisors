@@ -242,7 +242,7 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
 
   return (
     <div className="p-2 bg-gray-50 min-h-screen">
-      <div className="max-w-[960px] mx-auto">
+      <div className="max-w-[950px] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-start mb-6">
           <div>

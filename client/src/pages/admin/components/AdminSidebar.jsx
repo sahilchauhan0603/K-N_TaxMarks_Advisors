@@ -182,6 +182,18 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {!isCollapsed && <span>User Suggestions</span>}
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/bills" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Bills Management"
+                    >
+                      <FaFileInvoiceDollar /> 
+                      {!isCollapsed && <span>Bills Management</span>}
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </div>

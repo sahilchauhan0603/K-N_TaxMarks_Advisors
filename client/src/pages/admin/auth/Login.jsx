@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../utils/axios";
-import { FaUserShield, FaEnvelope, FaKey, FaLock } from "react-icons/fa";
+import { FaUserShield, FaEnvelope, FaKey, FaLock, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import OTPInput from "../../../components/OTPInput";
 
@@ -19,6 +19,8 @@ const AdminLogin = () => {
   const [info, setInfo] = useState("");
   const [otpTimer, setOtpTimer] = useState(0);
   const [canResendOtp, setCanResendOtp] = useState(false);
+  const [hasFormData, setHasFormData] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // OTP Timer Effect
   useEffect(() => {
@@ -39,6 +41,23 @@ const AdminLogin = () => {
     };
   }, [otpTimer]);
 
+  // Page reload warning effect
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasFormData && !isRedirecting) {
+        e.preventDefault();
+        e.returnValue = 'Your data might get lost. Do you want to reload?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasFormData, isRedirecting]);
+
   // Format timer display
   const formatTimer = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -50,9 +69,11 @@ const AdminLogin = () => {
     e.preventDefault();
     if (!allowedEmails.includes(email)) {
       setError("not-allowed");
+      setHasFormData(true);
       return;
     }
     setLoading(true);
+    setHasFormData(true);
     try {
       await axios.post("/api/admin/send-otp", { email });
       setStep(2);
@@ -90,16 +111,31 @@ const AdminLogin = () => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(""); // Clear any previous errors
     try {
       const res = await axios.post("/api/admin/verify-otp", { email, otp });
       localStorage.setItem("adminToken", res.data.token);
       localStorage.setItem("adminEmail", email);
       localStorage.setItem("adminLoginTime", new Date().toISOString());
-      window.location.href = "/admin";
+      
+      // Set redirecting flag to prevent beforeunload warning
+      setIsRedirecting(true);
+      setHasFormData(false);
+      
+      // Small delay to ensure state updates before redirect
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 100);
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP");
+      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
+      setOtp(""); // Clear the OTP input for retry
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  // Function to clear error messages
+  const clearError = () => {
+    setError("");
   };
 
   return (
@@ -125,11 +161,11 @@ const AdminLogin = () => {
               <FaLock className="text-red-500 text-xl mt-0.5 flex-shrink-0" />
               <span>This user is not allowed to access the admin panel.</span>
               <button
-                className="ml-auto text-red-500 hover:text-red-700"
-                onClick={() => setError("")}
+                className="ml-auto text-red-500 hover:text-red-700 transition-colors duration-200"
+                onClick={clearError}
                 title="Close"
               >
-                &times;
+                <FaTimes className="text-sm" />
               </button>
             </div>
           )}
@@ -143,6 +179,13 @@ const AdminLogin = () => {
             <div className="mb-4 p-4 rounded-lg flex items-start gap-3 bg-red-50 text-red-800 border border-red-200">
               <FaLock className="text-red-500 text-xl mt-0.5 flex-shrink-0" />
               <span>{error}</span>
+              <button
+                className="ml-auto text-red-500 hover:text-red-700 transition-colors duration-200"
+                onClick={clearError}
+                title="Close"
+              >
+                <FaTimes className="text-sm" />
+              </button>
             </div>
           )}
           {step === 1 && (
@@ -291,6 +334,8 @@ const AdminLogin = () => {
                     setOtp("");
                     setError("");
                     setInfo("");
+                    setHasFormData(false); // Reset form data flag
+                    setIsRedirecting(false); // Reset redirecting flag
                   }}
                   className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-all duration-200"
                 >
@@ -351,4 +396,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default AdminLogin;

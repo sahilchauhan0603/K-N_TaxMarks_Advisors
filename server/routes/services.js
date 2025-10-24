@@ -13,6 +13,7 @@ const Trademark = require('../models/Trademark');
 router.get('/user-services', auth, async (req, res) => {
   try {
     const userId = req.user._id;
+    const Bill = require('../models/Bill');
     
     // Fetch all services for the user
     const [gstServices, itrServices, businessServices, taxServices, trademarkServices] = await Promise.all([
@@ -23,13 +24,37 @@ router.get('/user-services', auth, async (req, res) => {
       Trademark.find({ userId }).sort({ createdAt: -1 })
     ]);
 
+    // Function to attach bill information to services
+    const attachBillInfo = async (services, serviceType) => {
+      return Promise.all(services.map(async (service) => {
+        const bill = await Bill.findOne({
+          serviceId: service._id,
+          serviceType: serviceType,
+          userId: userId
+        });
+        
+        const serviceObj = service.toObject();
+        serviceObj.bill = bill; // Attach bill information
+        return serviceObj;
+      }));
+    };
+
+    // Attach bill information to each service type
+    const [gstWithBills, itrWithBills, businessWithBills, taxWithBills, trademarkWithBills] = await Promise.all([
+      attachBillInfo(gstServices, 'gst'),
+      attachBillInfo(itrServices, 'itr'),
+      attachBillInfo(businessServices, 'business'),
+      attachBillInfo(taxServices, 'tax'),
+      attachBillInfo(trademarkServices, 'trademark')
+    ]);
+
     const userServices = {
-      gst: gstServices,
-      itr: itrServices,
-      business: businessServices,
-      tax: taxServices,
-      trademark: trademarkServices,
-      totalServices: gstServices.length + itrServices.length + businessServices.length + taxServices.length + trademarkServices.length
+      gst: gstWithBills,
+      itr: itrWithBills,
+      business: businessWithBills,
+      tax: taxWithBills,
+      trademark: trademarkWithBills,
+      totalServices: gstWithBills.length + itrWithBills.length + businessWithBills.length + taxWithBills.length + trademarkWithBills.length
     };
 
     res.status(200).json({

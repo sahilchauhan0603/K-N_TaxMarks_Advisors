@@ -67,6 +67,7 @@ app.use('/api/admin/settings', settingsRouter);
 app.use('/api/testimonials', testimonialsRoutes);
 app.use('/api/suggestions', suggestionsRoutes);
 app.use('/api/services', servicesRoutes);
+app.use('/api/bills', require('./routes/bills'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

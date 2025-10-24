@@ -129,7 +129,7 @@ const UserSidebar = ({
             onClick={() => setIsMobileOpen(false)}
             className="md:hidden text-gray-500 hover:text-gray-700 cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
         </div>
 
@@ -206,7 +206,7 @@ const UserSidebar = ({
             to="/"
             onClick={() => setIsMobileOpen(false)}
             className={`
-              w-full flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg text-sm font-medium
+              w-full flex items-center gap-3 cursor-pointer px-1 py-2.5 rounded-lg text-sm font-medium
               transition-colors duration-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700
               ${isCollapsed ? 'justify-center' : ''}
             `}
@@ -220,7 +220,7 @@ const UserSidebar = ({
           <button
             onClick={handleLogout}
             className={`
-              w-full flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg text-sm font-medium
+              w-full flex items-center gap-3 cursor-pointer px-1 py-2.5 rounded-lg text-sm font-medium
               transition-colors duration-200 text-red-600 hover:bg-red-50 hover:text-red-700
               ${isCollapsed ? 'justify-center' : ''}
             `}

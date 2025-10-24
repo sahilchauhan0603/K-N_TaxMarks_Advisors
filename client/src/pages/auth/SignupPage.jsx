@@ -58,6 +58,8 @@ const SignupPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [hasFormData, setHasFormData] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Error states for each field
   const [errors, setErrors] = useState({
@@ -157,10 +159,12 @@ const SignupPage = () => {
     if (emailError) {
       setMessageType("error");
       setMessage(emailError);
+      setHasFormData(true);
       return;
     }
     setIsLoading(true);
     setMessage("");
+    setHasFormData(true);
 
     try {
       const result = await sendOTP(email);
@@ -248,7 +252,14 @@ const SignupPage = () => {
     try {
       const result = await register(name, email, otp, password, phone, state);
       if (result?.success) {
-        navigate("/", { replace: true });
+        // Set redirecting flag to prevent beforeunload warning
+        setIsRedirecting(true);
+        setHasFormData(false);
+        
+        // Small delay to ensure state updates before redirect
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 100);
       } else {
         setMessageType("error");
         // Show a specific message if the backend says user already exists
@@ -267,20 +278,22 @@ const SignupPage = () => {
     }
   };
 
-  // Warn user about data loss on refresh only on step 2 (profile completion)
+  // Page reload warning effect - enhanced version
   useEffect(() => {
-    function handleBeforeUnload(e) {
-      e.preventDefault();
-      e.returnValue = 'Your data might be lost if you refresh';
-      return 'Your data might be lost if you refresh';
-    }
-    if (step === 2) {
-      window.addEventListener('beforeunload', handleBeforeUnload);
-      return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      };
-    }
-  }, [step]);
+    const handleBeforeUnload = (e) => {
+      if (hasFormData && !isRedirecting) {
+        e.preventDefault();
+        e.returnValue = 'Your registration details might get lost. Are you sure you want to reload?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasFormData, isRedirecting]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -364,6 +377,11 @@ const SignupPage = () => {
                     onChange={(e) => {
                       setEmail(e.target.value);
                       setErrors((prev) => ({ ...prev, email: "" }));
+                      if (e.target.value.trim()) {
+                        setHasFormData(true);
+                      } else {
+                        setHasFormData(false);
+                      }
                     }}
                     className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Enter your email"
@@ -517,6 +535,7 @@ const SignupPage = () => {
                     onChange={(e) => {
                       setName(e.target.value);
                       setErrors((prev) => ({ ...prev, name: "" }));
+                      setHasFormData(true);
                     }}
                     className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Full Name"
@@ -547,6 +566,7 @@ const SignupPage = () => {
                     onChange={(e) => {
                       setPhone(e.target.value);
                       setErrors((prev) => ({ ...prev, phone: "" }));
+                      setHasFormData(true);
                     }}
                     className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.phone ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Phone Number"
@@ -576,6 +596,7 @@ const SignupPage = () => {
                     onChange={(val) => {
                       setOtp(val);
                       setErrors((prev) => ({ ...prev, otp: "" }));
+                      setHasFormData(true);
                     }}
                     disabled={isLoading}
                     autoFocus={false}
@@ -631,6 +652,7 @@ const SignupPage = () => {
                     onChange={(e) => {
                       setState(e.target.value);
                       setErrors((prev) => ({ ...prev, state: "" }));
+                      setHasFormData(true);
                     }}
                     className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.state ? "border-red-500" : "border-gray-300"} rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                   >
@@ -668,6 +690,7 @@ const SignupPage = () => {
                     onChange={(e) => {
                       setPassword(e.target.value);
                       setErrors((prev) => ({ ...prev, password: "" }));
+                      setHasFormData(true);
                     }}
                     className={`appearance-none block w-full pl-10 pr-12 py-3 border ${errors.password ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Enter your password"
@@ -724,6 +747,7 @@ const SignupPage = () => {
                     onChange={(e) => {
                       setConfirmPassword(e.target.value);
                       setErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                      setHasFormData(true);
                     }}
                     className={`appearance-none block w-full pl-10 pr-12 py-3 border ${errors.confirmPassword ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     placeholder="Confirm your password"
@@ -759,6 +783,7 @@ const SignupPage = () => {
                     setCanResendOtp(false);
                     setOtp("");
                     setMessage("");
+                    setHasFormData(email.trim() ? true : false); // Keep form data state if email exists
                   }}
                   className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-all duration-200"
                 >
@@ -766,11 +791,7 @@ const SignupPage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    // Remove beforeunload warning on successful register
-                    window.removeEventListener('beforeunload', () => {});
-                    handleRegister();
-                  }}
+                  onClick={handleRegister}
                   disabled={isLoading}
                   className="flex-1 group relative flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
                 >

@@ -31,7 +31,7 @@ import {
   Trash2,
   RefreshCw,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "../../utils/axios";
 import Swal from "sweetalert2";
@@ -79,6 +79,7 @@ const STATES_OF_INDIA = [
 const UserProfile = () => {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState("profile");
   const [userProfile, setUserProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -100,7 +101,40 @@ const UserProfile = () => {
   const [satisfactionRate, setSatisfactionRate] = useState(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [billsStats, setBillsStats] = useState({
+    totalAmount: 0,
+    paidAmount: 0,
+    pendingAmount: 0,
+    overdueAmount: 0,
+    totalBills: 0
+  });
   const fileInputRef = useRef(null);
+
+  // Handle URL path to determine active section
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname === '/profile') {
+      setActiveSection('profile');
+    } else if (pathname === '/profile/services') {
+      setActiveSection('services');
+    } else if (pathname === '/profile/testimonials') {
+      setActiveSection('testimonials');
+    } else if (pathname === '/profile/bills') {
+      setActiveSection('bills');
+    }
+  }, [location.pathname]);
+
+  // Helper function to format currency amounts
+  const formatCurrency = (amount) => {
+    if (amount === 0) return '₹0';
+    if (amount >= 100000) {
+      return `₹${(amount / 100000).toFixed(1)}L`; // Lakhs
+    } else if (amount >= 1000) {
+      return `₹${(amount / 1000).toFixed(1)}k`; // Thousands
+    } else {
+      return `₹${amount.toLocaleString()}`;
+    }
+  };
 
   //  Fetch user profile (runs only when user.email changes or on manual refresh)
   const fetchUserProfile = useCallback(
@@ -192,6 +226,50 @@ const UserProfile = () => {
     }
   }, [user?.email]);
 
+  // Fetch bills statistics
+  useEffect(() => {
+    const fetchBillsStats = async () => {
+      try {
+        const response = await axios.get('/api/bills/user');
+        const bills = response.data.bills || [];
+        
+        // Calculate statistics from bills data
+        const totalAmount = bills.reduce((sum, bill) => sum + bill.amount, 0);
+        const paidAmount = bills
+          .filter((bill) => bill.status === "Paid")
+          .reduce((sum, bill) => sum + bill.amount, 0);
+        const pendingAmount = bills
+          .filter((bill) => bill.status === "Pending")
+          .reduce((sum, bill) => sum + bill.amount, 0);
+        const overdueAmount = bills
+          .filter((bill) => bill.status === "Overdue")
+          .reduce((sum, bill) => sum + bill.amount, 0);
+        
+        setBillsStats({
+          totalAmount,
+          paidAmount,
+          pendingAmount,
+          overdueAmount,
+          totalBills: bills.length
+        });
+      } catch (err) {
+        console.error("Failed to fetch bills statistics:", err);
+        // Keep default values if error occurs
+        setBillsStats({
+          totalAmount: 0,
+          paidAmount: 0,
+          pendingAmount: 0,
+          overdueAmount: 0,
+          totalBills: 0
+        });
+      }
+    };
+
+    if (user?.email) {
+      fetchBillsStats();
+    }
+  }, [user?.email]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -270,7 +348,7 @@ const UserProfile = () => {
         // Switch back to profile view after successful update
         setTimeout(() => {
           setSuccess("");
-          setActiveSection("profile");
+          navigate("/profile");
         }, 2000);
       } else {
         setError("Failed to update profile. Please try again.");
@@ -635,7 +713,15 @@ const UserProfile = () => {
   };
 
   const handleSectionChange = (section) => {
-    setActiveSection(section);
+    // Navigate to the appropriate URL
+    const sectionPaths = {
+      'profile': '/profile',
+      'services': '/profile/services',
+      'testimonials': '/profile/testimonials',
+      'bills': '/profile/bills'
+    };
+    
+    navigate(sectionPaths[section] || '/profile');
     setError("");
     setSuccess("");
     setFieldErrors({});
@@ -749,13 +835,26 @@ const UserProfile = () => {
 
         {/* Bills Summary Card */}
         <button
-          onClick={() => setActiveSection("bills")}
-          className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-left group cursor-pointer"
+          onClick={() => handleSectionChange("bills")}
+          className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-left group cursor-pointer relative"
+          title={`Total: ${formatCurrency(billsStats.totalAmount)} | Paid: ${formatCurrency(billsStats.paidAmount)} | Pending: ${formatCurrency(billsStats.pendingAmount)}`}
         >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Bills</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900">₹23.5k</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                {formatCurrency(billsStats.totalAmount)}
+              </p>
+              {billsStats.totalBills > 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {billsStats.totalBills} bill{billsStats.totalBills !== 1 ? 's' : ''}
+                  {billsStats.pendingAmount > 0 && (
+                    <span className="text-orange-600 ml-1">
+                      • {formatCurrency(billsStats.pendingAmount)} pending
+                    </span>
+                  )}
+                </p>
+              )}
             </div>
             <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 group-hover:text-purple-600" />
           </div>

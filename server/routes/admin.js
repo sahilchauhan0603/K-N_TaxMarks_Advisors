@@ -12,7 +12,8 @@ const {
   getServicesReport,
   getAllServices,
   getServiceDetails,
-  updateServiceStatus
+  updateServiceStatus,
+  deleteService,
 } = require("../controllers/adminController");
 
 // Send OTP endpoint
@@ -48,5 +49,9 @@ router.get('/services/:serviceType/:serviceId', adminAuth, getServiceDetails);
 
 // Update service status
 router.put('/services/:serviceType/:serviceId/status', adminAuth, updateServiceStatus);
+
+// Delete declined service
+router.delete('/services/:serviceType/:serviceId', adminAuth, deleteService);
+
 
 module.exports = router;

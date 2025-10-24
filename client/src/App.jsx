@@ -53,6 +53,7 @@ import AdminITR from "./pages/admin/TablesForForms/AdminITR";
 import AdminTestimonials from "./pages/admin/Others/AdminTestimonials";
 import AdminSuggestions from "./pages/admin/Others/AdminSuggestions";
 import AdminServices from "./pages/admin/Others/AdminServices";
+import AdminBills from "./pages/admin/Others/AdminBills";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -129,6 +130,15 @@ const App = () => {
         break;
       case "/profile":
         pageTitle = "User Profile";
+        break;
+      case "/profile/services":
+        pageTitle = "My Services";
+        break;
+      case "/profile/testimonials":
+        pageTitle = "My Testimonials";
+        break;
+      case "/profile/bills":
+        pageTitle = "My Bills";
         break;
        case "/reviews":
         pageTitle = "User Reviews";
@@ -212,7 +222,7 @@ const App = () => {
     location.pathname === "/signup" ||
     location.pathname === "/complete-profile" ||
     location.pathname === "/forgot-password" ||
-    location.pathname === "/profile";
+    location.pathname.startsWith("/profile");
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-800">
@@ -240,7 +250,12 @@ const App = () => {
             )}
 
             <Routes>
+              {/* User Profile routes */}
               <Route path="/profile" element={<UserProfile />} />
+              <Route path="/profile/services" element={<UserProfile />} />
+              <Route path="/profile/testimonials" element={<UserProfile />} />
+              <Route path="/profile/bills" element={<UserProfile />} />
+              
               {/* Public routes */}
               <Route
                 path="/"
@@ -285,6 +300,7 @@ const App = () => {
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="testimonials" element={<AdminTestimonials />} />
                 <Route path="suggestions" element={<AdminSuggestions />} />
+                <Route path="bills" element={<AdminBills />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="services" element={<AdminServices />} />
                 <Route path="trademark" element={<AdminTrademark />} />

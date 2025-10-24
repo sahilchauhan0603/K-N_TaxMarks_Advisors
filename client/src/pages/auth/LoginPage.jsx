@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
@@ -20,7 +20,26 @@ const LoginPage = () => {
   const [messageType, setMessageType] = useState("error"); // 'error' or 'success'
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [hasFormData, setHasFormData] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const { login } = useAuth();
+
+  // Page reload warning effect
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasFormData && !isRedirecting) {
+        e.preventDefault();
+        e.returnValue = 'Your login details might get lost. Are you sure you want to reload?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasFormData, isRedirecting]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,17 +47,23 @@ const LoginPage = () => {
     if (!email || !password) {
       setMessageType("error");
       setMessage("Please fill all fields");
+      setHasFormData(true);
       return;
     }
 
     setIsLoading(true);
     setMessage("");
+    setHasFormData(true);
 
     try {
       const result = await login(email, password);
       if (result.success) {
         setMessageType("success");
         setMessage("Login successful! Redirecting...");
+        
+        // Set redirecting flag to prevent beforeunload warning
+        setIsRedirecting(true);
+        setHasFormData(false);
 
         // Small delay to show success message
         setTimeout(() => {
@@ -131,7 +156,14 @@ const LoginPage = () => {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (e.target.value.trim() || password.trim()) {
+                      setHasFormData(true);
+                    } else {
+                      setHasFormData(false);
+                    }
+                  }}
                   className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
                   placeholder="Enter your email"
                 />
@@ -156,7 +188,14 @@ const LoginPage = () => {
                   autoComplete="current-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (e.target.value.trim() || email.trim()) {
+                      setHasFormData(true);
+                    } else {
+                      setHasFormData(false);
+                    }
+                  }}
                   className="appearance-none block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
                   placeholder="Enter your password"
                 />

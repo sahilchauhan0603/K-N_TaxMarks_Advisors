@@ -11,7 +11,7 @@
 .loading-bar-progress {
   width: 100%;
   height: 100%;
-  background-color: #52ed58;
+  background-color: #3281cf;
   animation: loading 0.5s infinite;
 }
 

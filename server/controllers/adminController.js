@@ -11,17 +11,45 @@ const allowedAdmins = [
 ];
 
 const OTP_STORE = {};
+
+// Cleanup expired admin OTPs every 2 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const email in OTP_STORE) {
+    if (OTP_STORE[email].expires < now) {
+      delete OTP_STORE[email];
+    }
+  }
+}, 2 * 60 * 1000);
+
 // Send OTP controller
 exports.sendOTP = async (req, res) => {
-  const { email } = req.body;
-  if (!allowedAdmins.includes(email)) {
-    return res.status(403).json({ message: "Not allowed" });
-  }
-  const otp = otpGenerator.generate(6, {
-    upperCase: false,
-    specialChars: false,
-  });
-  OTP_STORE[email] = { otp, expires: Date.now() + 3 * 60 * 1000 };
+  try {
+    const { email } = req.body;
+    
+    // Validate email input
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+    
+    // Check if email is in allowed list
+    if (!allowedAdmins.includes(email)) {
+      return res.status(403).json({ message: "Access denied. This email is not authorized for admin access." });
+    }
+    
+    // Generate secure 6-digit numeric OTP
+    const otp = otpGenerator.generate(6, {
+      upperCase: false,
+      specialChars: false,
+      alphabets: false // Only numbers
+    });
+    
+    // Store OTP with 3-minute expiration
+    OTP_STORE[email] = { 
+      otp, 
+      expires: Date.now() + 3 * 60 * 1000,
+      attempts: 0 // Track failed attempts
+    };
 
   // Send OTP via email using mailer utility
   await sendMail(
@@ -48,19 +76,83 @@ exports.sendOTP = async (req, res) => {
     `
   );
   res.json({ message: "OTP sent" });
+  } catch (error) {
+    console.error('Admin OTP send error:', error);
+    res.status(500).json({ message: "Server error while sending OTP" });
+  }
 };
 // Verify OTP controller
 exports.verifyOTP = (req, res) => {
-  const { email, otp } = req.body;
-  const record = OTP_STORE[email];
-  if (!record || record.otp !== otp || record.expires < Date.now()) {
-    return res.status(401).json({ message: "Invalid or expired OTP" });
+  try {
+    const { email, otp } = req.body;
+    
+    // Validate input
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and OTP are required" });
+    }
+    
+    // Validate email is authorized
+    if (!allowedAdmins.includes(email)) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+    
+    // Get stored OTP record
+    const record = OTP_STORE[email];
+    
+    // Check if OTP exists
+    if (!record) {
+      return res.status(401).json({ message: "OTP not found. Please request a new OTP." });
+    }
+    
+    // Check if OTP has expired
+    if (record.expires < Date.now()) {
+      delete OTP_STORE[email]; // Clean up expired OTP
+      return res.status(401).json({ message: "OTP has expired. Please request a new OTP." });
+    }
+    
+    // Increment attempt counter
+    record.attempts = (record.attempts || 0) + 1;
+    
+    // Check for too many attempts (max 5 attempts)
+    if (record.attempts > 5) {
+      delete OTP_STORE[email]; // Clean up after too many attempts
+      return res.status(401).json({ message: "Too many failed attempts. Please request a new OTP." });
+    }
+    
+    // Verify OTP matches
+    if (record.otp !== otp.toString()) {
+      // Update the record with increased attempt count but don't delete yet
+      OTP_STORE[email] = record;
+      const remainingAttempts = 5 - record.attempts;
+      return res.status(401).json({ 
+        message: `Invalid OTP. ${remainingAttempts} attempts remaining.` 
+      });
+    }
+    
+    // OTP is valid - clean up and generate token
+    delete OTP_STORE[email];
+    
+    // Generate admin JWT token
+    const token = jwt.sign(
+      { 
+        email, 
+        admin: true, 
+        loginTime: new Date().toISOString() 
+      }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: "2h" }
+    );
+    
+    res.json({ 
+      success: true,
+      message: "Admin login successful",
+      token 
+    });
+    
+  } catch (error) {
+    console.error('Admin OTP verification error:', error);
+    res.status(500).json({ message: "Server error during OTP verification" });
   }
-  delete OTP_STORE[email];
-  const token = jwt.sign({ email, admin: true }, process.env.JWT_SECRET, {
-    expiresIn: "2h",
-  });
-  res.json({ token });
 };
 
 
@@ -283,8 +375,6 @@ exports.exportServicesExcel = async (req, res) => {
     res.status(500).json({ message: 'Failed to export services', error: err.message });
   }
 };
-
-
 // Get services report controller
 exports.getServicesReport = async (req, res) => {
   try {
@@ -333,6 +423,7 @@ exports.getServicesReport = async (req, res) => {
   }
 };
 
+
 // Get all services with status for admin panel
 exports.getAllServices = async (req, res) => {
   try {
@@ -341,6 +432,7 @@ exports.getAllServices = async (req, res) => {
     const BusinessAdvisory = require('../models/BusinessAdvisory');
     const GST = require('../models/GST');
     const ITR = require('../models/ITR');
+    const Bill = require('../models/Bill');
 
     // Collect all service data with status
     const [gstServices, itrServices, taxServices, businessServices, trademarkServices] = await Promise.all([
@@ -351,12 +443,35 @@ exports.getAllServices = async (req, res) => {
       Trademark.find().populate('userId', 'name email phone').sort({ createdAt: -1 })
     ]);
 
+    // Function to attach bill information to services
+    const attachBillInfo = async (services, serviceType) => {
+      return Promise.all(services.map(async (service) => {
+        const bill = await Bill.findOne({
+          serviceId: service._id,
+          serviceType: serviceType
+        });
+        
+        const serviceObj = service.toObject();
+        serviceObj.bill = bill; // Attach bill information
+        return serviceObj;
+      }));
+    };
+
+    // Attach bill information to each service type
+    const [gstWithBills, itrWithBills, taxWithBills, businessWithBills, trademarkWithBills] = await Promise.all([
+      attachBillInfo(gstServices, 'gst'),
+      attachBillInfo(itrServices, 'itr'),
+      attachBillInfo(taxServices, 'tax'),
+      attachBillInfo(businessServices, 'business'),
+      attachBillInfo(trademarkServices, 'trademark')
+    ]);
+
     const services = {
-      gst: gstServices,
-      itr: itrServices,
-      tax: taxServices,
-      business: businessServices,
-      trademark: trademarkServices
+      gst: gstWithBills,
+      itr: itrWithBills,
+      tax: taxWithBills,
+      business: businessWithBills,
+      trademark: trademarkWithBills
     };
 
     res.json(services);
@@ -364,6 +479,7 @@ exports.getAllServices = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch services', error: err.message });
   }
 };
+
 
 // Get specific service details
 exports.getServiceDetails = async (req, res) => {
@@ -402,14 +518,15 @@ exports.getServiceDetails = async (req, res) => {
   }
 };
 
-// Update service status
+
+// Update service status and create bill if completed
 exports.updateServiceStatus = async (req, res) => {
   try {
     const { serviceType, serviceId } = req.params;
-    const { status, adminNotes } = req.body;
+    const { status, adminNotes, billAmount, billDescription } = req.body;
 
     // Validate status
-    if (!['Pending', 'In Progress', 'Approved', 'Declined'].includes(status)) {
+    if (!['Pending', 'In Progress', 'Approved', 'Completed', 'Declined'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
 
@@ -448,8 +565,203 @@ exports.updateServiceStatus = async (req, res) => {
       return res.status(404).json({ message: 'Service not found' });
     }
 
+    // Check if userId exists
+    if (!service.userId) {
+      return res.status(400).json({ 
+        message: 'Service has no associated user - cannot update status', 
+        serviceId: service._id
+      });
+    }
+
+    // If service is completed, create a bill
+    if (status === 'Completed') {
+      const numericBillAmount = parseFloat(billAmount);
+      if (!billAmount || isNaN(numericBillAmount) || numericBillAmount <= 0) {
+        return res.status(400).json({ 
+          message: 'Valid bill amount is required for completed services',
+          received: { billAmount, type: typeof billAmount }
+        });
+      }
+
+      const Bill = require('../models/Bill');
+      
+      // Check if bill already exists for this service
+      const existingBill = await Bill.findOne({ serviceId, serviceType });
+      if (existingBill) {
+        return res.status(400).json({ message: 'Bill already exists for this service' });
+      }
+
+      // Get service name mapping
+      const serviceNames = {
+        'gst': 'GST Services',
+        'itr': 'ITR Filing',
+        'tax': 'Tax Planning',
+        'business': 'Business Advisory',
+        'trademark': 'Trademark Registration'
+      };
+
+      // Create due date (72 hours from now)
+      const dueDate = new Date();
+      dueDate.setHours(dueDate.getHours() + 72);
+
+      // Get userId - handle both populated and non-populated cases
+      let userId;
+      if (typeof service.userId === 'object' && service.userId._id) {
+        userId = service.userId._id; // Populated user object
+      } else if (service.userId) {
+        userId = service.userId; // Direct ObjectId reference
+      } else {
+        return res.status(400).json({ 
+          message: 'Cannot create bill: service has no associated user',
+          serviceData: { id: service._id, userId: service.userId }
+        });
+      }
+
+      const billData = {
+        userId: userId,
+        serviceId: service._id,
+        serviceType,
+        serviceName: serviceNames[serviceType],
+        amount: numericBillAmount,
+        description: billDescription || `Payment for ${serviceNames[serviceType]} service`,
+        dueDate,
+        adminNotes: adminNotes || ''
+      };
+
+      const newBill = new Bill(billData);
+
+      // Save with error handling
+      try {
+        const savedBill = await newBill.save();
+      } catch (billError) {
+        return res.status(500).json({ 
+          message: 'Service updated but bill creation failed', 
+          error: billError.message,
+          service 
+        });
+      }
+
+      // Send email notification to user
+      const sendMail = require("../utils/mailer");
+      const userEmail = typeof service.userId === 'object' ? service.userId.email : null;
+      
+      if (userEmail) {
+        await sendMail(
+          userEmail,
+        "Service Completed - Payment Required",
+        undefined,
+        `
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; padding: 32px 0;">
+            <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px #0001; padding: 32px 28px; border: 1px solid #e5e7eb;">
+              <div style="text-align: center; margin-bottom: 24px;">
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; margin: 0;">Service Completed! 🎉</h2>
+                <p style="color: #64748b; font-size: 1rem; margin: 8px 0 0 0;">Your ${serviceNames[serviceType]} service has been completed successfully.</p>
+              </div>
+              
+              <div style="background: #f8fafc; border-radius: 12px; padding: 24px; margin: 24px 0;">
+                <h3 style="margin: 0 0 16px 0; color: #374151;">Bill Details:</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div>
+                    <p style="margin: 4px 0; color: #6b7280; font-size: 0.9rem;">Bill Number:</p>
+                    <p style="margin: 4px 0; font-weight: 600;">${newBill.billNumber}</p>
+                  </div>
+                  <div>
+                    <p style="margin: 4px 0; color: #6b7280; font-size: 0.9rem;">Amount:</p>
+                    <p style="margin: 4px 0; font-weight: 600; color: #059669;">₹${billAmount.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p style="margin: 4px 0; color: #6b7280; font-size: 0.9rem;">Due Date:</p>
+                    <p style="margin: 4px 0; font-weight: 600; color: #dc2626;">${dueDate.toLocaleDateString('en-IN')}</p>
+                  </div>
+                  <div>
+                    <p style="margin: 4px 0; color: #6b7280; font-size: 0.9rem;">Service:</p>
+                    <p style="margin: 4px 0; font-weight: 600;">${serviceNames[serviceType]}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; margin: 24px 0;">
+                <p style="margin: 0; color: #92400e; font-weight: 600;">⚠️ Payment Required Within 72 Hours</p>
+                <p style="margin: 8px 0 0 0; color: #92400e; font-size: 0.9rem;">Please complete your payment within 72 hours to avoid service delays.</p>
+              </div>
+
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="${'https://kandn-taxmarks-advisors.onrender.com'|| 'http://localhost:5173'}/profile" style="display: inline-block; background: linear-gradient(90deg, #3b82f6, #1d4ed8); color: white; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 1rem;">Pay Now</a>
+              </div>
+
+              <p style="color: #64748b; font-size: 0.9rem; text-align: center; margin-bottom: 0;">If you have any questions, please contact our support team.</p>
+              <div style="margin-top: 32px; text-align: center; color: #94a3b8; font-size: 0.9rem;">&copy; ${new Date().getFullYear()} K-N TaxMarks Advisors</div>
+            </div>
+          </div>
+        `
+        );
+      }
+
+      return res.json({ 
+        message: 'Service completed and bill created successfully', 
+        service,
+        bill: newBill
+      });
+    }
+
     res.json({ message: 'Service status updated successfully', service });
   } catch (err) {
     res.status(500).json({ message: 'Failed to update service status', error: err.message });
+  }
+};
+
+
+// Delete service (only for declined services)
+exports.deleteService = async (req, res) => {
+  try {
+    const { serviceType, serviceId } = req.params;
+
+    let Model;
+    switch (serviceType) {
+      case 'gst':
+        Model = require('../models/GST');
+        break;
+      case 'itr':
+        Model = require('../models/ITR');
+        break;
+      case 'tax':
+        Model = require('../models/TaxPlanning');
+        break;
+      case 'business':
+        Model = require('../models/BusinessAdvisory');
+        break;
+      case 'trademark':
+        Model = require('../models/Trademark');
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid service type' });
+    }
+
+    // Find the service and check if it's declined
+    const service = await Model.findById(serviceId);
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    // Only allow deletion of declined services
+    if (service.status !== 'Declined') {
+      return res.status(400).json({ 
+        message: 'Only declined services can be deleted' 
+      });
+    }
+
+    // Delete the service
+    await Model.findByIdAndDelete(serviceId);
+
+    res.json({ 
+      message: 'Declined service deleted successfully',
+      serviceId,
+      serviceType 
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      message: 'Failed to delete service', 
+      error: err.message 
+    });
   }
 };
