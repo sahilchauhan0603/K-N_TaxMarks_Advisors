@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import OthersContactModal from "../../components/OthersContactModal";
 
 const CookiePolicyPage = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     // Trigger animations after component mounts
@@ -305,9 +307,12 @@ const CookiePolicyPage = () => {
                     Contact our privacy team for more information.
                   </p>
                 </div>
-                <Link to="/contact-us" className="mt-4 md:mt-0 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 transform hover:-translate-y-1">
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="mt-4 md:mt-0 cursor-pointer px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 transform hover:-translate-y-1"
+                >
                   Contact Us
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -321,6 +326,14 @@ const CookiePolicyPage = () => {
           <p>Last updated: August 2023 | Version 2.1</p>
         </div>
       </div>
+
+      {/* Contact Modal */}
+      <OthersContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        source="cookie-policy"
+        title="Questions About Our Cookie Policy?"
+      />
     </div>
   );
 };

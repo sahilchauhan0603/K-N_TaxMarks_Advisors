@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../utils/axios";
 import { useAuth } from "../../context/AuthContext";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import Swal from "sweetalert2";
 
 const SERVICE_OPTIONS = [
   "Trademark",
@@ -37,15 +38,39 @@ const UserTestimonials = () => {
   };
 
   const deleteTestimonial = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this testimonial?")) {
-      return;
-    }
+    const result = await Swal.fire({
+      title: 'Delete Testimonial?',
+      text: 'This action cannot be undone! Your testimonial will be permanently removed.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
 
-    try {
-      await axios.delete(`/api/testimonials/${id}`);
-      setTestimonials(testimonials.filter((t) => t._id !== id));
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to delete testimonial");
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`/api/testimonials/${id}`);
+        setTestimonials(testimonials.filter((t) => t._id !== id));
+        
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'Your testimonial has been deleted successfully.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to delete testimonial");
+        
+        Swal.fire({
+          title: 'Error!',
+          text: err.response?.data?.message || "Failed to delete testimonial",
+          icon: 'error',
+          confirmButtonColor: '#ef4444'
+        });
+      }
     }
   };
 

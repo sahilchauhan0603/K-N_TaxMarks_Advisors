@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import OthersContactModal from "../../components/OthersContactModal";
 
 const FAQPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -207,7 +209,7 @@ const FAQPage = () => {
             </div>
             
             {/* Visual element */}
-            <div className="rounded-xl overflow-hidden mt-8 shadow-md">
+            {/* <div className="rounded-xl overflow-hidden mt-8 shadow-md">
               <div className="h-3 bg-gradient-to-r from-blue-500 to-blue-700"></div>
               <div className="p-6 bg-blue-50 text-black flex flex-col md:flex-row items-center">
                 <div className="flex-1">
@@ -221,7 +223,7 @@ const FAQPage = () => {
                   Contact Us
                 </Link>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -242,12 +244,15 @@ const FAQPage = () => {
               </svg>
               <span className="text-blue-700">Call Us</span>
             </a>
-            <Link to="/contact-us" className="flex items-center justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button 
+              onClick={() => setShowContactModal(true)}
+              className="flex items-center cursor-pointer justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
-              <span>Live Chat</span>
-            </Link>
+              <span>Contact Us</span>
+            </button>
           </div>
         </div>
 
@@ -256,6 +261,14 @@ const FAQPage = () => {
           <p>© 2023 K&N TaxMark Advisors. All rights reserved.</p>
         </div>
       </div>
+
+      {/* Contact Modal */}
+      <OthersContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        source="faq"
+        title="Can't Find What You're Looking For?"
+      />
     </div>
   );
 };

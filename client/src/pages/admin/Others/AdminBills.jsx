@@ -8,6 +8,7 @@ const AdminBills = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [serviceTypeFilter, setServiceTypeFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const { user } = useAuth();
@@ -28,6 +29,12 @@ const AdminBills = () => {
     fetchBills();
   }, []);
 
+  // Get unique service types for filter dropdown
+  const getUniqueServiceTypes = () => {
+    const serviceTypes = [...new Set(bills.map(bill => bill.serviceName))].filter(Boolean);
+    return serviceTypes.sort();
+  };
+
   // Filter bills based on search and filters
   const filteredBills = bills.filter((bill) => {
     const matchesSearch =
@@ -39,7 +46,10 @@ const AdminBills = () => {
     const matchesStatus =
       statusFilter === "All" || bill.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
+    const matchesServiceType =
+      serviceTypeFilter === "All" || bill.serviceName === serviceTypeFilter;
+
+    return matchesSearch && matchesStatus && matchesServiceType;
   });
 
   // Pagination calculations
@@ -51,7 +61,7 @@ const AdminBills = () => {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, serviceTypeFilter]);
 
   // Calculate summary statistics
   const totalAmount = filteredBills.reduce((sum, bill) => sum + bill.amount, 0);
@@ -201,8 +211,8 @@ const AdminBills = () => {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div className="md:col-span-2 lg:col-span-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <svg className="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -216,6 +226,26 @@ const AdminBills = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <svg className="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              Service Type
+            </label>
+            <select
+              value={serviceTypeFilter}
+              onChange={(e) => setServiceTypeFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="All">All Services</option>
+              {getUniqueServiceTypes().map((serviceType) => (
+                <option key={serviceType} value={serviceType}>
+                  {serviceType}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -167,7 +167,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       title="Testimonials"
                     >
                       <FaComments /> 
-                      {!isCollapsed && <span>Testimonials</span>}
+                      {!isCollapsed && <span>User Testimonials</span>}
                     </NavLink>
                   </li>
                   <li>
@@ -180,6 +180,18 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     >
                       <FaLightbulb /> 
                       {!isCollapsed && <span>User Suggestions</span>}
+                    </NavLink>
+                  </li>   
+                  <li>
+                    <NavLink 
+                      to="/admin/others-contact" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Others Page Contacts"
+                    >
+                      <FaComments /> 
+                      {!isCollapsed && <span>User Queries</span>}
                     </NavLink>
                   </li>
                   <li>

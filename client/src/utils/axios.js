@@ -14,6 +14,7 @@ instance.interceptors.request.use(
     const isAdminRoute = config.url?.includes('/admin') || 
                         config.url?.includes('admin') ||
                         config.url?.includes('/approve') ||  // Testimonial approve endpoint
+                        (config.url?.includes('/others-contact') && config.method?.toLowerCase() !== 'post') || // Others contact admin routes (except submit)
                         (config.url?.includes('/suggestions') && config.method?.toLowerCase() !== 'post') ||  // Suggestions routes are admin-only except POST
                         (config.method?.toLowerCase() === 'delete' && config.url?.includes('/testimonials/')); // Testimonial delete by admin
     
@@ -45,6 +46,7 @@ instance.interceptors.response.use(
       const isAdminRoute = error.config?.url?.includes('/admin') || 
                           error.config?.url?.includes('admin') ||
                           error.config?.url?.includes('/approve') ||
+                          (error.config?.url?.includes('/others-contact') && error.config?.method?.toLowerCase() !== 'post') || // Others contact admin routes (except submit)
                           (error.config?.url?.includes('/suggestions') && error.config?.method?.toLowerCase() !== 'post') ||  // Suggestions routes are admin-only except POST
                           (error.config?.method?.toLowerCase() === 'delete' && error.config?.url?.includes('/testimonials/'));
       

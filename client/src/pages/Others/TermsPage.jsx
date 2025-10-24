@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import OthersContactModal from "../../components/OthersContactModal";
 
 const TermsPage = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -195,7 +197,10 @@ const TermsPage = () => {
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">Questions about our Terms?</h3>
                   <p className="text-gray-600">Contact our legal team for clarification or more information.</p>
                 </div>
-                <button className="mt-4 md:mt-0 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 transform hover:-translate-y-1">
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="mt-4 md:mt-0 cursor-pointer px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 transform hover:-translate-y-1"
+                >
                   Contact Us
                 </button>
               </div>
@@ -208,6 +213,14 @@ const TermsPage = () => {
           <p>© 2023 K&N TaxMark Advisors. All rights reserved.</p>
         </div>
       </div>
+
+      {/* Contact Modal */}
+      <OthersContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        source="terms"
+        title="Questions About Our Terms?"
+      />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import OthersContactModal from "../../components/OthersContactModal";
 import { 
   FiHome, FiInfo, FiMail, FiBookOpen, FiShield, FiUser, 
   FiFileText, FiList, FiLock, FiUsers, FiBarChart2, 
@@ -12,6 +13,7 @@ const SitemapPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [openSections, setOpenSections] = useState({
     main: true,
     services: true,
@@ -320,6 +322,13 @@ const SitemapPage = () => {
                     <span>All Services</span>
                   </Link>
                   
+                  <Link to="/admin/others-contact" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <FiMail className="text-blue-600" />
+                    </div>
+                    <span>Page Contacts</span>
+                  </Link>
+                  
                   {/* <Link to="/admin/trademark" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiTarget className="text-blue-600" />
@@ -366,12 +375,12 @@ const SitemapPage = () => {
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">Can't find what you're looking for?</h3>
                   <p className="text-gray-600">Contact our team for more information or personalized support.</p>
                 </div>
-                <Link 
-                  to="/contact-us" 
-                  className="mt-4 md:mt-0 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 transform hover:-translate-y-1"
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="mt-4 md:mt-0 cursor-pointer px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200 transform hover:-translate-y-1"
                 >
                   Contact Us
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -382,6 +391,14 @@ const SitemapPage = () => {
           <p>© 2023 K&N TaxMark Advisors. All rights reserved. | Version 2.2</p>
         </div>
       </div>
+
+      {/* Contact Modal */}
+      <OthersContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        source="sitemap"
+        title="Can't Find What You're Looking For?"
+      />
     </div>
   );
 };

@@ -18,6 +18,7 @@ const itrForms = require('./routes/Forms/itrForms');
 
 const settingsRouter = require('./routes/settings');
 const contactRoutes = require('./routes/contact');
+const othersContactRoutes = require('./routes/othersContact');
 const testimonialsRoutes = require('./routes/testimonials');
 const suggestionsRoutes = require('./routes/suggestions');
 const servicesRoutes = require('./routes/services');
@@ -57,6 +58,7 @@ app.use('/uploads/testimonials', express.static(path.join(__dirname, 'uploads/te
 app.use('/api', userRoutes);
 app.use('/api/auth', googleAuthRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/others-contact', othersContactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', trademarkForms);
 app.use('/api', businessForms);
