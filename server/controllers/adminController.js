@@ -4,11 +4,17 @@ const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const User = require("../models/User");
 
-const allowedAdmins = [
-  "sahilchauhan0603@gmail.com",
-  "sahilpersonal2003@gmail.com",
-  "saritachauhan0704@gmail.com",
-];
+// Get allowed admin emails from environment variable
+const getAllowedAdmins = () => {
+  const adminEmails = process.env.ADMIN_EMAILS;
+  if (!adminEmails) {
+    console.error('WARNING: ADMIN_EMAILS not set in environment variables!');
+    return [];
+  }
+  return adminEmails.split(',').map(email => email.trim()).filter(email => email.length > 0);
+};
+
+const allowedAdmins = getAllowedAdmins();
 
 const OTP_STORE = {};
 

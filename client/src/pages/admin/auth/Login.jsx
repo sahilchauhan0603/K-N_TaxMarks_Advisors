@@ -4,11 +4,17 @@ import { FaUserShield, FaEnvelope, FaKey, FaLock, FaTimes } from "react-icons/fa
 import { Link } from "react-router-dom";
 import OTPInput from "../../../components/OTPInput";
 
-const allowedEmails = [
-  "sahilchauhan0603@gmail.com",
-  "sahilpersonal2003@gmail.com",
-  "saritachauhan0704@gmail.com",
-];
+// Get allowed admin emails from environment variable
+const getAllowedEmails = () => {
+  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS;
+  if (!adminEmails) {
+    console.error('WARNING: VITE_ADMIN_EMAILS not set in environment variables!');
+    return [];
+  }
+  return adminEmails.split(',').map(email => email.trim()).filter(email => email.length > 0);
+};
+
+const allowedEmails = getAllowedEmails();
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
