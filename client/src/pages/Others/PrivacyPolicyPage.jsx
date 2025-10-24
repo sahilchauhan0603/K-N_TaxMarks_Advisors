@@ -16,9 +16,6 @@ const PrivacyPolicyPage = () => {
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in { animation: fade-in 0.8s ease-out; }
-        .section-icon {
-          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        }
       `}</style>
       
       <div className="max-w-4xl mx-auto">
@@ -49,18 +46,18 @@ const PrivacyPolicyPage = () => {
             <div className="space-y-8">
               {/* Section 1 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">1. Information We Collect</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">1. Information We Collect</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       We collect information that you provide directly to us, including:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
                       <li>Personal identification information (Name, email address, phone number, etc.)</li>
                       <li>Business information (Company name, GST number, etc.)</li>
                       <li>Financial information necessary for tax preparation and filing</li>
@@ -73,18 +70,18 @@ const PrivacyPolicyPage = () => {
 
               {/* Section 2 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">2. How We Use Your Information</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">2. How We Use Your Information</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       We use the information we collect for various purposes, including:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
                       <li>Providing, maintaining, and improving our services</li>
                       <li>Processing transactions and sending related information</li>
                       <li>Responding to your comments, questions, and requests</li>
@@ -99,18 +96,18 @@ const PrivacyPolicyPage = () => {
 
               {/* Section 3 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">3. Information Sharing and Disclosure</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">3. Information Sharing and Disclosure</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       We do not share your personal data with third parties except in the following circumstances:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
                       <li>With your consent</li>
                       <li>With service providers who need access to perform services on our behalf</li>
                       <li>To comply with legal obligations or respond to lawful requests</li>
@@ -123,18 +120,18 @@ const PrivacyPolicyPage = () => {
 
               {/* Section 4 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">4. Data Security</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">4. Data Security</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. These measures include:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
                       <li>Encryption of sensitive data</li>
                       <li>Regular security assessments and testing</li>
                       <li>Access controls to limit who can access your information</li>
@@ -147,18 +144,18 @@ const PrivacyPolicyPage = () => {
 
               {/* Section 5 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">5. Your Rights and Choices</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">5. Your Rights and Choices</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       You have certain rights regarding your personal information, including:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-4">
                       <li>Accessing and reviewing your information</li>
                       <li>Correcting inaccuracies in your information</li>
                       <li>Requesting deletion of your information</li>
@@ -166,7 +163,7 @@ const PrivacyPolicyPage = () => {
                       <li>Withdrawing consent where we rely on consent for processing</li>
                       <li>Receiving a copy of your information in a portable format</li>
                     </ul>
-                    <p className="text-gray-600 mt-3">
+                    <p className="text-gray-600 leading-relaxed">
                       To exercise these rights, please contact us using the information provided below.
                     </p>
                   </div>
@@ -175,15 +172,15 @@ const PrivacyPolicyPage = () => {
 
               {/* Section 6 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.7s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">6. Changes to This Policy</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">6. Changes to This Policy</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. You are advised to review this Privacy Policy periodically for any changes.
                     </p>
                   </div>
@@ -192,19 +189,19 @@ const PrivacyPolicyPage = () => {
 
               {/* Section 7 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">7. Contact Us</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">7. Contact Us</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       If you have any questions about this Privacy Policy or our data practices, please contact us at:
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
                       <li>Email: <a href="mailto:kntaxmarkadvisors@gmail.com" className="text-blue-600 hover:underline">kntaxmarkadvisors@gmail.com</a></li>
                       <li>Phone: <a href="tel:+919318469138" className="text-blue-600 hover:underline">+91 9318469138</a></li>
                       <li>Address: [Your Company Address]</li>

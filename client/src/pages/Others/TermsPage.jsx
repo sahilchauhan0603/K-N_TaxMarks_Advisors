@@ -16,9 +16,6 @@ const TermsPage = () => {
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in { animation: fade-in 0.8s ease-out; }
-        .section-icon {
-          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        }
       `}</style>
       
       <div className="max-w-4xl mx-auto">
@@ -49,15 +46,15 @@ const TermsPage = () => {
             <div className="space-y-8">
               {/* Section 1 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">1. Services Overview</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">1. Services Overview</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       K&N TaxMark Advisors provides tax consultation, filing services, GST services, business advisory, 
                       and trademark registration services. All services are provided as per Indian law and regulations.
                     </p>
@@ -67,19 +64,19 @@ const TermsPage = () => {
 
               {/* Section 2 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">2. Client Responsibilities</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">2. Client Responsibilities</h2>
+                    <p className="text-gray-600 leading-relaxed mb-4">
                       Clients are responsible for providing accurate, complete, and timely information necessary for us to perform our services. 
                       You acknowledge that incomplete or inaccurate information may affect the quality and timeliness of our services.
                     </p>
-                    <ul className="list-disc pl-6 text-gray-600 mt-3 space-y-2">
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
                       <li>Provide all required documents in a timely manner</li>
                       <li>Ensure information provided is accurate and complete</li>
                       <li>Notify us of any changes to your information</li>
@@ -91,15 +88,15 @@ const TermsPage = () => {
 
               {/* Section 3 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">3. Fees and Payments</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">3. Fees and Payments</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       Our service fees are as quoted at the time of engagement. Unless otherwise stated, all fees are exclusive of applicable taxes. 
                       Payment is due as per the agreed schedule, and late payments may incur additional charges.
                     </p>
@@ -109,16 +106,16 @@ const TermsPage = () => {
 
               {/* Section 4 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                       <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">4. Confidentiality</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">4. Confidentiality</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       We maintain the confidentiality of all client information in accordance with our Privacy Policy and applicable laws. 
                       However, we may disclose information when required by law or with your consent.
                     </p>
@@ -128,15 +125,15 @@ const TermsPage = () => {
 
               {/* Section 5 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">5. Limitation of Liability</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">5. Limitation of Liability</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       Our liability is limited to the fees paid for our services. We are not liable for indirect, special, 
                       or consequential damages arising from the use of our services or inability to use our services.
                     </p>
@@ -146,15 +143,15 @@ const TermsPage = () => {
 
               {/* Section 6 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.7s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">6. Modifications to Terms</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">6. Modifications to Terms</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       We reserve the right to update these Terms of Service at any time. Continued use of our services after changes 
                       constitutes acceptance of the modified terms. We will notify clients of significant changes.
                     </p>
@@ -164,15 +161,15 @@ const TermsPage = () => {
 
               {/* Section 7 */}
               <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}>
-                <div className="flex items-start mb-4">
-                  <div className="section-icon w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-start mb-6">
+                  <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">7. Governing Law</h2>
-                    <p className="text-gray-600 mt-2">
+                  <div className="flex-1">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3">7. Governing Law</h2>
+                    <p className="text-gray-600 leading-relaxed">
                       These Terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of 
                       the courts located in [Your City], India.
                     </p>

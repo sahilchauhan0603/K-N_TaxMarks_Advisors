@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { 
   FiHome, FiInfo, FiMail, FiBookOpen, FiShield, FiUser, 
   FiFileText, FiList, FiLock, FiUsers, FiBarChart2, 
@@ -8,6 +9,8 @@ import {
 } from 'react-icons/fi';
 
 const SitemapPage = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [openSections, setOpenSections] = useState({
     main: true,
@@ -20,6 +23,23 @@ const SitemapPage = () => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Handle protected navigation for services - same as Footer component
+  const handleProtectedRoute = (route) => {
+    if (!user) {
+      if (typeof window.setShowAuthPopup === "function") {
+        window.setShowAuthPopup(true);
+        setTimeout(() => {
+          navigate(`/login?redirectTo=${encodeURIComponent(route)}`);
+          window.setShowAuthPopup(false);
+        }, 1200);
+      } else {
+        navigate(`/login?redirectTo=${encodeURIComponent(route)}`);
+      }
+    } else {
+      navigate(route);
+    }
+  };
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({
@@ -139,40 +159,55 @@ const SitemapPage = () => {
               
               <div className={`section-transition overflow-hidden ${openSections.services ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-2">
-                  <Link to="/services/tax-planning" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <button
+                    onClick={() => handleProtectedRoute('/services/tax-planning')}
+                    className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer w-full text-left"
+                  >
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiBarChart2 className="text-blue-600" />
                     </div>
                     <span>Tax Planning</span>
-                  </Link>
+                  </button>
                   
-                  <Link to="/services/itr-filing" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <button
+                    onClick={() => handleProtectedRoute('/services/itr-filing')}
+                    className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer w-full text-left"
+                  >
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiCheckCircle className="text-blue-600" />
                     </div>
                     <span>ITR Filing</span>
-                  </Link>
+                  </button>
                   
-                  <Link to="/services/gst-filing" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <button
+                    onClick={() => handleProtectedRoute('/services/gst-filing')}
+                    className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer w-full text-left"
+                  >
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiDollarSign className="text-blue-600" />
                     </div>
                     <span>GST Filing</span>
-                  </Link>
+                  </button>
                   
-                  <Link to="/services/trademark" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <button
+                    onClick={() => handleProtectedRoute('/services/trademark')}
+                    className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer w-full text-left"
+                  >
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiTarget className="text-blue-600" />
                     </div>
                     <span>Trademark & Legal</span>
-                  </Link>
+                  </button>
                   
-                  <Link to="/services/business-advisory" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <button
+                    onClick={() => handleProtectedRoute('/services/business-advisory')}
+                    className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer w-full text-left"
+                  >
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiUsers className="text-blue-600" />
                     </div>
                     <span>Business Advisory</span>
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
@@ -227,7 +262,7 @@ const SitemapPage = () => {
                 {openSections.admin ? <FiChevronUp className="text-blue-600" /> : <FiChevronDown className="text-blue-600" />}
               </button>
               
-              <div className={`section-transition overflow-hidden ${openSections.admin ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className={`section-transition overflow-hidden ${openSections.admin ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-2">
                   <Link to="/admin/login" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -250,21 +285,42 @@ const SitemapPage = () => {
                     <span>User Management</span>
                   </Link>
                   
-                  <Link to="/admin/reports" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <Link to="/admin/testimonials" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiFileText className="text-blue-600" />
+                    </div>
+                    <span>Testimonials</span>
+                  </Link>
+                  
+                  <Link to="/admin/suggestions" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <FiBookOpen className="text-blue-600" />
+                    </div>
+                    <span>User Suggestions</span>
+                  </Link>
+                  
+                  <Link to="/admin/bills" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <FiDollarSign className="text-blue-600" />
+                    </div>
+                    <span>Bills Management</span>
+                  </Link>
+                  
+                  <Link to="/admin/reports" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <FiBarChart2 className="text-blue-600" />
                     </div>
                     <span>Reports</span>
                   </Link>
                   
-                  <Link to="/admin/settings" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  <Link to="/admin/services" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <FiSettings className="text-blue-600" />
+                      <FiBriefcase className="text-blue-600" />
                     </div>
-                    <span>Settings</span>
+                    <span>All Services</span>
                   </Link>
                   
-                  <Link to="/admin/trademark" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
+                  {/* <Link to="/admin/trademark" className="flex items-center gap-3 p-3 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       <FiTarget className="text-blue-600" />
                     </div>
@@ -297,7 +353,7 @@ const SitemapPage = () => {
                       <FiCheckCircle className="text-blue-600" />
                     </div>
                     <span>ITR Requests</span>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
