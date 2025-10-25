@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
+import { useServicePrice } from '../../../utils/servicePricing';
 
 const GSTFilingForm = ({ onClose }) => {
   const { user } = useAuth();
@@ -14,6 +15,14 @@ const GSTFilingForm = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  
+  // Get price for GST Filing
+  const { price, loading: priceLoading, formattedPrice } = useServicePrice('gst', 'filing');
+  
+  // Debug: Log the pricing info
+  useEffect(() => {
+    console.log('GSTFilingForm pricing:', { price, priceLoading, formattedPrice });
+  }, [price, priceLoading, formattedPrice]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -74,7 +83,15 @@ const GSTFilingForm = ({ onClose }) => {
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 bg-gradient-to-br from-yellow-50 to-white border-l-4 border-yellow-500 rounded-xl p-6 shadow-md">
-      <h4 className="text-lg font-bold text-yellow-700 mb-4">GST Filing Request</h4>
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="text-lg font-bold text-yellow-700">GST Filing Request</h4>
+        <div className="bg-yellow-100 px-4 py-2 rounded-lg border border-yellow-200">
+          <span className="text-sm text-yellow-600 font-medium">Service Fee: </span>
+          <span className="text-lg font-bold text-yellow-700">
+            {priceLoading ? '...' : formattedPrice}
+          </span>
+        </div>
+      </div>
       {success && <div className="mb-3 p-2 bg-yellow-100 text-yellow-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

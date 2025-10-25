@@ -14,6 +14,7 @@ const {
   getServiceDetails,
   updateServiceStatus,
   deleteService,
+  getServicePricing,
 } = require("../controllers/adminController");
 
 // Send OTP endpoint
@@ -53,5 +54,7 @@ router.put('/services/:serviceType/:serviceId/status', adminAuth, updateServiceS
 // Delete declined service
 router.delete('/services/:serviceType/:serviceId', adminAuth, deleteService);
 
+// Get service pricing configuration
+router.get('/service-pricing', adminAuth, getServicePricing);
 
 module.exports = router;

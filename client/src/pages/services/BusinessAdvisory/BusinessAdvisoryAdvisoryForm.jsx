@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
+import { useServicePrice } from '../../../utils/servicePricing';
 
 const BusinessAdvisoryAdvisoryForm = ({ onClose }) => {
   const { user } = useAuth();
@@ -13,6 +14,9 @@ const BusinessAdvisoryAdvisoryForm = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
+  // Get pricing information
+  const { price, loading: priceLoading, formattedPrice } = useServicePrice('business', 'advisory');
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -73,7 +77,15 @@ const BusinessAdvisoryAdvisoryForm = ({ onClose }) => {
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 bg-gradient-to-br from-pink-50 to-white border-l-4 border-pink-500 rounded-xl p-6 shadow-md">
-      <h4 className="text-lg font-bold text-pink-700 mb-4">Legal & Financial Advisory</h4>
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="text-lg font-bold text-pink-700">Legal & Financial Advisory</h4>
+        <div className="bg-pink-100 px-4 py-2 rounded-lg border border-pink-200">
+          <span className="text-sm text-pink-600 font-medium">Service Fee: </span>
+          <span className="text-lg font-bold text-pink-700">
+            {priceLoading ? '...' : formattedPrice}
+          </span>
+        </div>
+      </div>
       {success && <div className="mb-3 p-2 bg-pink-100 text-pink-800 rounded">{success}</div>}
       {error && <div className="mb-3 p-2 bg-red-100 text-red-800 rounded">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

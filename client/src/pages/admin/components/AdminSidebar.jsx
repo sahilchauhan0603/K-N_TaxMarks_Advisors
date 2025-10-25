@@ -234,18 +234,18 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {!isCollapsed && <span>Service Management</span>}
                     </NavLink>
                   </li>
-                  {/* <li>
+                  <li>
                     <NavLink 
-                      to="/admin/tax-planning" 
+                      to="/admin/service-pricing" 
                       className={({ isActive }) =>
                         `admin-sidebar-link ${isActive ? 'active' : ''}`
                       }
-                      title="Tax Planning"
+                      title="Service Pricing"
                     >
                       <GiCash /> 
-                      {!isCollapsed && <span>Tax Planning</span>}
+                      {!isCollapsed && <span>Service Pricing</span>}
                     </NavLink>
-                  </li> */}
+                  </li>
                 </ul>
               )}
             </div>

@@ -771,3 +771,22 @@ exports.deleteService = async (req, res) => {
     });
   }
 };
+
+// Get service pricing configuration for admin
+exports.getServicePricing = async (req, res) => {
+  try {
+    const { getAllServicesForAdmin } = require('../config/servicePricing');
+    const services = getAllServicesForAdmin();
+    
+    res.json({
+      success: true,
+      services,
+      message: 'Service pricing retrieved successfully'
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      message: 'Failed to retrieve service pricing', 
+      error: err.message 
+    });
+  }
+};

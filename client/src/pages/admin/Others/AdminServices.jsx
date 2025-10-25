@@ -40,36 +40,81 @@ const AdminServices = ({ setSidebarVisible }) => {
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
 
+  // Import pricing from the shared configuration
+  const getServicePricing = () => {
+    return {
+      gst: {
+        filing: 1999,
+        returnFiling: 2999,
+        resolution: 3999,
+      },
+      itr: {
+        filing: { individual: 2499, business: 4999 },
+        refundNotice: 3499,
+        documentPrep: 1999,
+      },
+      trademark: {
+        search: 5999,
+        protection: 12999,
+        documentation: 8999,
+      },
+      business: {
+        startup: 7999,
+        incorporation: 15999,
+        advisory: 9999,
+      },
+      tax: {
+        yearRound: 6999,
+        personalCorporate: 8999,
+        compliance: 4999,
+      },
+    };
+  };
+
+  const servicePricing = getServicePricing();
+
+  // Helper function to get default amount for a service type
+  const getDefaultServiceAmount = (serviceType) => {
+    switch (serviceType) {
+      case 'gst': return servicePricing.gst.filing; // Default to filing price
+      case 'itr': return servicePricing.itr.filing.individual; // Default to individual price
+      case 'trademark': return servicePricing.trademark.search; // Default to search price
+      case 'business': return servicePricing.business.startup; // Default to startup price
+      case 'tax': return servicePricing.tax.yearRound; // Default to year round price
+      default: return 1000;
+    }
+  };
+
   const serviceTypeMap = {
     gst: { 
       name: 'GST Services', 
       icon: <FaFileInvoiceDollar className="text-blue-500" />, 
       color: 'blue',
-      amount: 1000 // ₹1000 for GST Services
+      amount: getDefaultServiceAmount('gst')
     },
     itr: { 
       name: 'ITR Services', 
       icon: <FaLandmark className="text-green-500" />, 
       color: 'green',
-      amount: 2000 // ₹2000 for ITR Services
+      amount: getDefaultServiceAmount('itr')
     },
     tax: { 
       name: 'Tax Planning', 
       icon: <FaCog className="text-purple-500" />, 
       color: 'purple',
-      amount: 3000 // ₹3000 for Tax Planning
+      amount: getDefaultServiceAmount('tax')
     },
     business: { 
       name: 'Business Advisory', 
       icon: <FaBusinessTime className="text-orange-500" />, 
       color: 'orange',
-      amount: 4000 // ₹4000 for Business Advisory
+      amount: getDefaultServiceAmount('business')
     },
     trademark: { 
       name: 'Trademark Services', 
       icon: <FaLandmark className="text-red-500" />, 
       color: 'red',
-      amount: 5000 // ₹5000 for Trademark Services
+      amount: getDefaultServiceAmount('trademark')
     }
   };
 

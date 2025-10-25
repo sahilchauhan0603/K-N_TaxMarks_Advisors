@@ -72,7 +72,7 @@ const GSTFiling = () => {
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
+              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[80px]">
                 <React.Suspense fallback={<div>Loading form...</div>}>
                   <GSTFilingForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>

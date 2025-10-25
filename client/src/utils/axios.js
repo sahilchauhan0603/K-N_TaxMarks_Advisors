@@ -16,7 +16,9 @@ instance.interceptors.request.use(
                         config.url?.includes('/approve') ||  // Testimonial approve endpoint
                         (config.url?.includes('/others-contact') && config.method?.toLowerCase() !== 'post') || // Others contact admin routes (except submit)
                         (config.url?.includes('/suggestions') && config.method?.toLowerCase() !== 'post') ||  // Suggestions routes are admin-only except POST
-                        (config.method?.toLowerCase() === 'delete' && config.url?.includes('/testimonials/')); // Testimonial delete by admin
+                        (config.method?.toLowerCase() === 'delete' && config.url?.includes('/testimonials/')) || // Testimonial delete by admin
+                        // Pricing admin routes (PUT, POST, DELETE operations require admin auth)
+                        (config.url?.includes('/pricing') && ['put', 'post', 'delete'].includes(config.method?.toLowerCase()) && !config.url?.includes('/initialize'));
     
     let token;
     if (isAdminRoute) {
@@ -48,7 +50,9 @@ instance.interceptors.response.use(
                           error.config?.url?.includes('/approve') ||
                           (error.config?.url?.includes('/others-contact') && error.config?.method?.toLowerCase() !== 'post') || // Others contact admin routes (except submit)
                           (error.config?.url?.includes('/suggestions') && error.config?.method?.toLowerCase() !== 'post') ||  // Suggestions routes are admin-only except POST
-                          (error.config?.method?.toLowerCase() === 'delete' && error.config?.url?.includes('/testimonials/'));
+                          (error.config?.method?.toLowerCase() === 'delete' && error.config?.url?.includes('/testimonials/')) ||
+                          // Pricing admin routes (PUT, POST, DELETE operations require admin auth)
+                          (error.config?.url?.includes('/pricing') && ['put', 'post', 'delete'].includes(error.config?.method?.toLowerCase()) && !error.config?.url?.includes('/initialize'));
       
       if (isAdminRoute) {
         // Admin token expired or invalid

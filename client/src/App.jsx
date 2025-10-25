@@ -53,6 +53,7 @@ import AdminITR from "./pages/admin/TablesForForms/AdminITR";
 import AdminTestimonials from "./pages/admin/Others/AdminTestimonials";
 import AdminSuggestions from "./pages/admin/Others/AdminSuggestions";
 import AdminServices from "./pages/admin/Others/AdminServices";
+import AdminServicePricing from "./pages/admin/Others/AdminServicePricing";
 import AdminBills from "./pages/admin/Others/AdminBills";
 import AdminOthersContact from "./pages/admin/Others/AdminOthersContact";
 
@@ -304,6 +305,7 @@ const App = () => {
                 <Route path="bills" element={<AdminBills />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="services" element={<AdminServices />} />
+                <Route path="service-pricing" element={<AdminServicePricing />} />
                 <Route path="others-contact" element={<AdminOthersContact />} />
                 <Route path="trademark" element={<AdminTrademark />} />
                 <Route path="business-advisory" element={<AdminBusiness />} />
