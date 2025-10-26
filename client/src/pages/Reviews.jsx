@@ -2,8 +2,61 @@ import React, { useState, useEffect } from 'react';
 import axios from '../utils/axios';
 import { FaQuoteLeft, FaStar, FaUser, FaCalendarAlt, FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
+const SERVICE_OPTIONS = [
+  'Trademark',
+  'Business Advisory',
+  'GST Filing',
+  'ITR Filing',
+  'Tax Planning',
+];
+
+// Color map for each service
+const SERVICE_COLORS = {
+  'Trademark': {
+    primary: 'purple',
+    bg: 'bg-white',
+    border: 'border-purple-500',
+    text: 'text-purple-700',
+    button: 'bg-purple-700 hover:bg-purple-800',
+  },
+  'Business Advisory': {
+    primary: 'pink',
+    bg: 'bg-white',
+    border: 'border-pink-500',
+    text: 'text-pink-700',
+    button: 'bg-pink-700 hover:bg-pink-800',
+  },
+  'GST Filing': {
+    primary: 'yellow',
+    bg: 'bg-white',
+    border: 'border-yellow-500',
+    text: 'text-yellow-700',
+    button: 'bg-yellow-700 hover:bg-yellow-800',
+  },
+  'ITR Filing': {
+    primary: 'green',
+    bg: 'bg-white',
+    border: 'border-green-500',
+    text: 'text-green-700',
+    button: 'bg-green-600 hover:bg-green-700',
+  },
+  'Tax Planning': {
+    primary: 'blue',
+    bg: 'bg-white',
+    border: 'border-blue-500',
+    text: 'text-blue-700',
+    button: 'bg-blue-600 hover:bg-blue-700',
+  },
+};
 
 const Reviews = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [testimonials, setTestimonials] = useState([]);
   const [filteredTestimonials, setFilteredTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,6 +64,7 @@ const Reviews = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedService, setSelectedService] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [showTestimonialForm, setShowTestimonialForm] = useState(false);
   
   // Pagination states
   const [currentPage, setCurrentPage] = useState(0);
@@ -47,6 +101,16 @@ const Reviews = () => {
     // Reset to first page when filters change
     setCurrentPage(0);
   }, [searchTerm, selectedService, sortBy]);
+
+  // Handle redirect after login to open testimonial form
+  useEffect(() => {
+    // Check if user just logged in and came from reviews page with intention to write review
+    if (user && location.state?.openTestimonialForm) {
+      setShowTestimonialForm(true);
+      // Clear the state to prevent reopening form on subsequent visits
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [user, location.state, navigate, location.pathname]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -194,6 +258,43 @@ const Reviews = () => {
     return colors[service] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
+  const handleWriteReview = () => {
+    if (!user) {
+      // Show login prompt for unauthenticated users
+      Swal.fire({
+        title: '🔐 Login Required',
+        html: `
+          <div class="text-center space-y-4">
+            <div class="text-4xl mb-3">👤</div>
+            <p class="text-lg text-gray-700">Please log in to write a review</p>
+            <p class="text-sm text-gray-500">You need to be logged in to share your experience with our services.</p>
+          </div>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3B82F6',
+        cancelButtonColor: '#6B7280',
+        confirmButtonText: '🔑 Login Now',
+        cancelButtonText: '❌ Cancel',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Navigate to login with redirect parameter to come back to reviews page and open form
+          navigate('/login', { 
+            state: { 
+              redirect: '/reviews',
+              openTestimonialForm: true,
+              message: 'Please log in to write a review'
+            }
+          });
+        }
+      });
+    } else {
+      // Open testimonial form for authenticated users
+      setShowTestimonialForm(true);
+    }
+  };
+
   const renderStars = (rating = 5) => {
     return Array.from({ length: 5 }, (_, index) => (
       <FaStar
@@ -225,7 +326,7 @@ const Reviews = () => {
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={fetchTestimonials}
-            className="bg-slate-500 hover:bg-slate-600 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-slate-500 hover:bg-slate-600 text-white px-6 cursor-pointer py-2 rounded-lg transition-colors"
           >
             Try Again
           </button>
@@ -489,21 +590,215 @@ const Reviews = () => {
             Experience the same level of professional service and expertise that our clients rave about.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/"
-              className="bg-white text-slate-700 hover:bg-slate-50 font-bold py-3 px-8 rounded-lg transition-colors shadow-md"
+            <button
+              onClick={handleWriteReview}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 font-bold py-3 px-8 cursor-pointer rounded-lg transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2"
             >
-              Explore Our Services
-            </a>
-            {/* <a
-              href="/services"
+              ✍️ Write a Review
+            </button>
+            <Link 
+              to="/"
               className="border-2 border-gray-400 text-gray-700 hover:bg-white hover:text-slate-800 font-bold py-3 px-8 rounded-lg transition-colors"
             >
               Explore Services
-            </a> */}
+            </Link>
           </div>
         </div>
       </div>
+
+      {/* Testimonial Form Modal */}
+      {showTestimonialForm && (
+        <TestimonialForm
+          onClose={() => setShowTestimonialForm(false)}
+          onSuccess={() => {
+            setShowTestimonialForm(false);
+            fetchTestimonials(); // Refresh testimonials after submission
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// Testimonial Form Component
+const TestimonialForm = ({ onClose, onSuccess }) => {
+  const { user } = useAuth();
+  const [form, setForm] = useState({
+    name: user?.name || '',
+    role: user?.role || '',
+    photoUrl: user?.photoUrl || '',
+    service: '',
+    feedback: '',
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = e => {
+    setImageFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('role', form.role);
+      formData.append('service', form.service);
+      formData.append('feedback', form.feedback);
+      if (imageFile) {
+        formData.append('photo', imageFile);
+      }
+      
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+      
+      // Use appropriate endpoint based on authentication status
+      const endpoint = user ? '/api/testimonials' : '/api/testimonials/public';
+      
+      await axios.post(endpoint, formData, config);
+      
+      // Show success message with SweetAlert
+      await Swal.fire({
+        title: '🎉 Thank You!',
+        html: `
+          <div class="text-center space-y-3">
+            <div class="text-green-600 text-4xl mb-3">✅</div>
+            <p class="text-lg font-medium text-gray-800">Your review has been submitted successfully!</p>
+            <p class="text-sm text-gray-600">Thank you for sharing your experience with us.</p>
+          </div>
+        `,
+        icon: 'success',
+        confirmButtonColor: '#10B981',
+        confirmButtonText: '✅ Continue',
+        timer: 3000,
+        timerProgressBar: true
+      });
+      
+      onSuccess();
+      
+    } catch (err) {
+      setError(err.response?.data?.message || 'Submission failed');
+      await Swal.fire({
+        title: '❌ Submission Failed',
+        text: err.response?.data?.message || 'Failed to submit your review. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#EF4444',
+        confirmButtonText: 'Try Again'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setForm(f => ({
+        ...f,
+        name: user.name || '',
+        role: user.role || '',
+        photoUrl: user.photoUrl || '',
+      }));
+    }
+  }, [user]);
+
+  return (
+    <div className="fixed inset-0 backdrop-blur-lg bg-black/50 flex items-center justify-center z-50">
+      <form
+        className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-lg relative border border-gray-200 animate-fadeIn`}
+        onSubmit={handleSubmit}
+        style={{ minHeight: '480px' }}
+      >
+        <button
+          type="button"
+          className="absolute cursor-pointer top-2 right-2 text-gray-400 hover:text-black text-2xl focus:outline-none"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+        <h3 className="text-xl font-extrabold mb-2 text-gray-800 text-center tracking-tight">Share Your Experience</h3>
+        <p className="text-xs text-gray-400 mb-4 text-center">We value your feedback!</p>
+        
+        <div className="mb-2">
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white placeholder-gray-300"
+            placeholder="Your Name"
+            required
+          />
+        </div>
+        
+        <div className="mb-2">
+          <input
+            type="text"
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white placeholder-gray-500"
+            placeholder="Your Designation"
+            required
+          />
+        </div>
+        
+        <div className="mb-2">
+          <label className="block mb-1 font-semibold text-gray-700">Upload Profile Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white placeholder-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300"
+          />
+        </div>
+        
+        <div className="mb-2">
+          <select
+            name="service"
+            value={form.service}
+            onChange={handleChange}
+            className="w-full cursor-pointer border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white text-gray-800"
+            required
+          >
+            <option value="">Select Service</option>
+            {SERVICE_OPTIONS.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="mb-2">
+          <textarea
+            name="feedback"
+            value={form.feedback}
+            onChange={handleChange}
+            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm focus:outline-none bg-white placeholder-gray-500 resize-none"
+            rows={2}
+            maxLength={180}
+            placeholder="Your feedback (max 180 chars)"
+            required
+          />
+        </div>
+        
+        {error && <p className="text-red-500 mb-2 text-center text-xs">{error}</p>}
+        {success && <p className="text-green-600 mb-2 text-center text-xs">Thank you for your feedback!</p>}
+        
+        <button
+          type="submit"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white cursor-pointer font-bold py-2 px-4 rounded-lg shadow transition text-sm mt-1"
+          disabled={loading}
+        >
+          {loading ? 'Submitting...' : 'Submit Review'}
+        </button>
+      </form>
     </div>
   );
 };

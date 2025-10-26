@@ -69,8 +69,15 @@ const LoginPage = () => {
         setTimeout(() => {
           const params = new URLSearchParams(location.search);
           const redirectTo = params.get("redirectTo");
+          const stateRedirect = location.state?.redirect;
+          const shouldOpenForm = location.state?.openTestimonialForm;
+          
           if (redirectTo) {
             navigate(redirectTo, { replace: true });
+          } else if (stateRedirect) {
+            // Pass along any additional state for the target page
+            const navigationState = shouldOpenForm ? { openTestimonialForm: true } : {};
+            navigate(stateRedirect, { replace: true, state: navigationState });
           } else {
             navigate("/", { replace: true });
           }

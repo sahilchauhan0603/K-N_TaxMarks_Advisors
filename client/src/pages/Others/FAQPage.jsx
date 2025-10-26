@@ -257,9 +257,9 @@ const FAQPage = () => {
         </div>
 
         {/* Footer note */}
-        <div className="text-center mt-8 text-gray-500 text-sm">
+        {/* <div className="text-center mt-8 text-gray-500 text-sm">
           <p>© 2023 K&N TaxMark Advisors. All rights reserved.</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Contact Modal */}

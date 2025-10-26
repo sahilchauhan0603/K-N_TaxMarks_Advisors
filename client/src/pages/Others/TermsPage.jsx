@@ -209,9 +209,9 @@ const TermsPage = () => {
         </div>
 
         {/* Footer note */}
-        <div className="text-center mt-8 text-gray-500 text-sm opacity-0 animate-fade-in" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
+        {/* <div className="text-center mt-8 text-gray-500 text-sm opacity-0 animate-fade-in" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
           <p>© 2023 K&N TaxMark Advisors. All rights reserved.</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Contact Modal */}
