@@ -140,53 +140,90 @@ const MyBills = () => {
   const handlePayNow = async (bill) => {
     setPaymentLoading(true);
     try {
-      // Create Razorpay order
+      // Create Razorpay order (or mock order)
       const response = await axios.post('/api/bills/create-payment-order', {
         billId: bill._id
       });
 
       const { order } = response.data;
 
-      // Initialize Razorpay
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        name: "K&N TaxMarks Advisors",
-        description: `Payment for ${bill.serviceName}`,
-        order_id: order.id,
-        handler: async function (response) {
+      // Check if this is a mock payment
+      const isMockPayment = order.id.startsWith('order_mock_');
+      
+      if (isMockPayment) {
+        // Handle mock payment - simulate success
+        
+        // Show a confirmation dialog for mock payment
+        const confirmed = window.confirm(
+          `Mock Payment Mode\n\n` +
+          `Service: ${bill.serviceName}\n` +
+          `Amount: ₹${bill.amount}\n` +
+          `Bill #: ${bill.billNumber}\n\n` +
+          `This is a test payment. Click OK to simulate successful payment.`
+        );
+        
+        if (confirmed) {
+          // Simulate successful payment verification
+          const mockPaymentData = {
+            billId: bill._id,
+            razorpay_payment_id: `pay_mock_${Date.now()}`,
+            razorpay_order_id: order.id,
+            razorpay_signature: `mock_signature_${Date.now()}`
+          };
+          
           try {
-            // Verify payment
-            const verifyResponse = await axios.post('/api/bills/verify-payment', {
-              billId: bill._id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature
-            });
-
+            const verifyResponse = await axios.post('/api/bills/verify-payment', mockPaymentData);
+            
             if (verifyResponse.data.success) {
-              setSuccessMessage('Payment successful! Your bill has been paid.');
+              setSuccessMessage('Mock Payment Successful! Your bill has been marked as paid.');
               fetchBills(); // Refresh bills
             }
           } catch (error) {
             setError('Payment verification failed. Please contact support.');
           }
-        },
-        prefill: {
-          name: user.name,
-          email: user.email,
-          contact: user.phone || ''
-        },
-        theme: {
-          color: "#3B82F6"
         }
-      };
+      } else {
+        // Handle real Razorpay payment
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: order.amount,
+          currency: order.currency,
+          name: "K&N TaxMarks Advisors",
+          description: `Payment for ${bill.serviceName}`,
+          order_id: order.id,
+          handler: async function (response) {
+            try {
+              // Verify payment
+              const verifyResponse = await axios.post('/api/bills/verify-payment', {
+                billId: bill._id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              });
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+              if (verifyResponse.data.success) {
+                setSuccessMessage('Payment successful! Your bill has been paid.');
+                fetchBills(); // Refresh bills
+              }
+            } catch (error) {
+              setError('Payment verification failed. Please contact support.');
+            }
+          },
+          prefill: {
+            name: user.name,
+            email: user.email,
+            contact: user.phone || ''
+          },
+          theme: {
+            color: "#3B82F6"
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      }
     } catch (error) {
-      setError('Failed to initiate payment. Please try again.');
+      setError(error.response?.data?.message || 'Failed to initiate payment. Please try again.');
     } finally {
       setPaymentLoading(false);
     }

@@ -16,7 +16,10 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaEdit,
-  FaTrash
+  FaTrash,
+  FaMoneyBillWave,
+  FaExclamationTriangle,
+  FaBan
 } from 'react-icons/fa';
 
 const AdminServices = ({ setSidebarVisible }) => {
@@ -35,6 +38,7 @@ const AdminServices = ({ setSidebarVisible }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [serviceTypeFilter, setServiceTypeFilter] = useState('All');
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const servicesPerPage = 5;
   const [showDocumentModal, setShowDocumentModal] = useState(false);
@@ -73,15 +77,68 @@ const AdminServices = ({ setSidebarVisible }) => {
 
   const servicePricing = getServicePricing();
 
-  // Helper function to get default amount for a service type
-  const getDefaultServiceAmount = (serviceType) => {
+    // Helper function to get default amount for a service type
+  const getDefaultAmount = (serviceType) => {
+    const pricing = getServicePricing();
     switch (serviceType) {
-      case 'gst': return servicePricing.gst.filing; // Default to filing price
-      case 'itr': return servicePricing.itr.filing.individual; // Default to individual price
-      case 'trademark': return servicePricing.trademark.search; // Default to search price
-      case 'business': return servicePricing.business.startup; // Default to startup price
-      case 'tax': return servicePricing.tax.yearRound; // Default to year round price
-      default: return 1000;
+      case 'gst':
+        return pricing.gst.filing; // Default to filing amount
+      case 'itr':
+        return pricing.itr.individual; // Default to individual filing
+      case 'tax':
+        return pricing.tax.basic; // Default to basic tax planning
+      case 'business':
+        return pricing.business.consultation; // Default to consultation
+      case 'trademark':
+        return pricing.trademark.search; // Default to search
+      default:
+        return 0;
+    }
+  };
+
+  // Helper function to get payment status badge
+  const getPaymentStatusBadge = (service) => {
+    if (service.status !== 'Completed') {
+      return (
+        <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+          <FaBan className="mr-1" />
+          No Bill
+        </span>
+      );
+    }
+    
+    if (!service.bill) {
+      return (
+        <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+          <FaClock className="mr-1" />
+          Bill Pending
+        </span>
+      );
+    }
+    
+    switch (service.bill.status) {
+      case 'Paid':
+        return (
+          <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full bg-green-100 text-green-800 border border-green-200">
+            <FaMoneyBillWave className="mr-1" />
+            Paid
+          </span>
+        );
+      case 'Overdue':
+        return (
+          <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full bg-red-100 text-red-800 border border-red-200">
+            <FaExclamationTriangle className="mr-1" />
+            Overdue
+          </span>
+        );
+      case 'Pending':
+      default:
+        return (
+          <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+            <FaClock className="mr-1" />
+            Pending
+          </span>
+        );
     }
   };
 
@@ -90,31 +147,31 @@ const AdminServices = ({ setSidebarVisible }) => {
       name: 'GST Services', 
       icon: <FaFileInvoiceDollar className="text-blue-500" />, 
       color: 'blue',
-      amount: getDefaultServiceAmount('gst')
+      amount: getDefaultAmount('gst')
     },
     itr: { 
       name: 'ITR Services', 
       icon: <FaLandmark className="text-green-500" />, 
       color: 'green',
-      amount: getDefaultServiceAmount('itr')
+      amount: getDefaultAmount('itr')
     },
     tax: { 
       name: 'Tax Planning', 
       icon: <FaCog className="text-purple-500" />, 
       color: 'purple',
-      amount: getDefaultServiceAmount('tax')
+      amount: getDefaultAmount('tax')
     },
     business: { 
       name: 'Business Advisory', 
       icon: <FaBusinessTime className="text-orange-500" />, 
       color: 'orange',
-      amount: getDefaultServiceAmount('business')
+      amount: getDefaultAmount('business')
     },
     trademark: { 
       name: 'Trademark Services', 
       icon: <FaLandmark className="text-red-500" />, 
       color: 'red',
-      amount: getDefaultServiceAmount('trademark')
+      amount: getDefaultAmount('trademark')
     }
   };
 
@@ -240,7 +297,12 @@ const AdminServices = ({ setSidebarVisible }) => {
   };
 
   const handleCompletionWithBilling = async () => {
-    const serviceInfo = serviceTypeMap[selectedService.serviceType];
+    const serviceInfo = serviceTypeMap[selectedService.serviceType] || {
+      name: 'Unknown Service',
+      icon: <FaCog className="text-gray-500" />,
+      color: 'gray',
+      amount: 0
+    };
     const defaultAmount = serviceInfo.amount;
 
     const { value: formValues } = await Swal.fire({
@@ -376,7 +438,14 @@ const AdminServices = ({ setSidebarVisible }) => {
     return allServices;
   };
 
-  // Filter services based on search term, status, and service type
+  // Helper function to get payment status for filtering
+  const getPaymentStatus = (service) => {
+    if (service.status !== 'Completed') return 'No Bill';
+    if (!service.bill) return 'Bill Pending';
+    return service.bill.status;
+  };
+
+  // Filter services based on search term, status, service type, and payment status
   const getFilteredServices = () => {
     let filtered = getAllServices();
 
@@ -394,6 +463,10 @@ const AdminServices = ({ setSidebarVisible }) => {
 
     if (serviceTypeFilter !== 'All') {
       filtered = filtered.filter(service => service.serviceType === serviceTypeFilter);
+    }
+
+    if (paymentStatusFilter !== 'All') {
+      filtered = filtered.filter(service => getPaymentStatus(service) === paymentStatusFilter);
     }
 
     return filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -416,7 +489,7 @@ const AdminServices = ({ setSidebarVisible }) => {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, serviceTypeFilter]);
+  }, [searchTerm, statusFilter, serviceTypeFilter, paymentStatusFilter]);
 
   // Pagination handlers
   const handlePrevPage = () => {
@@ -572,7 +645,12 @@ const AdminServices = ({ setSidebarVisible }) => {
   const ServiceModal = () => {
     if (!selectedService) return null;
 
-    const serviceInfo = serviceTypeMap[selectedService.serviceType];
+    const serviceInfo = serviceTypeMap[selectedService.serviceType] || {
+      name: 'Unknown Service',
+      icon: <FaCog className="text-gray-500" />,
+      color: 'gray',
+      amount: 0
+    };
 
     return (
       <div className="fixed inset-0 backdrop-blur-sm bg-black/40 bg-opacity-50 flex items-center justify-center z-[9999] p-4">
@@ -616,7 +694,8 @@ const AdminServices = ({ setSidebarVisible }) => {
               <h4 className="font-semibold text-gray-900 mb-3">Service Details</h4>
               <div className="space-y-2 text-sm">
                 {Object.entries(selectedService).map(([key, value]) => {
-                  if (['_id', '__v', 'userId', 'createdAt', 'updatedAt', 'serviceType', 'status', 'adminNotes', 'documentPath', 'documentUrl'].includes(key) || !value) return null;
+                  // Skip these keys and object values
+                  if (['_id', '__v', 'userId', 'createdAt', 'updatedAt', 'serviceType', 'status', 'adminNotes', 'documentPath', 'documentUrl', 'bill'].includes(key) || !value || typeof value === 'object') return null;
                   return (
                     <div key={key} className="flex">
                       <span className="font-medium capitalize mr-2 min-w-32">{key.replace(/([A-Z])/g, ' $1')}:</span>
@@ -626,6 +705,41 @@ const AdminServices = ({ setSidebarVisible }) => {
                 })}
               </div>
             </div>
+
+            {/* Bill Information */}
+            {selectedService.bill && (
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <FaMoneyBillWave className="text-green-600 mr-2" />
+                  Bill Information
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div><span className="font-medium">Bill Number:</span> {selectedService.bill.billNumber || 'N/A'}</div>
+                  <div><span className="font-medium">Amount:</span> ₹{selectedService.bill.amount?.toLocaleString() || '0'}</div>
+                  <div><span className="font-medium">Status:</span> 
+                    <span className={`ml-1 px-2 py-1 rounded text-xs font-medium ${
+                      selectedService.bill.status === 'Paid' ? 'bg-green-100 text-green-800' :
+                      selectedService.bill.status === 'Overdue' ? 'bg-red-100 text-red-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {selectedService.bill.status}
+                    </span>
+                  </div>
+                  <div><span className="font-medium">Due Date:</span> {selectedService.bill.dueDate ? new Date(selectedService.bill.dueDate).toLocaleDateString() : 'N/A'}</div>
+                  {selectedService.bill.paidAt && (
+                    <div><span className="font-medium">Paid At:</span> {new Date(selectedService.bill.paidAt).toLocaleDateString()}</div>
+                  )}
+                  {selectedService.bill.paymentMethod && (
+                    <div><span className="font-medium">Payment Method:</span> {selectedService.bill.paymentMethod}</div>
+                  )}
+                </div>
+                {selectedService.bill.description && (
+                  <div className="mt-2">
+                    <span className="font-medium">Description:</span> {selectedService.bill.description}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Current Status */}
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -684,7 +798,7 @@ const AdminServices = ({ setSidebarVisible }) => {
                       handleDeleteService(
                         selectedService.serviceType, 
                         selectedService._id, 
-                        serviceTypeMap[selectedService.serviceType].name, 
+                        serviceTypeMap[selectedService.serviceType]?.name || 'Unknown Service', 
                         selectedService.userId?.name
                       );
                     }, 100);
@@ -704,7 +818,7 @@ const AdminServices = ({ setSidebarVisible }) => {
                   className="flex-1 min-w-48 bg-purple-600 text-white px-4 cursor-pointer py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center space-x-2"
                 >
                   {updating ? <FaSpinner className="animate-spin" /> : <FaFileInvoiceDollar />}
-                  <span>Complete & Bill ₹{service.bill ? service.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}</span>
+                  <span>Complete & Bill ₹{service.bill?.amount?.toLocaleString() || serviceInfo?.amount?.toLocaleString() || '0'}</span>
                 </button>
                 
                 <button
@@ -786,6 +900,15 @@ const AdminServices = ({ setSidebarVisible }) => {
   const pendingCount = getAllServices().filter(s => s.status === 'Pending').length;
   const approvedCount = getAllServices().filter(s => s.status === 'Approved').length;
   const completedCount = getAllServices().filter(s => s.status === 'Completed').length;
+  
+  // Payment statistics
+  const allServices = getAllServices();
+  const paidCount = allServices.filter(s => s.bill && s.bill.status === 'Paid').length;
+  const totalPaidRevenue = allServices
+    .filter(s => s.bill && s.bill.status === 'Paid')
+    .reduce((total, s) => total + (s.bill.amount || 0), 0);
+  const pendingPaymentCount = allServices.filter(s => s.bill && s.bill.status === 'Pending').length;
+  const overduePaymentCount = allServices.filter(s => s.bill && s.bill.status === 'Overdue').length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-2">
@@ -804,7 +927,7 @@ const AdminServices = ({ setSidebarVisible }) => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
@@ -812,16 +935,6 @@ const AdminServices = ({ setSidebarVisible }) => {
                 <p className="text-2xl font-bold text-gray-900">{totalServices}</p>
               </div>
               <FaCog className="text-gray-400 text-2xl" />
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">{pendingCount}</p>
-              </div>
-              <FaClock className="text-yellow-400 text-2xl" />
             </div>
           </div>
           
@@ -838,10 +951,31 @@ const AdminServices = ({ setSidebarVisible }) => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Completion Rate</p>
-                <p className="text-2xl font-bold text-blue-600">{totalServices ? Math.round((completedCount / totalServices) * 100) : 0}%</p>
+                <p className="text-sm font-medium text-gray-600">Revenue Collected</p>
+                <p className="text-2xl font-bold text-green-600">₹{(totalPaidRevenue || 0).toLocaleString()}</p>
+                <p className="text-xs text-gray-500 mt-1">{paidCount} paid bills</p>
               </div>
-              <FaBusinessTime className="text-blue-400 text-2xl" />
+              <FaMoneyBillWave className="text-green-400 text-2xl" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Pending Payments</p>
+                <p className="text-2xl font-bold text-yellow-600">{pendingPaymentCount}</p>
+              </div>
+              <FaClock className="text-yellow-400 text-2xl" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Overdue Payments</p>
+                <p className="text-2xl font-bold text-red-600">{overduePaymentCount}</p>
+              </div>
+              <FaExclamationTriangle className="text-red-400 text-2xl" />
             </div>
           </div>
         </div>
@@ -887,6 +1021,19 @@ const AdminServices = ({ setSidebarVisible }) => {
               <option value="business">Business Advisory</option>
               <option value="trademark">Trademark Services</option>
             </select>
+            
+            <select
+              value={paymentStatusFilter}
+              onChange={(e) => setPaymentStatusFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All Payment Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending Payment</option>
+              <option value="Overdue">Overdue Payment</option>
+              <option value="Bill Pending">Bill Pending</option>
+              <option value="No Bill">No Bill</option>
+            </select>
           </div>
         </div>
 
@@ -900,6 +1047,7 @@ const AdminServices = ({ setSidebarVisible }) => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -907,7 +1055,12 @@ const AdminServices = ({ setSidebarVisible }) => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {paginatedServices.map((service, index) => {
-                  const serviceInfo = serviceTypeMap[service.serviceType];
+                  const serviceInfo = serviceTypeMap[service.serviceType] || {
+                    name: 'Unknown Service',
+                    icon: <FaCog className="text-gray-500" />,
+                    color: 'gray',
+                    amount: 0
+                  };
                   const serialNumber = (currentPage - 1) * servicesPerPage + index + 1;
                   return (
                     <tr key={`${service.serviceType}-${service._id}`} className="hover:bg-gray-50">
@@ -926,11 +1079,14 @@ const AdminServices = ({ setSidebarVisible }) => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-green-600">
-                          ₹{service.bill ? service.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}
+                          ₹{service.bill?.amount?.toLocaleString() || serviceInfo?.amount?.toLocaleString() || '0'}
                         </div>
                         <div className="text-xs text-gray-500">
                           {service.bill ? 'Actual Bill Amount' : 'Standard Rate'}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getPaymentStatusBadge(service)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {new Date(service.createdAt).toLocaleDateString()}
