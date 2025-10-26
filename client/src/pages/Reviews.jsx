@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axios';
-import { FaQuoteLeft, FaStar, FaUser, FaCalendarAlt, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaQuoteLeft, FaStar, FaUser, FaCalendarAlt, FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 
 const Reviews = () => {
@@ -11,6 +11,17 @@ const Reviews = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedService, setSelectedService] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(3); // Number of cards per page
+  const [totalPages, setTotalPages] = useState(0);
+  const [displayedTestimonials, setDisplayedTestimonials] = useState([]);
+  const [loadingPage, setLoadingPage] = useState(false);
+  
+  // Touch/Swipe support
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   const services = [
     'Business Advisory',
@@ -27,6 +38,55 @@ const Reviews = () => {
   useEffect(() => {
     filterAndSortTestimonials();
   }, [testimonials, searchTerm, selectedService, sortBy]);
+
+  useEffect(() => {
+    updateDisplayedTestimonials();
+  }, [filteredTestimonials, currentPage]);
+
+  useEffect(() => {
+    // Reset to first page when filters change
+    setCurrentPage(0);
+  }, [searchTerm, selectedService, sortBy]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (totalPages <= 1) return;
+      
+      if (event.key === 'ArrowLeft') {
+        goToPrevPage();
+      } else if (event.key === 'ArrowRight') {
+        goToNextPage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentPage, totalPages]);
+
+  // Touch handlers
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && totalPages > 1) {
+      goToNextPage();
+    }
+    if (isRightSwipe && totalPages > 1) {
+      goToPrevPage();
+    }
+  };
 
   const fetchTestimonials = async () => {
     try {
@@ -67,6 +127,44 @@ const Reviews = () => {
     });
 
     setFilteredTestimonials(filtered);
+    setTotalPages(Math.ceil(filtered.length / pageSize));
+  };
+
+  const updateDisplayedTestimonials = () => {
+    const startIndex = currentPage * pageSize;
+    const endIndex = startIndex + pageSize;
+    const pageTestimonials = filteredTestimonials.slice(startIndex, endIndex);
+    setDisplayedTestimonials(pageTestimonials);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setLoadingPage(true);
+      setTimeout(() => {
+        setCurrentPage(prev => prev + 1);
+        setLoadingPage(false);
+      }, 300); // Small delay for smooth transition
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setLoadingPage(true);
+      setTimeout(() => {
+        setCurrentPage(prev => prev - 1);
+        setLoadingPage(false);
+      }, 300);
+    }
+  };
+
+  const goToPage = (pageNumber) => {
+    if (pageNumber >= 0 && pageNumber < totalPages && pageNumber !== currentPage) {
+      setLoadingPage(true);
+      setTimeout(() => {
+        setCurrentPage(pageNumber);
+        setLoadingPage(false);
+      }, 300);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -214,15 +312,20 @@ const Reviews = () => {
             </div>
           </div>
 
-          {/* Results Count */}
+          {/* Results Count & Page Info */}
           <div className="mt-4 text-center">
             <span className="text-gray-600 text-sm">
-              Showing {filteredTestimonials.length} of {testimonials.length} reviews
+              Showing {displayedTestimonials.length} of {filteredTestimonials.length} reviews 
+              {totalPages > 1 && (
+                <span className="ml-2">
+                  (Page {currentPage + 1} of {totalPages})
+                </span>
+              )}
             </span>
           </div>
         </div>
 
-        {/* Testimonials Grid */}
+        {/* Testimonials Carousel */}
         {filteredTestimonials.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🔍</div>
@@ -230,8 +333,55 @@ const Reviews = () => {
             <p className="text-gray-600">Try adjusting your search or filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredTestimonials.map((testimonial, index) => (
+          <div className="relative">
+            {/* Navigation Buttons */}
+            {totalPages > 1 && (
+              <>
+                <button
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 0 || loadingPage}
+                  className={`absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 md:-translate-x-6 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg transition-all duration-300 ${
+                    currentPage === 0 || loadingPage
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-white text-gray-700 hover:bg-slate-50 hover:shadow-xl hover:scale-110 active:scale-95'
+                  } border border-gray-200`}
+                  aria-label="Previous reviews"
+                >
+                  <FaChevronLeft className="w-4 h-4 md:w-5 md:h-5 mx-auto" />
+                </button>
+
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage >= totalPages - 1 || loadingPage}
+                  className={`absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 md:translate-x-6 z-10 w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg transition-all duration-300 ${
+                    currentPage >= totalPages - 1 || loadingPage
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-white text-gray-700 hover:bg-slate-50 hover:shadow-xl hover:scale-110 active:scale-95'
+                  } border border-gray-200`}
+                  aria-label="Next reviews"
+                >
+                  <FaChevronRight className="w-4 h-4 md:w-5 md:h-5 mx-auto" />
+                </button>
+              </>
+            )}
+
+            {/* Cards Container */}
+            <div 
+              className={`relative transition-all duration-300 ${loadingPage ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {loadingPage && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-white bg-opacity-75 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-600"></div>
+                    <span className="text-sm text-gray-600">Loading reviews...</span>
+                  </div>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
+                {displayedTestimonials.map((testimonial, index) => (
               <div
                 key={testimonial._id}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 p-6 border border-gray-100"
@@ -289,6 +439,44 @@ const Reviews = () => {
                 </div>
               </div>
             ))}
+              </div>
+            </div>
+
+            {/* Pagination Dots */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8 space-x-3">
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToPage(index)}
+                    disabled={loadingPage}
+                    className={`relative transition-all duration-300 ${loadingPage ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    aria-label={`Go to page ${index + 1}`}
+                  >
+                    <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentPage
+                        ? 'bg-slate-600 scale-125 shadow-md'
+                        : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                    }`} />
+                    {index === currentPage && (
+                      <div className="absolute inset-0 w-3 h-3 rounded-full bg-slate-600 animate-pulse opacity-50" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Page Navigation Info */}
+            {totalPages > 1 && (
+              <div className="text-center mt-6">
+                <div className="inline-flex items-center space-x-4 text-sm text-gray-600 bg-gray-50 px-4 py-2 rounded-full">
+                  <span className="hidden md:inline">Use arrow keys to navigate</span>
+                  <span className="md:hidden">Swipe to navigate</span>
+                  <span className="text-slate-600 font-medium">•</span>
+                  <span>Page {currentPage + 1} of {totalPages}</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

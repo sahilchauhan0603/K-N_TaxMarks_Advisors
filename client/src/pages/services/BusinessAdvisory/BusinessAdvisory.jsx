@@ -69,8 +69,17 @@ const BusinessAdvisory = () => {
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
-                <React.Suspense fallback={<div>Loading form...</div>}>
+              <Modal 
+                isOpen={isAuthenticated && openForm === 1} 
+                onClose={() => setOpenForm(null)} 
+                width="max-w-2xl" 
+                minHeight="min-h-[450px]"
+              >
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[450px]">
+                    <div className="text-pink-600 text-lg">Loading form...</div>
+                  </div>
+                }>
                   <BusinessAdvisoryStartupForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
@@ -94,8 +103,17 @@ const BusinessAdvisory = () => {
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
-                <React.Suspense fallback={<div>Loading form...</div>}>
+              <Modal 
+                isOpen={isAuthenticated && openForm === 2} 
+                onClose={() => setOpenForm(null)} 
+                width="max-w-2xl" 
+                minHeight="min-h-[450px]"
+              >
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[450px]">
+                    <div className="text-pink-600 text-lg">Loading form...</div>
+                  </div>
+                }>
                   <BusinessAdvisoryIncorporationForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
@@ -119,8 +137,17 @@ const BusinessAdvisory = () => {
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
-                <React.Suspense fallback={<div>Loading form...</div>}>
+              <Modal 
+                isOpen={isAuthenticated && openForm === 3} 
+                onClose={() => setOpenForm(null)} 
+                width="max-w-2xl" 
+                minHeight="min-h-[450px]"
+              >
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[450px]">
+                    <div className="text-pink-600 text-lg">Loading form...</div>
+                  </div>
+                }>
                   <BusinessAdvisoryAdvisoryForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
