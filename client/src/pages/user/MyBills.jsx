@@ -21,6 +21,7 @@ import {
 import axios from "../../utils/axios";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // MyBills Component - Comprehensive Billing Dashboard
 const MyBills = () => {
@@ -153,16 +154,37 @@ const MyBills = () => {
       if (isMockPayment) {
         // Handle mock payment - simulate success
         
-        // Show a confirmation dialog for mock payment
-        const confirmed = window.confirm(
-          `Mock Payment Mode\n\n` +
-          `Service: ${bill.serviceName}\n` +
-          `Amount: ₹${bill.amount}\n` +
-          `Bill #: ${bill.billNumber}\n\n` +
-          `This is a test payment. Click OK to simulate successful payment.`
-        );
+        // Show a confirmation dialog for mock payment using SweetAlert2
+        const result = await Swal.fire({
+          title: '💳 Mock Payment Mode',
+          html: `
+            <div class="text-left space-y-3">
+              <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                <p class="text-sm text-blue-800 mb-2"><strong>📋 Service:</strong> ${bill.serviceName}</p>
+                <p class="text-sm text-blue-800 mb-2"><strong>💰 Amount:</strong> ₹${bill.amount.toLocaleString()}</p>
+                <p class="text-sm text-blue-800"><strong>🧾 Bill #:</strong> ${bill.billNumber}</p>
+              </div>
+              <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                <p class="text-sm text-yellow-800">⚠️ This is a test payment environment. No real money will be charged.</p>
+              </div>
+            </div>
+          `,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3B82F6',
+          cancelButtonColor: '#6B7280',
+          confirmButtonText: '✅ Simulate Payment',
+          cancelButtonText: '❌ Cancel',
+          reverseButtons: true,
+          customClass: {
+            container: 'swal-container',
+            popup: 'swal-popup',
+            title: 'swal-title',
+            content: 'swal-content'
+          }
+        });
         
-        if (confirmed) {
+        if (result.isConfirmed) {
           // Simulate successful payment verification
           const mockPaymentData = {
             billId: bill._id,
@@ -175,11 +197,35 @@ const MyBills = () => {
             const verifyResponse = await axios.post('/api/bills/verify-payment', mockPaymentData);
             
             if (verifyResponse.data.success) {
-              setSuccessMessage('Mock Payment Successful! Your bill has been marked as paid.');
+              await Swal.fire({
+                title: '🎉 Payment Successful!',
+                html: `
+                  <div class="text-center space-y-3">
+                    <div class="text-green-600 text-4xl mb-3">✅</div>
+                    <p class="text-lg font-medium text-gray-800">Mock payment completed successfully!</p>
+                    <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                      <p class="text-sm text-green-800"><strong>Service:</strong> ${bill.serviceName}</p>
+                      <p class="text-sm text-green-800"><strong>Amount:</strong> ₹${bill.amount.toLocaleString()}</p>
+                      <p class="text-sm text-green-800"><strong>Status:</strong> Paid</p>
+                    </div>
+                  </div>
+                `,
+                icon: 'success',
+                confirmButtonColor: '#10B981',
+                confirmButtonText: '✅ Continue',
+                timer: 5000,
+                timerProgressBar: true
+              });
               fetchBills(); // Refresh bills
             }
           } catch (error) {
-            setError('Payment verification failed. Please contact support.');
+            await Swal.fire({
+              title: '❌ Payment Failed',
+              text: 'Payment verification failed. Please contact support.',
+              icon: 'error',
+              confirmButtonColor: '#EF4444',
+              confirmButtonText: 'Try Again'
+            });
           }
         }
       } else {
@@ -202,11 +248,35 @@ const MyBills = () => {
               });
 
               if (verifyResponse.data.success) {
-                setSuccessMessage('Payment successful! Your bill has been paid.');
+                await Swal.fire({
+                  title: '🎉 Payment Successful!',
+                  html: `
+                    <div class="text-center space-y-3">
+                      <div class="text-green-600 text-4xl mb-3">✅</div>
+                      <p class="text-lg font-medium text-gray-800">Payment completed successfully!</p>
+                      <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                        <p class="text-sm text-green-800"><strong>Service:</strong> ${bill.serviceName}</p>
+                        <p class="text-sm text-green-800"><strong>Amount:</strong> ₹${bill.amount.toLocaleString()}</p>
+                        <p class="text-sm text-green-800"><strong>Payment ID:</strong> ${response.razorpay_payment_id}</p>
+                      </div>
+                    </div>
+                  `,
+                  icon: 'success',
+                  confirmButtonColor: '#10B981',
+                  confirmButtonText: '✅ Continue',
+                  timer: 5000,
+                  timerProgressBar: true
+                });
                 fetchBills(); // Refresh bills
               }
             } catch (error) {
-              setError('Payment verification failed. Please contact support.');
+              await Swal.fire({
+                title: '❌ Payment Failed',
+                text: 'Payment verification failed. Please contact support.',
+                icon: 'error',
+                confirmButtonColor: '#EF4444',
+                confirmButtonText: 'Try Again'
+              });
             }
           },
           prefill: {
@@ -223,7 +293,13 @@ const MyBills = () => {
         rzp.open();
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to initiate payment. Please try again.');
+      await Swal.fire({
+        title: '❌ Payment Error',
+        text: error.response?.data?.message || 'Failed to initiate payment. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#EF4444',
+        confirmButtonText: 'OK'
+      });
     } finally {
       setPaymentLoading(false);
     }
