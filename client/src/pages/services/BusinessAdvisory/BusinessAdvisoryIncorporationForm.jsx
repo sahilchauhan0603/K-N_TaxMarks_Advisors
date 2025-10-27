@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../utils/axios';
 import { useServicePrice } from '../../../utils/servicePricing';
+import Swal from 'sweetalert2';
 
 const BusinessAdvisoryIncorporationForm = ({ onClose }) => {
   const { user } = useAuth();
@@ -43,16 +44,29 @@ const BusinessAdvisoryIncorporationForm = ({ onClose }) => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (res.data.success) {
-        setSuccess('Your Company Incorporation request has been submitted successfully!');
         setForm((prev) => ({ ...prev, companyName: '', companyType: '', notes: '', documents: null }));
         window.removeEventListener('beforeunload', handleBeforeUnload);
         
-        // Close the form after successful submission
-        setTimeout(() => {
+        // Show SweetAlert success message
+        Swal.fire({
+          title: '🎉 Success!',
+          html: `
+            <div class="text-center space-y-3">
+              <div class="text-4xl mb-3">✅</div>
+              <p class="text-lg text-gray-700 font-medium">Your Company Incorporation request has been submitted successfully!</p>
+              <p class="text-sm text-blue-600 font-semibold">📋 Track your service request in your profile page</p>
+            </div>
+          `,
+          icon: 'success',
+          confirmButtonColor: '#EC4899',
+          confirmButtonText: '👍 Got it!',
+          timer: 5000,
+          timerProgressBar: true
+        }).then(() => {
           if (onClose) {
             onClose();
           }
-        }, 1500); // Wait 1.5 seconds to show success message before closing
+        });
       } else {
         setError(res.data.message || 'Submission failed.');
       }
