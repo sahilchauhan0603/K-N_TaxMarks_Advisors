@@ -191,7 +191,7 @@ const BusinessAdvisoryIncorporationForm = ({ onClose }) => {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-pink-600 hover:bg-pink-700 disabled:bg-pink-400 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+              className="w-full cursor-pointer bg-pink-600 hover:bg-pink-700 disabled:bg-pink-400 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">

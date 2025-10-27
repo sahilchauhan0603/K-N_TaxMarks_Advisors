@@ -260,35 +260,16 @@ const Reviews = () => {
 
   const handleWriteReview = () => {
     if (!user) {
-      // Show login prompt for unauthenticated users
-      Swal.fire({
-        title: '🔐 Login Required',
-        html: `
-          <div class="text-center space-y-4">
-            <div class="text-4xl mb-3">👤</div>
-            <p class="text-lg text-gray-700">Please log in to write a review</p>
-            <p class="text-sm text-gray-500">You need to be logged in to share your experience with our services.</p>
-          </div>
-        `,
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonColor: '#3B82F6',
-        cancelButtonColor: '#6B7280',
-        confirmButtonText: '🔑 Login Now',
-        cancelButtonText: '❌ Cancel',
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Navigate to login with redirect parameter to come back to reviews page and open form
-          navigate('/login', { 
-            state: { 
-              redirect: '/reviews',
-              openTestimonialForm: true,
-              message: 'Please log in to write a review'
-            }
-          });
-        }
-      });
+      // Show the same login popup as used for services links in the footer
+      if (typeof window.setShowAuthPopup === 'function') {
+        window.setShowAuthPopup(true);
+        setTimeout(() => {
+          navigate('/login?redirectTo=' + encodeURIComponent('/reviews?openTestimonialForm=true'));
+          window.setShowAuthPopup(false);
+        }, 1200);
+      } else {
+        navigate('/login?redirectTo=' + encodeURIComponent('/reviews?openTestimonialForm=true'));
+      }
     } else {
       // Open testimonial form for authenticated users
       setShowTestimonialForm(true);
