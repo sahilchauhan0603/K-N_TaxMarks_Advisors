@@ -30,7 +30,7 @@ const PrivacyPolicyPage = () => {
           </div> */}
           <h1 className="text-4xl md:text-5xl font-bold text-blue-800 mb-4 text-center">Privacy Policy</h1>
           <p className="text-lg text-gray-700 text-center max-w-2xl">Your privacy is important to us. Learn how we collect, use, and protect your information at K&N TaxMark Advisors.</p>
-          <p className="text-sm text-gray-500 mt-2">Last updated: September 10, 2023</p>
+          <p className="text-sm text-gray-500 mt-2">Last updated: September 10, 2025</p>
         </div>
 
         {/* Main Content */}
@@ -241,9 +241,9 @@ const PrivacyPolicyPage = () => {
         </div>
 
         {/* Footer note */}
-        <div className="text-center mt-8 text-gray-500 text-sm opacity-0 animate-fade-in" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
+        {/* <div className="text-center mt-8 text-gray-500 text-sm opacity-0 animate-fade-in" style={{ animationDelay: '1.1s', animationFillMode: 'forwards' }}>
           <p>© 2023 K&N TaxMark Advisors. All rights reserved.</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Contact Modal */}

@@ -319,12 +319,12 @@ const CookiePolicyPage = () => {
         </div>
 
         {/* Footer note */}
-        <div
+        {/* <div
           className="text-center mt-8 text-gray-500 text-sm opacity-0 animate-fade-in"
           style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}
         >
           <p>Last updated: August 2023 | Version 2.1</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Contact Modal */}

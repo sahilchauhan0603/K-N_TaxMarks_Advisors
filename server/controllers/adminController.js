@@ -270,12 +270,27 @@ exports.getDashboardStats = async (req, res) => {
     const itr = await ITR.countDocuments();
     const other = 0;
 
-    // Revenue (if you have a field, sum it; else, keep as 0 or estimate)
-    let revenue = 0;
-    // If you have a revenue field in any model, sum it here
+    // Calculate total revenue from paid bills
+    const Bill = require("../models/Bill");
+    const paidBills = await Bill.find({ status: 'Paid' });
+    const revenue = paidBills.reduce((total, bill) => total + bill.amount, 0);
 
-    // Fill monthly revenue if you have per-user or per-service revenue
-    // For now, keep as 0
+    // Calculate monthly revenue for the chart
+    for (let i = 0; i < monthly.length; i++) {
+      const monthData = monthly[i];
+      const month = new Date();
+      month.setMonth(month.getMonth() - (5 - i));
+      const m = month.getMonth();
+      const y = month.getFullYear();
+      
+      // Calculate revenue for this month from paid bills
+      const monthRevenue = paidBills.filter(bill => {
+        const billDate = new Date(bill.paidAt || bill.createdAt);
+        return billDate.getMonth() === m && billDate.getFullYear() === y;
+      }).reduce((total, bill) => total + bill.amount, 0);
+      
+      monthData.Revenue = monthRevenue;
+    }
 
     res.json({
       total,
@@ -518,7 +533,17 @@ exports.getServiceDetails = async (req, res) => {
       return res.status(404).json({ message: 'Service not found' });
     }
 
-    res.json(service);
+    // Also fetch bill information for this service
+    const Bill = require('../models/Bill');
+    const bill = await Bill.findOne({
+      serviceId: serviceId,
+      serviceType: serviceType
+    });
+
+    const serviceWithBill = service.toObject();
+    serviceWithBill.bill = bill;
+
+    res.json(serviceWithBill);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch service details', error: err.message });
   }

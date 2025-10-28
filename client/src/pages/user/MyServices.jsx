@@ -94,13 +94,42 @@ const MyServices = () => {
     // Use actual status field if available, otherwise fall back to date-based logic
     const status = service.status || 'Pending';
     
-    // Check if there's an unpaid bill for any service status
+    // Check if there's an unpaid bill
     const hasUnpaidBill = service.bill && service.bill.status === 'Pending';
     
-    // If there's an unpaid bill, override the display to show pending dues
+    // Handle completed services with paid bills
+    if (status === 'Completed' && service.bill && service.bill.status === 'Paid') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <CheckCircle className="w-3 h-3 mr-1" />
+          Completed - Paid
+        </span>
+      );
+    }
+    
+    // Handle overdue bills
+    if (hasUnpaidBill && isOverdue(service.bill)) {
+      const overdueDays = getOverdueDays(service.bill.dueDate);
+      const totalAmount = calculateTotalAmount(service.bill);
+      const penaltyAmount = calculatePenaltyAmount(service.bill.amount);
+      
+      return (
+        <div className="flex flex-col items-end space-y-1">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+            <AlertCircle className="w-3 h-3 mr-1" />
+            Overdue - ₹{totalAmount.toLocaleString()}
+          </span>
+          <span className="text-xs text-red-600 font-medium">
+            +₹{penaltyAmount.toLocaleString()} penalty ({overdueDays} days overdue)
+          </span>
+        </div>
+      );
+    }
+    
+    // Handle regular pending bills
     if (hasUnpaidBill) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
           <AlertCircle className="w-3 h-3 mr-1" />
           Pending Dues - ₹{service.bill.amount.toLocaleString()}
         </span>
@@ -151,6 +180,35 @@ const MyServices = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  // Check if a bill is overdue
+  const isOverdue = (bill) => {
+    if (!bill || !bill.dueDate) return false;
+    return new Date(bill.dueDate) < new Date() && bill.status === 'Pending';
+  };
+
+  // Calculate penalty amount for overdue bills (10% penalty)
+  const calculatePenaltyAmount = (originalAmount) => {
+    return Math.round(originalAmount * 0.1); // 10% penalty
+  };
+
+  // Calculate total amount including penalty for overdue bills
+  const calculateTotalAmount = (bill) => {
+    if (!bill) return 0;
+    const originalAmount = bill.amount || 0;
+    if (isOverdue(bill)) {
+      return originalAmount + calculatePenaltyAmount(originalAmount);
+    }
+    return originalAmount;
+  };
+
+  // Get overdue days
+  const getOverdueDays = (dueDate) => {
+    const now = new Date();
+    const due = new Date(dueDate);
+    const diffTime = now - due;
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   const getServiceDetails = (service, type) => {
@@ -529,25 +587,47 @@ const MyServices = () => {
                     Applied on {formatDate(service.createdAt)}
                   </div>
                   
-                  <div className="flex space-x-2 items-center">
-                    {/* Pay Now button for services with pending bills */}
-                    {service.bill && service.bill.status === 'Pending' && (
-                      <button
-                        onClick={() => handlePayNow(service)}
-                        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-200 flex items-center space-x-2 text-sm shadow-md hover:shadow-lg transform hover:scale-105"
-                        title={`Pay pending bill of ₹${service.bill.amount.toLocaleString()}`}
-                      >
-                        <CreditCard className="w-4 h-4" />
-                        <span>Pay ₹{service.bill.amount.toLocaleString()}</span>
-                      </button>
+                  <div className="flex flex-col space-y-2 items-end">
+                    {/* Overdue Warning */}
+                    {service.bill && service.bill.status === 'Pending' && isOverdue(service.bill) && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 max-w-sm">
+                        <div className="flex items-center space-x-2">
+                          <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                          <div className="text-xs text-red-700">
+                            <p className="font-semibold">Payment Overdue Warning!</p>
+                            <p>A 10% penalty has been added to your bill. Please pay immediately to avoid further charges.</p>
+                          </div>
+                        </div>
+                      </div>
                     )}
                     
-                    {service.documentUrl && (
-                      <>
+                    <div className="flex space-x-2 items-center">
+                      {/* Pay Now button for services with pending bills */}
+                      {service.bill && service.bill.status === 'Pending' && (
                         <button
-                          onClick={() => handleViewDocument(service.documentUrl)}
-                          className="text-blue-600 hover:text-blue-800 p-2 cursor-pointer rounded-lg hover:bg-blue-50 transition-colors"
-                          title="View document"
+                          onClick={() => handlePayNow(service)}
+                          className={`${isOverdue(service.bill) 
+                            ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 animate-pulse' 
+                            : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                          } text-white px-4 py-2 rounded-lg font-medium cursor-pointer transition-all duration-200 flex items-center space-x-2 text-sm shadow-md hover:shadow-lg transform hover:scale-105`}
+                          title={`Pay ${isOverdue(service.bill) ? 'overdue' : 'pending'} bill of ₹${calculateTotalAmount(service.bill).toLocaleString()}${isOverdue(service.bill) ? ' (includes penalty)' : ''}`}
+                        >
+                          <CreditCard className="w-4 h-4" />
+                          <span>
+                            {isOverdue(service.bill) ? 'Pay Overdue' : 'Pay'} ₹{calculateTotalAmount(service.bill).toLocaleString()}
+                          </span>
+                          {isOverdue(service.bill) && (
+                            <AlertCircle className="w-3 h-3 animate-pulse" />
+                          )}
+                        </button>
+                      )}
+                    
+                      {service.documentUrl && (
+                        <>
+                          <button
+                            onClick={() => handleViewDocument(service.documentUrl)}
+                            className="text-blue-600 hover:text-blue-800 p-2 cursor-pointer rounded-lg hover:bg-blue-50 transition-colors"
+                            title="View document"
                         >
                           <Eye className="w-5 h-5" />
                         </button>
@@ -563,8 +643,9 @@ const MyServices = () => {
                         >
                           <Download className="w-5 h-5" />
                         </button> */}
-                      </>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

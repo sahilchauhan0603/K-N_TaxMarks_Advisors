@@ -72,8 +72,17 @@ const GSTFiling = () => {
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 1} onClose={() => setOpenForm(null)} minHeight="min-h-[80px]">
-                <React.Suspense fallback={<div>Loading form...</div>}>
+              <Modal 
+                isOpen={isAuthenticated && openForm === 1} 
+                onClose={() => setOpenForm(null)} 
+                width="max-w-2xl" 
+                minHeight="min-h-[450px]"
+              >
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[450px]">
+                    <div className="text-yellow-600 text-lg">Loading form...</div>
+                  </div>
+                }>
                   <GSTFilingForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
@@ -98,8 +107,17 @@ const GSTFiling = () => {
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 2} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
-                <React.Suspense fallback={<div>Loading form...</div>}>
+              <Modal 
+                isOpen={isAuthenticated && openForm === 2} 
+                onClose={() => setOpenForm(null)} 
+                width="max-w-2xl" 
+                minHeight="min-h-[450px]"
+              >
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[450px]">
+                    <div className="text-yellow-600 text-lg">Loading form...</div>
+                  </div>
+                }>
                   <GSTReturnFilingForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
@@ -124,8 +142,17 @@ const GSTFiling = () => {
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}
               </button>
-              <Modal isOpen={isAuthenticated && openForm === 3} onClose={() => setOpenForm(null)} minHeight="min-h-[100px]">
-                <React.Suspense fallback={<div>Loading form...</div>}>
+              <Modal 
+                isOpen={isAuthenticated && openForm === 3} 
+                onClose={() => setOpenForm(null)} 
+                width="max-w-2xl" 
+                minHeight="min-h-[450px]"
+              >
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[450px]">
+                    <div className="text-yellow-600 text-lg">Loading form...</div>
+                  </div>
+                }>
                   <GSTResolutionForm onClose={() => setOpenForm(null)} />
                 </React.Suspense>
               </Modal>
