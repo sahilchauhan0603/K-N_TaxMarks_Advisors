@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../utils/axios";
 import { useAuth } from "../../../context/AuthContext";
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
 const AdminBills = () => {
   const [bills, setBills] = useState([]);
@@ -97,11 +98,11 @@ const AdminBills = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <AdminPageLoader message="Loading bills..." />;
+  }
+
+  if (error) {
+    return <AdminPageError error={error} onRetry={fetchBills} />;
   }
 
   return (

@@ -15,6 +15,7 @@ import {
   FaSync
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { AdminPageLoader, AdminPageError } from '../components/AdminPageLoader';
 
 const AdminServicePricing = () => {
   const [services, setServices] = useState([]);
@@ -66,7 +67,7 @@ const AdminServicePricing = () => {
       setServices(response.data.data.all || []);
       setError('');
     } catch (err) {
-      setError('Failed to fetch service pricing');
+      setError('Failed to fetch service pricing. Please try again.');
       console.error('Error fetching service pricing:', err);
       
       // Initialize pricing if it fails (first time setup)
@@ -201,14 +202,11 @@ const AdminServicePricing = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading service pricing...</p>
-        </div>
-      </div>
-    );
+    return <AdminPageLoader message="Loading service pricing..." />;
+  }
+
+  if (error && !services.length) {
+    return <AdminPageError error={error} onRetry={fetchServicePricing} />;
   }
 
   const groupedServices = groupServicesByCategory();

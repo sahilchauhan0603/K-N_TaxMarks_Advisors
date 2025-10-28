@@ -3,6 +3,7 @@ import axios from '../../../utils/axios';
 import { FaTrash, FaSearch, FaFilter, FaChevronDown, FaChevronLeft, FaChevronRight, FaUser, FaEdit, FaSyncAlt } from 'react-icons/fa';
 import { format, parseISO, subDays } from 'date-fns';
 import Swal from 'sweetalert2';
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -30,7 +31,7 @@ const AdminUsers = () => {
       setUsers(res.data);
       setFilteredUsers(res.data);
     } catch {
-      setError('Failed to fetch users');
+      setError('Failed to fetch users. Please try again.');
     }
     setLoading(false);
   };
@@ -140,30 +141,10 @@ const AdminUsers = () => {
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600"></div>
-      </div>
-    );
+    return <AdminPageLoader message="Loading users..." />;
   }
-
   if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen p-4 md:p-8">
-        <div className="max-w-md mx-auto text-center">
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-            <div className="text-red-600 text-lg font-semibold mb-2">Error</div>
-            <p className="text-red-500 mb-4">{error}</p>
-            <button
-              onClick={fetchUsers}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <AdminPageError error={error} onRetry={fetchUsers} />;
   }
 
   return (

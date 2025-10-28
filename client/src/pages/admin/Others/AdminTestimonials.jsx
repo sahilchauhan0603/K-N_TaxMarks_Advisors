@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../../utils/axios";
 import Swal from "sweetalert2";
 import { FaQuestion, FaStar } from "react-icons/fa";
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
 const AdminTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -25,7 +26,7 @@ const AdminTestimonials = () => {
         setTestimonials(response.data);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch testimonials");
+      setError(err.response?.data?.message || "Failed to fetch testimonials. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -172,22 +173,10 @@ const AdminTestimonials = () => {
     activeTab === "pending" ? pendingTestimonials : testimonials;
 
   if (loading) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg shadow">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-20 bg-gray-200 rounded"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <AdminPageLoader message="Loading testimonials..." />;
+  }
+  if (error) {
+    return <AdminPageError error={error} onRetry={fetchTestimonials} />;
   }
 
   return (

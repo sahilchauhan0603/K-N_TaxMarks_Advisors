@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 import {
   FiMail,
   FiUser,
@@ -26,6 +27,7 @@ import Swal from "sweetalert2";
 const AdminOthersContact = ({ setSidebarVisible }) => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [selectedContact, setSelectedContact] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [filters, setFilters] = useState({
@@ -63,20 +65,20 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
+      setError("");
       const queryParams = new URLSearchParams({
         page: pagination.current,
         limit: pagination.limit,
         ...filters,
       });
-
       const response = await axios.get(`/api/others-contact?${queryParams}`);
-
       if (response.data.success) {
         setContacts(response.data.data.contacts);
         setPagination(response.data.data.pagination);
         setStats(response.data.data.stats);
       }
     } catch (error) {
+      setError("Failed to fetch User Queries. Please try again.");
       console.error("Error fetching contacts:", error);
     } finally {
       setLoading(false);
@@ -423,9 +425,15 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
     );
   };
 
+  if (loading) {
+    return <AdminPageLoader message="Loading contacts..." />;
+  }
+  if (error) {
+    return <AdminPageError error={error} onRetry={fetchContacts} />;
+  }
   return (
     <div className="p-2 bg-gray-50 min-h-screen">
-      {/* Header */}
+            {/* Header */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -834,6 +842,7 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
       </div>
 
       {/* Modal */}
+
       {showModal && selectedContact && <ContactModal />}
     </div>
   );

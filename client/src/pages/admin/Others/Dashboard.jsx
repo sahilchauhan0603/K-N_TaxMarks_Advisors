@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import { GiCash, GiTakeMyMoney } from 'react-icons/gi';
 import { BsGraphUp, BsFillBarChartFill, BsThreeDotsVertical } from 'react-icons/bs';
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
@@ -34,9 +35,13 @@ const AdminDashboard = () => {
     dailyActivity: []
   });
   const [recentUsers, setRecentUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
+      setError("");
       try {
         const res = await axios.get('/api/admin/dashboard-stats', {
           headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
@@ -53,9 +58,12 @@ const AdminDashboard = () => {
         } = res.data;
         setStats({ total, active, inactive, monthly, revenue, services, dailyActivity });
         setRecentUsers(recent);
-      } catch {
+      } catch (err) {
+        setError("Failed to fetch dashboard stats. Please try again.");
         setStats({ total: 0, active: 0, inactive: 0, monthly: [], revenue: 0, services: {}, dailyActivity: [] });
         setRecentUsers([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchStats();
@@ -86,6 +94,12 @@ const AdminDashboard = () => {
     services: calculatePercentageChange(Object.values(stats.services).reduce((a, b) => a + b, 0))
   };
 
+  if (loading) {
+    return <AdminPageLoader message="Loading dashboard..." />;
+  }
+  if (error) {
+    return <AdminPageError error={error} onRetry={() => window.location.reload()} />;
+  }
   return (
     <div className="w-full min-h-screen p-4 md:p-4 md:ml-4">
       {/* Header */}

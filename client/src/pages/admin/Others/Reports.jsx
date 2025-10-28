@@ -8,6 +8,7 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import { FiUsers, FiFileText } from "react-icons/fi";
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
 const ReportsPage = () => {
   // For custom date range
@@ -22,10 +23,12 @@ const ReportsPage = () => {
   const [users, setUsers] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setError("");
       try {
         const token = localStorage.getItem("adminToken");
         if (activeTab === "users") {
@@ -40,7 +43,7 @@ const ReportsPage = () => {
           setServices(res.data);
         }
       } catch (err) {
-        // handle error
+        setError("Failed to fetch report data. Please try again.");
       }
       setLoading(false);
     };
@@ -136,6 +139,12 @@ const ReportsPage = () => {
     return matchesSearch && filterByDate(item.createdAt);
   });
 
+  if (loading) {
+    return <AdminPageLoader message="Loading reports..." />;
+  }
+  if (error) {
+    return <AdminPageError error={error} onRetry={() => window.location.reload()} />;
+  }
   return (
     <div className="w-full min-h-screen p-4 md:p-4 md:ml-4">
       <div className="bg-white rounded-xl shadow-lg p-6 max-w-6xl mx-auto">

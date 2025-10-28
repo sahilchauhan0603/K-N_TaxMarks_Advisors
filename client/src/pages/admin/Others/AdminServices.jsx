@@ -18,6 +18,7 @@ import {
   FaEdit,
   FaTrash
 } from 'react-icons/fa';
+import { AdminPageLoader, AdminPageError } from '../components/AdminPageLoader';
 
 const AdminServices = ({ setSidebarVisible }) => {
   const [services, setServices] = useState({
@@ -144,7 +145,7 @@ const AdminServices = ({ setSidebarVisible }) => {
       setServices(response.data);
       setError('');
     } catch (err) {
-      setError('Failed to fetch services');
+      setError('Failed to fetch services. Please try again.');
       console.error('Error fetching services:', err);
     } finally {
       setLoading(false);
@@ -704,7 +705,7 @@ const AdminServices = ({ setSidebarVisible }) => {
                   className="flex-1 min-w-48 bg-purple-600 text-white px-4 cursor-pointer py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center space-x-2"
                 >
                   {updating ? <FaSpinner className="animate-spin" /> : <FaFileInvoiceDollar />}
-                  <span>Complete & Bill ₹{service.bill ? service.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}</span>
+                  <span>Complete & Bill ₹{selectedService.bill ? selectedService.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}</span>
                 </button>
                 
                 <button
@@ -769,14 +770,11 @@ const AdminServices = ({ setSidebarVisible }) => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <FaSpinner className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading services...</p>
-        </div>
-      </div>
-    );
+    return <AdminPageLoader message="Loading services..." />;
+  }
+
+  if (error) {
+    return <AdminPageError error={error} onRetry={fetchServices} />;
   }
 
   const allFilteredServices = getFilteredServices();

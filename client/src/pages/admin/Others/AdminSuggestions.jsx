@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../../utils/axios';
+import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 import { 
   FaEye, FaEyeSlash, FaTrash, FaEdit, FaFilter, FaSearch, 
   FaLightbulb, FaExclamationTriangle, FaCalendarAlt, FaUser,
@@ -12,6 +13,7 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [stats, setStats] = useState({});
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -53,6 +55,7 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
   const fetchSuggestions = async () => {
     try {
       setLoading(true);
+      setError("");
       const response = await axios.get('/api/suggestions', {
         params: {
           category: filters.category !== 'All' ? filters.category : undefined,
@@ -65,9 +68,9 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
       setSuggestions(response.data.suggestions);
       // Apply frontend search filtering to backend results
       applySearchFilter(response.data.suggestions);
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
-      Swal.fire('Error', 'Failed to fetch suggestions', 'error');
+    } catch (err) {
+      setError('Failed to fetch suggestions. Please try again.');
+      console.error('Error fetching suggestions:', err);
     } finally {
       setLoading(false);
     }
@@ -232,12 +235,12 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
     return colors[priority] || colors['Medium'];
   };
 
+
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600"></div>
-      </div>
-    );
+    return <AdminPageLoader message="Loading suggestions..." />;
+  }
+  if (error) {
+    return <AdminPageError error={error} onRetry={fetchSuggestions} />;
   }
 
   return (
