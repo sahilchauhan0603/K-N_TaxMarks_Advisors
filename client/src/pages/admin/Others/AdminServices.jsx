@@ -616,11 +616,29 @@ const AdminServices = ({ setSidebarVisible }) => {
               <h4 className="font-semibold text-gray-900 mb-3">Service Details</h4>
               <div className="space-y-2 text-sm">
                 {Object.entries(selectedService).map(([key, value]) => {
-                  if (['_id', '__v', 'userId', 'createdAt', 'updatedAt', 'serviceType', 'status', 'adminNotes', 'documentPath', 'documentUrl'].includes(key) || !value) return null;
+                  if ([
+                    '_id', '__v', 'userId', 'createdAt', 'updatedAt', 'serviceType', 'status', 'adminNotes', 'documentPath', 'documentUrl'
+                  ].includes(key) || !value) return null;
+                  let displayValue = value;
+                  if (key === 'bill' && typeof value === 'object' && value !== null) {
+                    displayValue = value.amount ? `₹${value.amount.toLocaleString()}` : '';
+                  } else if (typeof value === 'object') {
+                    if (Array.isArray(value)) {
+                      displayValue = value.length > 0 ? value.join(', ') : '';
+                    } else if (value instanceof Date) {
+                      displayValue = value.toLocaleString();
+                    } else if (value !== null) {
+                      displayValue = Object.entries(value)
+                        .map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`)
+                        .join(', ');
+                    } else {
+                      displayValue = '';
+                    }
+                  }
                   return (
                     <div key={key} className="flex">
                       <span className="font-medium capitalize mr-2 min-w-32">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                      <span>{value}</span>
+                      <span>{displayValue}</span>
                     </div>
                   );
                 })}
@@ -704,7 +722,7 @@ const AdminServices = ({ setSidebarVisible }) => {
                   className="flex-1 min-w-48 bg-purple-600 text-white px-4 cursor-pointer py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center justify-center space-x-2"
                 >
                   {updating ? <FaSpinner className="animate-spin" /> : <FaFileInvoiceDollar />}
-                  <span>Complete & Bill ₹{service.bill ? service.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}</span>
+                  <span>Complete & Bill ₹{selectedService.bill ? selectedService.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}</span>
                 </button>
                 
                 <button
@@ -792,14 +810,26 @@ const AdminServices = ({ setSidebarVisible }) => {
       <div className="max-w-[950px] mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Management</h1>
-          <div className="flex items-center justify-between">
-            <p className="text-gray-600">Manage and review all service requests from users</p>
-            {allFilteredServices.length !== totalServices && (
-              <p className="text-sm text-blue-600 font-medium">
-                Showing {allFilteredServices.length} of {totalServices} services
-              </p>
-            )}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-0">Service Management</h1>
+              <p className="text-gray-600">Manage and review all service requests from users</p>
+              {allFilteredServices.length !== totalServices && (
+                <p className="text-sm text-blue-600 font-medium">
+                  Showing {allFilteredServices.length} of {totalServices} services
+                </p>
+              )}
+            </div>
+            <button
+              onClick={fetchServices}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 cursor-pointer rounded-lg font-medium flex items-center space-x-2 transition-colors mt-2 sm:mt-0 self-start"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span>Refresh</span>
+            </button>
           </div>
         </div>
 
@@ -928,8 +958,21 @@ const AdminServices = ({ setSidebarVisible }) => {
                         <div className="text-sm font-semibold text-green-600">
                           ₹{service.bill ? service.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}
                         </div>
-                        <div className="text-xs text-gray-500">
-                          {service.bill ? 'Actual Bill Amount' : 'Standard Rate'}
+                        <div className="text-xs text-gray-500 flex items-center gap-2">
+                          {service.bill ? (
+                            <>
+                              Actual Bill Amount - 
+                              <span className={
+                                service.bill.status === 'Paid'
+                                  ? 'text-green-600 font-semibold'
+                                  : 'text-yellow-600 font-semibold'
+                              }>
+                                {service.bill.status === 'Paid' ? 'Paid' : 'Pending'}
+                              </span>
+                            </>
+                          ) : (
+                            'Standard Rate'
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

@@ -194,18 +194,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {!isCollapsed && <span>User Queries</span>}
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink 
-                      to="/admin/bills" 
-                      className={({ isActive }) =>
-                        `admin-sidebar-link ${isActive ? 'active' : ''}`
-                      }
-                      title="Bills Management"
-                    >
-                      <FaFileInvoiceDollar /> 
-                      {!isCollapsed && <span>Bills Management</span>}
-                    </NavLink>
-                  </li>
+                  
                 </ul>
               )}
             </div>
@@ -232,6 +221,18 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     >
                       <FaCog /> 
                       {!isCollapsed && <span>Service Management</span>}
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink 
+                      to="/admin/bills" 
+                      className={({ isActive }) =>
+                        `admin-sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      title="Bills Management"
+                    >
+                      <FaFileInvoiceDollar /> 
+                      {!isCollapsed && <span>Bills Management</span>}
                     </NavLink>
                   </li>
                   <li>

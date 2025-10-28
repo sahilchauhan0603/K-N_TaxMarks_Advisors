@@ -343,11 +343,14 @@ const AdminBills = () => {
                   </td>
                   <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {bill.status === 'Paid' && bill.razorpayPaymentId ? (
-                      <div>
-                        <div className="text-xs">Payment ID:</div>
-                        <div className="font-mono text-xs truncate max-w-24">
-                          {bill.razorpayPaymentId}
-                        </div>
+                      <div className="space-y-1">
+                        <div className="text-xs"><span className="font-semibold">Payment ID:</span> <span className="font-mono">{bill.razorpayPaymentId}</span></div>
+                        {bill.paidAt && (
+                          <div className="text-xs"><span className="font-semibold">Paid:</span> {formatDate(bill.paidAt)}</div>
+                        )}
+                        {bill.paymentMethod && (
+                          <div className="text-xs"><span className="font-semibold">Method:</span> {bill.paymentMethod}</div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-gray-400 text-xs sm:text-sm">No payment</div>
