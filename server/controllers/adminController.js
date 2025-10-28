@@ -604,6 +604,87 @@ exports.updateServiceStatus = async (req, res) => {
       });
     }
 
+    // If service is marked In Progress, send email notification
+    if (status === 'In Progress') {
+      const sendMail = require("../utils/mailer");
+      const userObj = typeof service.userId === 'object' ? service.userId : null;
+      const userEmail = userObj ? userObj.email : null;
+      if (userEmail) {
+        await sendMail(
+          userEmail,
+          'Your Service Request is In Progress',
+          undefined,
+          `
+            <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; padding: 32px 0;">
+              <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px #0001; padding: 32px 28px; border: 1px solid #e5e7eb;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                  <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; margin: 0;">Your Service Request is In Progress</h2>
+                  <p style="color: #64748b; font-size: 1rem; margin: 8px 0 0 0;">We have started processing your application. We will soon entertain your application. Till then, stay tuned. Any further updates will be sent to you through email.</p>
+                </div>
+                <div style="margin: 32px 0; padding: 20px; background: #f1f5f9; border-radius: 12px;">
+                  <h3 style="color: #2563eb; margin-bottom: 12px;">User Information</h3>
+                  <ul style="list-style: none; padding: 0; color: #334155; font-size: 1rem;">
+                    <li><strong>Name:</strong> ${userObj?.name || 'N/A'}</li>
+                    <li><strong>Email:</strong> ${userObj?.email || 'N/A'}</li>
+                  </ul>
+                  <h3 style="color: #2563eb; margin: 20px 0 12px 0;">Service Information</h3>
+                  <ul style="list-style: none; padding: 0; color: #334155; font-size: 1rem;">
+                    <li><strong>Service Type:</strong> ${serviceType}</li>
+                    <li><strong>Service ID:</strong> ${service._id}</li>
+                    <li><strong>Status:</strong> In Progress</li>
+                    <li><strong>Entity/Details:</strong> ${service.entityType || service.complianceType || service.planningType || 'N/A'}</li>
+                    <li><strong>Submitted At:</strong> ${service.createdAt ? new Date(service.createdAt).toLocaleString('en-IN') : 'N/A'}</li>
+                  </ul>
+                </div>
+                <div style="margin-top: 32px; text-align: center; color: #94a3b8; font-size: 0.9rem;">&copy; ${new Date().getFullYear()} K-N TaxMarks Advisors</div>
+              </div>
+            </div>
+          `
+        );
+      }
+    }
+
+    // If service is declined, send decline email
+    if (status === 'Declined') {
+      const sendMail = require("../utils/mailer");
+      const userObj = typeof service.userId === 'object' ? service.userId : null;
+      const userEmail = userObj ? userObj.email : null;
+      if (userEmail) {
+        await sendMail(
+          userEmail,
+          'Your Service Request Has Been Declined',
+          undefined,
+          `
+            <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f6f8fa; padding: 32px 0;">
+              <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px #0001; padding: 32px 28px; border: 1px solid #e5e7eb;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                  <h2 style="font-size: 1.8rem; font-weight: 700; color: #dc2626; margin: 0;">Your Service Request Has Been Declined</h2>
+                  <p style="color: #64748b; font-size: 1rem; margin: 8px 0 0 0;">We regret to inform you that your service request has been declined.</p>
+                  <p style="color: #dc2626; font-size: 1.1rem; margin: 16px 0 0 0; font-weight: 600;">Reason: ${adminNotes ? adminNotes : 'No message provided.'}</p>
+                </div>
+                <div style="margin: 32px 0; padding: 20px; background: #f1f5f9; border-radius: 12px;">
+                  <h3 style="color: #2563eb; margin-bottom: 12px;">User Information</h3>
+                  <ul style="list-style: none; padding: 0; color: #334155; font-size: 1rem;">
+                    <li><strong>Name:</strong> ${userObj?.name || 'N/A'}</li>
+                    <li><strong>Email:</strong> ${userObj?.email || 'N/A'}</li>
+                  </ul>
+                  <h3 style="color: #2563eb; margin: 20px 0 12px 0;">Service Information</h3>
+                  <ul style="list-style: none; padding: 0; color: #334155; font-size: 1rem;">
+                    <li><strong>Service Type:</strong> ${serviceType}</li>
+                    <li><strong>Service ID:</strong> ${service._id}</li>
+                    <li><strong>Status:</strong> Declined</li>
+                    <li><strong>Entity/Details:</strong> ${service.entityType || service.complianceType || service.planningType || 'N/A'}</li>
+                    <li><strong>Submitted At:</strong> ${service.createdAt ? new Date(service.createdAt).toLocaleString('en-IN') : 'N/A'}</li>
+                  </ul>
+                </div>
+                <div style="margin-top: 32px; text-align: center; color: #94a3b8; font-size: 0.9rem;">&copy; ${new Date().getFullYear()} K-N TaxMarks Advisors</div>
+              </div>
+            </div>
+          `
+        );
+      }
+    }
+
     // If service is completed, create a bill
     if (status === 'Completed') {
       const numericBillAmount = parseFloat(billAmount);
