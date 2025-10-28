@@ -133,44 +133,44 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: 'Delete Contact Submission?',
-      text: 'This action cannot be undone! The contact submission will be permanently removed.',
-      icon: 'warning',
+      title: "Delete Contact Submission?",
+      text: "This action cannot be undone! The contact submission will be permanently removed.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
-      zIndex: 99999  // Higher than modal's z-[9999]
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      zIndex: 99999, // Higher than modal's z-[9999]
     });
 
     if (result.isConfirmed) {
       try {
         await axios.delete(`/api/others-contact/${id}`);
         fetchContacts();
-        
+
         // Close modal if the deleted contact was being viewed
         if (selectedContact && selectedContact._id === id) {
           setShowModal(false);
         }
-        
+
         Swal.fire({
-          title: 'Deleted!',
-          text: 'Contact submission has been deleted successfully.',
-          icon: 'success',
+          title: "Deleted!",
+          text: "Contact submission has been deleted successfully.",
+          icon: "success",
           timer: 1500,
           showConfirmButton: false,
-          zIndex: 99999
+          zIndex: 99999,
         });
       } catch (error) {
         console.error("Error deleting contact:", error);
-        
+
         Swal.fire({
-          title: 'Error!',
-          text: 'Failed to delete contact submission. Please try again.',
-          icon: 'error',
-          confirmButtonColor: '#ef4444',
-          zIndex: 99999
+          title: "Error!",
+          text: "Failed to delete contact submission. Please try again.",
+          icon: "error",
+          confirmButtonColor: "#ef4444",
+          zIndex: 99999,
         });
       }
     }
@@ -379,7 +379,11 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
                         {selectedContact.adminResponse}
                       </p>
                       <div className="mt-2 text-sm text-gray-600">
-                        Responded by {selectedContact.respondedBy?.name || selectedContact.respondedByEmail || 'Admin'} on{" "}
+                        Responded by{" "}
+                        {selectedContact.respondedBy?.name ||
+                          selectedContact.respondedByEmail ||
+                          "Admin"}{" "}
+                        on{" "}
                         {new Date(
                           selectedContact.respondedAt
                         ).toLocaleDateString()}
@@ -433,17 +437,17 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
   }
   return (
     <div className="p-2 bg-gray-50 min-h-screen">
-            {/* Header */}
+      {/* Header */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
             <div className="flex items-center mb-4">
               <FaQuestion className="text-3xl text-slate-600 mr-3" />
               <h1 className="text-3xl font-bold text-gray-800">
-                User Contact Submissions
+                User Query Submissions
               </h1>
             </div>
-           
+
             <p className="text-gray-600 mt-2">
               Manage contact submissions from legal and info pages
             </p>

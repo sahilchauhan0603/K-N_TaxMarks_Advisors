@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import UserPageLoader from "./components/UserPageLoader";
+import UserPageError from "./components/UserPageError";
 import {
   Receipt,
   Check,
@@ -45,6 +47,7 @@ const MyBills = () => {
   const fetchBills = async () => {
     try {
       setLoading(true);
+      setError("");
       const response = await axios.get('/api/bills/user');
       setBills(response.data.bills);
       setStats(response.data.stats);
@@ -119,6 +122,14 @@ const MyBills = () => {
   }, [searchTerm, statusFilter]);
 
   // Calculate summary statistics
+
+  // Unified loading and error fallback
+  if (loading) {
+    return <UserPageLoader />;
+  }
+  if (error) {
+    return <UserPageError error={error} onRetry={fetchBills} />;
+  }
   const totalAmount = filteredBills.reduce((sum, bill) => sum + bill.amount, 0);
   const paidAmount = filteredBills
     .filter((bill) => bill.status === "Paid")

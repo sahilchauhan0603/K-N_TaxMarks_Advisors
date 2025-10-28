@@ -812,7 +812,11 @@ const AdminServices = ({ setSidebarVisible }) => {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-0">Service Management</h1>
+              <div className="flex items-center space-x-2 mb-2">
+                {/* SVG icon similar to AdminBills */}
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-700"><rect x="3" y="5" width="18" height="14" rx="2" fill="#e5e7eb"/><rect x="7" y="9" width="10" height="2" rx="1" fill="#6b7280"/><rect x="7" y="13" width="6" height="2" rx="1" fill="#6b7280"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="#374151" strokeWidth="2"/></svg>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-0">Service Management</h1>
+              </div>
               <p className="text-gray-600">Manage and review all service requests from users</p>
               {allFilteredServices.length !== totalServices && (
                 <p className="text-sm text-blue-600 font-medium">

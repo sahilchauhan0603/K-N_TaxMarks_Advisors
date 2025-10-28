@@ -26,7 +26,10 @@ const AdminTestimonials = () => {
         setTestimonials(response.data);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch testimonials. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Failed to fetch testimonials. Please try again."
+      );
     } finally {
       setLoading(false);
     }

@@ -39,6 +39,8 @@ import UserTestimonials from "./UserTestimonials";
 import MyServices from "./MyServices";
 import MyBills from "./MyBills";
 import UserSidebar from "./components/UserSidebar";
+import UserPageLoader from "./components/UserPageLoader";
+import UserPageError from "./components/UserPageError";
 
 // States of India
 const STATES_OF_INDIA = [
@@ -1363,16 +1365,12 @@ const UserProfile = () => {
     }
   };
 
-  // Show loading state while fetching profile
+  // Unified loading and error fallback
   if (profileLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your profile...</p>
-        </div>
-      </div>
-    );
+    return <UserPageLoader />;
+  }
+  if (error) {
+    return <UserPageError error={error} onRetry={fetchUserProfile} />;
   }
 
   return (

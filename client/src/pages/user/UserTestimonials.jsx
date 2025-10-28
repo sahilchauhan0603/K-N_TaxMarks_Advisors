@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import UserPageLoader from "./components/UserPageLoader";
+import UserPageError from "./components/UserPageError";
 import axios from "../../utils/axios";
 import { useAuth } from "../../context/AuthContext";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
@@ -98,22 +100,10 @@ const UserTestimonials = () => {
   };
 
   if (loading) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg shadow">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-20 bg-gray-200 rounded"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <UserPageLoader />;
+  }
+  if (error) {
+    return <UserPageError error={error} onRetry={fetchMyTestimonials} />;
   }
 
   return (
