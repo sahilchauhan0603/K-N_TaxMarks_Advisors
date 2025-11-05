@@ -6,6 +6,7 @@ const TaxPlanningYearRoundForm = React.lazy(() => import('./TaxPlanningYearRound
 const TaxPlanningComplianceForm = React.lazy(() => import('./TaxPlanningComplianceForm'));
 import TestimonialSection from '../../../components/TestimonialSection';
 import Modal from '../../../components/Modal';
+import ChatbotWrapper from '../../../components/ChatbotWrapper';
 
 const TaxPlanning = () => {
   const scrollToServices = () => {
@@ -138,12 +139,18 @@ const TaxPlanning = () => {
                 Contact us for a free consultation and personalized tax planning strategies.
               </p>
             </div>
-            <Link
-              to="/contact-us"
-              className="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center"
-            >
-              Free Consultation
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChatbotWrapper 
+                serviceName="Tax Planning" 
+                buttonClassName="bg-white text-blue-600 hover:bg-gray-100" 
+              />
+              <Link
+                to="/contact-us"
+                className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+              >
+                Contact Us Now
+              </Link>
+            </div>
           </div>
         </div>
 

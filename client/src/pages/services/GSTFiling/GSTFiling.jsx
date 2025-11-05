@@ -6,6 +6,7 @@ const GSTReturnFilingForm = React.lazy(() => import('./GSTReturnFilingForm'));
 const GSTResolutionForm = React.lazy(() => import('./GSTResolutionForm'));
 import TestimonialSection from '../../../components/TestimonialSection';
 import Modal from '../../../components/Modal';
+import ChatbotWrapper from '../../../components/ChatbotWrapper';
 
 const GSTFiling = () => {
   // Scroll to services section
@@ -170,12 +171,18 @@ const GSTFiling = () => {
                 saving you time and ensuring accuracy.
               </p>
             </div>
-            <Link
-              to="/contact-us"
-              className="bg-white text-yellow-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center"
-            >
-              Contact Us Now
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChatbotWrapper 
+                serviceName="GST Filing" 
+                buttonClassName="bg-white text-yellow-600 hover:bg-gray-100" 
+              />
+              <Link
+                to="/contact-us"
+                className="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+              >
+                Contact Us Now
+              </Link>
+            </div>
           </div>
         </div>
 

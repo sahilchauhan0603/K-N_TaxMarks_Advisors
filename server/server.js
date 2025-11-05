@@ -23,6 +23,7 @@ const testimonialsRoutes = require('./routes/testimonials');
 const suggestionsRoutes = require('./routes/suggestions');
 const servicesRoutes = require('./routes/services');
 const pricingRoutes = require('./routes/pricing');
+const chatbotRoutes = require('./routes/chatbot');
 const path = require('path');
 
 const app = express();
@@ -72,6 +73,7 @@ app.use('/api/suggestions', suggestionsRoutes);
 app.use('/api/services', servicesRoutes);
 app.use('/api/pricing', pricingRoutes);
 app.use('/api/bills', require('./routes/bills'));
+app.use('/api/chatbot', chatbotRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

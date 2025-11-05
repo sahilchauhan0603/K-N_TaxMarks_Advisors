@@ -6,6 +6,7 @@ const BusinessAdvisoryIncorporationForm = React.lazy(() => import('./BusinessAdv
 const BusinessAdvisoryAdvisoryForm = React.lazy(() => import('./BusinessAdvisoryAdvisoryForm'));
 import TestimonialSection from '../../../components/TestimonialSection';
 import Modal from '../../../components/Modal';
+import ChatbotWrapper from '../../../components/ChatbotWrapper';
 
 const BusinessAdvisory = () => {
   const { isAuthenticated } = useAuth();
@@ -164,12 +165,18 @@ const BusinessAdvisory = () => {
                 Book a strategy session and get expert guidance for your business growth and compliance.
               </p>
             </div>
-            <Link
-              to="/contact-us"
-              className="bg-white text-pink-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center"
-            >
-              Book a Strategy Session
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChatbotWrapper 
+                serviceName="Business Advisory" 
+                buttonClassName="bg-white text-pink-600 hover:bg-gray-100" 
+              />
+              <Link
+                to="/contact-us"
+                className="bg-pink-700 hover:bg-pink-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+              >
+                Contact Us Now
+              </Link>
+            </div>
           </div>
         </div>
 

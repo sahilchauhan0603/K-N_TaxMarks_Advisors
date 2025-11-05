@@ -6,6 +6,7 @@ const TrademarkDocumentationForm = React.lazy(() => import('./TrademarkDocumenta
 const TrademarkProtectionForm = React.lazy(() => import('./TrademarkProtectionForm'));
 import TestimonialSection from '../../../components/TestimonialSection';
 import Modal from '../../../components/Modal';
+import ChatbotWrapper from '../../../components/ChatbotWrapper';
 
 const Trademark = () => {
   const { isAuthenticated } = useAuth();
@@ -164,12 +165,18 @@ const Trademark = () => {
                 Schedule a legal consultation and safeguard your business identity and IP.
               </p>
             </div>
-            <Link
-              to="/contact-us"
-              className="bg-white text-purple-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center"
-            >
-              Schedule Consultation
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChatbotWrapper 
+                serviceName="Trademark" 
+                buttonClassName="bg-white text-purple-600 hover:bg-gray-100" 
+              />
+              <Link
+                to="/contact-us"
+                className="bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+              >
+                Contact Us Now
+              </Link>
+            </div>
           </div>
         </div>
 

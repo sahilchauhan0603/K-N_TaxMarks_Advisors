@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import TestimonialSection from '../../../components/TestimonialSection';
 import Modal from '../../../components/Modal';
+import ChatbotWrapper from '../../../components/ChatbotWrapper';
 
 const ITRFilingForm = React.lazy(() => import('./ITRFilingForm'));
 const ITRDocumentPrepForm = React.lazy(() => import('./ITRDocumentPrepForm'));
@@ -168,12 +169,15 @@ const ITRFiling = () => {
                 Focus on your goals while our team ensures your ITR is filed accurately and on time.
               </p>
             </div>
-            <Link
-              to="/contact-us"
-              className="bg-white text-green-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center"
-            >
-              Book Your Slot Now
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChatbotWrapper serviceName="ITR Filing" />
+              <Link
+                to="/contact-us"
+                className="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+              >
+                Contact Us
+              </Link>
+            </div>
           </div>
         </div>
 
