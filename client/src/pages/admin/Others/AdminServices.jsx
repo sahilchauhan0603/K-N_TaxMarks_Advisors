@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../../utils/axios';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { 
   FaEye, 
@@ -20,6 +21,7 @@ import {
 } from 'react-icons/fa';
 
 const AdminServices = ({ setSidebarVisible }) => {
+  const navigate = useNavigate();
   const [services, setServices] = useState({
     gst: [],
     itr: [],
@@ -123,7 +125,8 @@ const AdminServices = ({ setSidebarVisible }) => {
     'In Progress': 'bg-blue-100 text-blue-800 border-blue-200',
     'Approved': 'bg-green-100 text-green-800 border-green-200',
     'Completed': 'bg-purple-100 text-purple-800 border-purple-200',
-    'Declined': 'bg-red-100 text-red-800 border-red-200'
+    'Declined': 'bg-red-100 text-red-800 border-red-200',
+    'Overdue': 'bg-red-100 text-red-800 border-red-200'
   };
 
   useEffect(() => {
@@ -316,6 +319,12 @@ const AdminServices = ({ setSidebarVisible }) => {
         formValues.billAmount, 
         formValues.billDescription
       );
+    }
+  };
+
+  const handleBillAmountClick = (billId) => {
+    if (billId) {
+      navigate(`/admin/bills?highlight=${billId}`);
     }
   };
 
@@ -664,6 +673,114 @@ const AdminServices = ({ setSidebarVisible }) => {
               )}
             </div>
 
+            {/* Billing Information */}
+            {selectedService.bill && (
+              <div className={`p-4 rounded-lg ${
+                selectedService.bill.status === 'Overdue' 
+                  ? 'bg-red-50 border border-red-200' 
+                  : selectedService.bill.status === 'Paid'
+                  ? 'bg-green-50 border border-green-200'
+                  : 'bg-yellow-50 border border-yellow-200'
+              }`}>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-semibold text-gray-900 flex items-center">
+                    <FaFileInvoiceDollar className="mr-2" />
+                    Billing Information
+                  </h4>
+                  <button
+                    onClick={() => {
+                      setShowModal(false);
+                      setTimeout(() => {
+                        handleBillAmountClick(selectedService.bill._id);
+                      }, 100);
+                    }}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline cursor-pointer flex items-center space-x-1"
+                    title="View bill details in Bills section"
+                  >
+                    <span>View Bill Details</span>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Bill Number:</span>
+                    <span>{selectedService.bill.billNumber || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Status:</span>
+                    <span className={`font-semibold ${
+                      selectedService.bill.status === 'Paid'
+                        ? 'text-green-600'
+                        : selectedService.bill.status === 'Overdue'
+                        ? 'text-red-600'
+                        : 'text-yellow-600'
+                    }`}>
+                      {selectedService.bill.status}
+                    </span>
+                  </div>
+                  
+                  {selectedService.bill.status === 'Overdue' && selectedService.bill.originalAmount ? (
+                    <React.Fragment>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Original Amount:</span>
+                        <span>₹{selectedService.bill.originalAmount.toLocaleString()}</span>
+                      </div>
+                      {selectedService.bill.penaltyAmount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="font-medium text-red-600">Penalty Amount:</span>
+                          <span className="text-red-600 font-semibold">+₹{selectedService.bill.penaltyAmount.toLocaleString()}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between border-t pt-2">
+                        <span className="font-medium">Total Amount Due:</span>
+                        <span className="font-semibold text-red-600">₹{selectedService.bill.amount.toLocaleString()}</span>
+                      </div>
+                      {selectedService.bill.overdueSince && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Overdue Since:</span>
+                          <span className="text-red-600">{new Date(selectedService.bill.overdueSince).toLocaleDateString()}</span>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ) : (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Amount:</span>
+                      <span className="font-semibold">₹{selectedService.bill.amount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between">
+                    <span className="font-medium">Due Date:</span>
+                    <span>{selectedService.bill.dueDate ? new Date(selectedService.bill.dueDate).toLocaleDateString() : 'N/A'}</span>
+                  </div>
+                  
+                  {selectedService.bill.status === 'Paid' && selectedService.bill.paidAt && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Paid On:</span>
+                      <span className="text-green-600 font-semibold">{new Date(selectedService.bill.paidAt).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  
+                  {selectedService.bill.description && (
+                    <div className="mt-2">
+                      <span className="font-medium">Description:</span>
+                      <p className="text-gray-600 mt-1">{selectedService.bill.description}</p>
+                    </div>
+                  )}
+                </div>
+                
+                {selectedService.bill.status === 'Overdue' && (
+                  <div className="mt-3 p-2 bg-red-100 border border-red-300 rounded-md">
+                    <p className="text-xs text-red-800 font-medium">
+                      ⚠️ This bill is overdue. Penalties are calculated weekly and increase over time.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Document */}
             {selectedService.documentUrl && (
               <div className="bg-green-50 p-4 rounded-lg">
@@ -907,6 +1024,7 @@ const AdminServices = ({ setSidebarVisible }) => {
               <option value="Approved">Approved</option>
               <option value="Completed">Completed</option>
               <option value="Declined">Declined</option>
+              <option value="Overdue">Overdue</option>
             </select>
             
             <select
@@ -935,7 +1053,7 @@ const AdminServices = ({ setSidebarVisible }) => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Amount</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -959,20 +1077,43 @@ const AdminServices = ({ setSidebarVisible }) => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-semibold text-green-600">
-                          ₹{service.bill ? service.bill.amount.toLocaleString() : serviceInfo.amount.toLocaleString()}
-                        </div>
+                        {service.bill ? (
+                          <button
+                            onClick={() => handleBillAmountClick(service.bill._id)}
+                            className="text-sm font-semibold text-green-600 hover:text-green-800 hover:underline cursor-pointer transition-colors duration-200 flex items-center space-x-1"
+                            title="Click to view bill details"
+                          >
+                            <span>₹{service.bill.amount.toLocaleString()}</span>
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <div className="text-sm font-semibold text-gray-600">
+                            ₹{serviceInfo.amount.toLocaleString()}
+                          </div>
+                        )}
                         <div className="text-xs text-gray-500 flex items-center gap-2">
                           {service.bill ? (
                             <>
-                              Actual Bill Amount - 
-                              <span className={
-                                service.bill.status === 'Paid'
-                                  ? 'text-green-600 font-semibold'
-                                  : 'text-yellow-600 font-semibold'
-                              }>
-                                {service.bill.status === 'Paid' ? 'Paid' : 'Pending'}
+                              <span className="flex items-center gap-1">
+                                Bill Status - 
+                                <span className={
+                                  service.bill.status === 'Paid'
+                                    ? 'text-green-600 font-semibold'
+                                    : service.bill.status === 'Overdue'
+                                    ? 'text-red-600 font-semibold'
+                                    : 'text-yellow-600 font-semibold'
+                                }>
+                                  {service.bill.status === 'Paid' ? 'Paid' : service.bill.status === 'Overdue' ? 'Overdue' : 'Pending'}
+                                </span>
+                                {/* <span className="text-blue-500 text-xs font-medium">(Click to view)</span> */}
                               </span>
+                              {service.bill.status === 'Overdue' && service.bill.penaltyAmount && (
+                                <span className="text-red-600 font-semibold text-xs">
+                                  (+₹{service.bill.penaltyAmount.toLocaleString()} penalty)
+                                </span>
+                              )}
                             </>
                           ) : (
                             'Standard Rate'

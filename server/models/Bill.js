@@ -29,6 +29,22 @@ const BillSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  originalAmount: {
+    type: Number,
+    required: false, // Will be set when bill becomes overdue
+    min: 0
+  },
+  penaltyAmount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  penaltyRate: {
+    type: Number,
+    default: 0.05, // 5% penalty rate by default
+    min: 0,
+    max: 1
+  },
   description: {
     type: String,
     required: true
@@ -66,6 +82,18 @@ const BillSchema = new mongoose.Schema({
   adminNotes: {
     type: String,
     default: ''
+  },
+  lastReminderSent: {
+    type: Date,
+    default: null
+  },
+  reminderCount: {
+    type: Number,
+    default: 0
+  },
+  overdueSince: {
+    type: Date,
+    default: null
   },
   createdAt: { 
     type: Date, 

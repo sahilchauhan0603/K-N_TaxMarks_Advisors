@@ -41,14 +41,14 @@ const UserSidebar = ({
       badge: serviceCount > 0 ? serviceCount.toString() : null,
     },
     {
-      key: "testimonials",
-      label: "My Testimonials", 
-      icon: <Star className="w-5 h-5" />,
-    },
-    {
       key: "bills",
       label: "My Bills",
       icon: <CreditCard className="w-5 h-5" />,
+    },
+    {
+      key: "testimonials",
+      label: "My Testimonials", 
+      icon: <Star className="w-5 h-5" />,
     },
   ];
 

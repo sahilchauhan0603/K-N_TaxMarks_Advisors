@@ -14,19 +14,66 @@ const razorpay = new Razorpay({
 exports.getUserBills = async (req, res) => {
   try {
     const userId = req.user.id;
+    const now = new Date();
     
-    // Update overdue bills first
-    await Bill.updateMany(
-      { 
-        userId,
-        status: 'Pending', 
-        dueDate: { $lt: new Date() } 
-      },
-      { 
-        status: 'Overdue',
-        updatedAt: new Date()
+    // First, find bills that need to be marked as overdue
+    const billsToUpdate = await Bill.find({
+      userId,
+      status: 'Pending',
+      dueDate: { $lt: now }
+    });
+
+    // Update each bill individually to ensure proper originalAmount setting
+    for (const bill of billsToUpdate) {
+      // Set originalAmount if it doesn't exist or is 0/null
+      if (!bill.originalAmount || bill.originalAmount === 0) {
+        bill.originalAmount = bill.amount;
       }
-    );
+      
+      bill.status = 'Overdue';
+      bill.overdueSince = now;
+      bill.updatedAt = now;
+      
+      await bill.save();
+    }
+
+    // Calculate penalty amounts for overdue bills
+    const overdueBills = await Bill.find({
+      userId,
+      status: 'Overdue'
+    });
+
+    for (const bill of overdueBills) {
+      // Skip if originalAmount is not properly set (indicates a corrupted bill)
+      if (!bill.originalAmount || bill.originalAmount === 0) {
+        continue;
+      }      // Calculate overdue days from either overdueSince or dueDate
+      let overdueDays;
+      if (bill.overdueSince) {
+        overdueDays = Math.floor((now - bill.overdueSince) / (1000 * 60 * 60 * 24));
+      } else {
+        overdueDays = Math.floor((now - bill.dueDate) / (1000 * 60 * 60 * 24));
+        // Set overdueSince if not set
+        bill.overdueSince = bill.dueDate;
+      }
+      
+      // CRITICAL: Always use the stored originalAmount, never the current total amount
+      const originalAmount = bill.originalAmount;
+      
+      // Calculate penalty: 5% per week overdue (minimum 1 week)
+      const weeksOverdue = Math.max(1, Math.ceil(overdueDays / 7));
+      const penaltyMultiplier = weeksOverdue * (bill.penaltyRate || 0.05);
+      const penaltyAmount = Math.round(originalAmount * penaltyMultiplier);
+      const totalAmount = originalAmount + penaltyAmount;
+
+      // Only update if the penalty or total has actually changed
+      if (bill.penaltyAmount !== penaltyAmount || bill.amount !== totalAmount) {
+        bill.penaltyAmount = penaltyAmount;
+        bill.amount = totalAmount;
+        bill.updatedAt = now;
+        await bill.save();
+      }
+    }
 
     const bills = await Bill.find({ userId })
       .populate('userId', 'name email phone')
@@ -417,12 +464,31 @@ exports.updateBillStatus = async (req, res) => {
   }
 };
 
+// Admin: Manually trigger overdue processing (for testing)
+exports.processOverdueBills = async (req, res) => {
+  try {
+    const overdueService = require('../services/overdueService');
+    await overdueService.processOverdueBills();
+    
+    res.json({
+      success: true,
+      message: 'Overdue bills processed successfully'
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process overdue bills',
+      error: err.message
+    });
+  }
+};
+
 module.exports = {
   getUserBills: exports.getUserBills,
   getBillDetails: exports.getBillDetails,
   createPaymentOrder: exports.createPaymentOrder,
   verifyPayment: exports.verifyPayment,
   getAllBills: exports.getAllBills,
-  updateBillStatus: exports.updateBillStatus
-  
+  updateBillStatus: exports.updateBillStatus,
+  processOverdueBills: exports.processOverdueBills
 };

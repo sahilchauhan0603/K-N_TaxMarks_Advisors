@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../utils/axios";
 import { useAuth } from "../../../context/AuthContext";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
 const AdminBills = () => {
@@ -11,8 +12,11 @@ const AdminBills = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [serviceTypeFilter, setServiceTypeFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [highlightedBillId, setHighlightedBillId] = useState(null);
   const itemsPerPage = 10;
   const { user } = useAuth();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const fetchBills = async () => {
     setLoading(true);
@@ -54,6 +58,40 @@ const AdminBills = () => {
 
     return matchesSearch && matchesStatus && matchesServiceType;
   });
+
+  // Handle URL parameters for bill highlighting
+  useEffect(() => {
+    const highlightBillId = searchParams.get('highlight');
+    
+    if (highlightBillId && bills.length > 0) {
+      setHighlightedBillId(highlightBillId);
+      
+      // Find the bill in filtered results and navigate to correct page
+      const billIndex = filteredBills.findIndex(bill => bill._id === highlightBillId);
+      if (billIndex !== -1) {
+        const targetPage = Math.floor(billIndex / itemsPerPage) + 1;
+        if (targetPage !== currentPage) {
+          setCurrentPage(targetPage);
+        }
+      }
+      
+      // Auto-scroll to highlighted bill after a short delay
+      setTimeout(() => {
+        const billElement = document.getElementById(`bill-${highlightBillId}`);
+        if (billElement) {
+          billElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 500);
+
+      // Remove highlight after 8 seconds
+      setTimeout(() => {
+        setHighlightedBillId(null);
+      }, 8000);
+    }
+  }, [searchParams, bills, filteredBills, currentPage]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredBills.length / itemsPerPage);
@@ -160,6 +198,16 @@ const AdminBills = () => {
         {error && (
           <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             {error}
+          </div>
+        )}
+
+        {/* Highlight notification */}
+        {highlightedBillId && (
+          <div className="mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3 rounded-lg flex items-center space-x-2 animate-pulse">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="font-medium">Bill highlighted from service view - scroll down to see it!</span>
           </div>
         )}
 
@@ -369,13 +417,16 @@ const AdminBills = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      S.No.
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Bill Details
                     </th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Customer
                     </th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Amount
+                      Amount Billable
                     </th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
@@ -389,8 +440,21 @@ const AdminBills = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedBills.map((bill) => (
-                    <tr key={bill._id} className="hover:bg-gray-50">
+                  {paginatedBills.map((bill, index) => (
+                    <tr 
+                      key={bill._id} 
+                      className={`hover:bg-gray-50 ${
+                        highlightedBillId === bill._id 
+                          ? 'bg-blue-50 border-2 border-blue-300 shadow-md' 
+                          : ''
+                      }`} 
+                      id={`bill-${bill._id}`}
+                    >
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {startIndex + index + 1}
+                        </div>
+                      </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-gray-900">

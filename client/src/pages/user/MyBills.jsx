@@ -617,10 +617,28 @@ const MyBills = () => {
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">Amount</p>
-                      <p className="text-sm font-semibold">
-                        ₹{bill.amount.toLocaleString()}
+                      <p className="text-xs text-gray-500 mb-1">
+                        {bill.status === "Overdue" && bill.originalAmount ? "Total Amount" : "Amount"}
                       </p>
+                      {bill.status === "Overdue" && bill.originalAmount ? (
+                        <div>
+                          <p className="text-sm font-semibold text-red-600">
+                            ₹{bill.amount.toLocaleString()}
+                          </p>
+                          <div className="text-xs text-gray-500 mt-1">
+                            <span>Original: ₹{bill.originalAmount.toLocaleString()}</span>
+                            {bill.penaltyAmount > 0 && (
+                              <span className="block text-red-500">
+                                Penalty: +₹{bill.penaltyAmount.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm font-semibold">
+                          ₹{bill.amount.toLocaleString()}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Date</p>
@@ -659,9 +677,15 @@ const MyBills = () => {
                         handlePayNow(bill);
                       }}
                       disabled={paymentLoading}
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded cursor-pointer font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`${
+                        bill.status === "Overdue" 
+                          ? "bg-red-600 hover:bg-red-700" 
+                          : "bg-green-600 hover:bg-green-700"
+                      } text-white px-3 py-1 rounded cursor-pointer font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      {paymentLoading ? 'Processing...' : 'Pay Now'}
+                      {paymentLoading ? 'Processing...' : (
+                        bill.status === "Overdue" ? `Pay ₹${bill.amount.toLocaleString()}` : 'Pay Now'
+                      )}
                     </button>
                   )}
                 </div>
@@ -759,6 +783,27 @@ const MyBills = () => {
                     {selectedBill.status}
                   </span>
                 </div>
+                
+                {/* Overdue Warning */}
+                {selectedBill.status === 'Overdue' && selectedBill.originalAmount && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-start">
+                      <AlertCircle className="w-5 h-5 text-red-600 mr-3 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <h4 className="font-semibold text-red-800 mb-1">Payment Overdue</h4>
+                        <p className="text-sm text-red-700 mb-2">
+                          This bill is overdue and penalty charges have been applied. 
+                          {selectedBill.penaltyAmount > 0 && (
+                            <span className="font-medium"> A penalty of ₹{selectedBill.penaltyAmount.toLocaleString()} has been added to your original bill.</span>
+                          )}
+                        </p>
+                        <p className="text-xs text-red-600">
+                          Please pay immediately to avoid additional penalty charges. Penalties increase weekly.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Customer Information */}
@@ -800,14 +845,54 @@ const MyBills = () => {
               {/* Bill Information Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Amount */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className={`border rounded-lg p-4 ${
+                  selectedBill.status === 'Overdue' && selectedBill.originalAmount 
+                    ? 'bg-red-50 border-red-200' 
+                    : 'bg-blue-50 border-blue-200'
+                }`}>
                   <div className="flex items-center mb-2">
-                    <DollarSign className="w-5 h-5 text-blue-600 mr-2" />
-                    <h4 className="font-semibold text-gray-900">Amount</h4>
+                    <DollarSign className={`w-5 h-5 mr-2 ${
+                      selectedBill.status === 'Overdue' && selectedBill.originalAmount 
+                        ? 'text-red-600' 
+                        : 'text-blue-600'
+                    }`} />
+                    <h4 className="font-semibold text-gray-900">
+                      {selectedBill.status === 'Overdue' && selectedBill.originalAmount ? 'Total Amount Due' : 'Amount'}
+                    </h4>
                   </div>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className={`text-2xl font-bold ${
+                    selectedBill.status === 'Overdue' && selectedBill.originalAmount 
+                      ? 'text-red-600' 
+                      : 'text-blue-600'
+                  }`}>
                     ₹{selectedBill.amount.toLocaleString()}
                   </p>
+                  
+                  {selectedBill.status === 'Overdue' && selectedBill.originalAmount && (
+                    <div className="mt-3 pt-3 border-t border-red-200">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Original Amount:</span>
+                          <span className="font-medium">₹{selectedBill.originalAmount.toLocaleString()}</span>
+                        </div>
+                        {selectedBill.penaltyAmount > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-red-600">Penalty Charges:</span>
+                            <span className="font-medium text-red-600">+₹{selectedBill.penaltyAmount.toLocaleString()}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-sm font-semibold pt-1 border-t border-red-200">
+                          <span className="text-red-600">Total Due:</span>
+                          <span className="text-red-600">₹{selectedBill.amount.toLocaleString()}</span>
+                        </div>
+                      </div>
+                      {selectedBill.overdueSince && (
+                        <div className="mt-2 text-xs text-red-600">
+                          Overdue since: {new Date(selectedBill.overdueSince).toLocaleDateString('en-IN')}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Status */}
@@ -931,10 +1016,18 @@ const MyBills = () => {
                       handlePayNow(selectedBill);
                     }}
                     disabled={paymentLoading}
-                    className="flex-1 bg-green-200 text-gray-800 hover:bg-green-300 font-medium py-3 px-6 rounded-lg cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className={`flex-1 ${
+                      selectedBill.status === "Overdue" 
+                        ? "bg-red-200 hover:bg-red-300" 
+                        : "bg-green-200 hover:bg-green-300"
+                    } text-gray-800 font-medium py-3 px-6 rounded-lg cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                   >
                     <CreditCard className="w-5 h-5" />
-                    {paymentLoading ? 'Processing...' : 'Pay Now'}
+                    {paymentLoading ? 'Processing...' : (
+                      selectedBill.status === "Overdue" 
+                        ? `Pay ₹${selectedBill.amount.toLocaleString()}` 
+                        : 'Pay Now'
+                    )}
                   </button>
                 )}
                 

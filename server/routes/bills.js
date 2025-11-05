@@ -11,5 +11,6 @@ router.post('/verify-payment', userAuth, billController.verifyPayment);
 
 // Admin routes
 router.get('/admin/all', adminAuth, billController.getAllBills);
+router.post('/admin/process-overdue', adminAuth, billController.processOverdueBills);
 
 module.exports = router;

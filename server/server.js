@@ -81,5 +81,9 @@ app.use((err, req, res, next) => {
 // Connect to MongoDB
 connectDB();
 
+// Start overdue service for bill reminders and penalty calculations
+const overdueService = require('./services/overdueService');
+overdueService.startPeriodicCheck();
+
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
