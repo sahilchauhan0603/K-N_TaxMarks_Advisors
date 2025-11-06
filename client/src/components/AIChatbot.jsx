@@ -112,14 +112,57 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
     }
   }, [isOpen, isMinimized]);
 
+  // Service-specific quick suggestions
+  const getQuickSuggestions = (serviceName) => {
+    const suggestions = {
+      'ITR Filing': [
+        "What documents do I need for ITR filing?",
+        "How much does ITR filing cost?",
+        "What are the ITR filing deadlines?",
+        "Can you help with refund processing?"
+      ],
+      'GST Filing': [
+        "What is GST registration process?",
+        "How much does GST filing cost?",
+        "What are GST return filing deadlines?",
+        "Can you help with ITC reconciliation?"
+      ],
+      'Tax Planning': [
+        "How can I save tax legally?",
+        "What are the best tax-saving investments?",
+        "How much does tax planning cost?",
+        "Can you help with year-round strategies?"
+      ],
+      'Trademark': [
+        "How do I register a trademark?",
+        "What is the trademark registration cost?",
+        "How long does trademark registration take?",
+        "Can you help with trademark search?"
+      ],
+      'Business Advisory': [
+        "How to incorporate a company?",
+        "What is company incorporation cost?",
+        "What are MSME registration benefits?",
+        "Can you help with business setup?"
+      ]
+    };
+    return suggestions[serviceName] || [
+      "What services do you offer?",
+      "How much do your services cost?",
+      "How can I get started?",
+      "Can you help me choose the right service?"
+    ];
+  };
+
   // Initialize chat with welcome message
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       const welcomeMessage = {
         id: Date.now(),
-        text: `Hello! I'm your AI assistant for ${serviceName} services. I can help you with questions about tax filing, documentation, processes, and more. How can I assist you today?`,
+        text: `Hello! I'm your AI assistant for ${serviceName} services. I can help you with questions about tax filing, documentation, processes, pricing, and more. How can I assist you today?`,
         sender: 'bot',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        suggestions: getQuickSuggestions(serviceName)
       };
       setMessages([welcomeMessage]);
     }
@@ -180,9 +223,10 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
     setMessages([]);
     const welcomeMessage = {
       id: Date.now(),
-      text: `Hello! I'm your AI assistant for ${serviceName} services. I can help you with questions about tax filing, documentation, processes, and more. How can I assist you today?`,
+      text: `Hello! I'm your AI assistant for ${serviceName} services. I can help you with questions about tax filing, documentation, processes, pricing, and more. How can I assist you today?`,
       sender: 'bot',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      suggestions: getQuickSuggestions(serviceName)
     };
     setMessages([welcomeMessage]);
   };
@@ -242,7 +286,28 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
                       : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
                   }`}>
                     {message.sender === 'bot' ? (
-                      <FormattedText text={message.text} className="text-sm" />
+                      <>
+                        <FormattedText text={message.text} className="text-sm" />
+                        {message.suggestions && (
+                          <div className="mt-3 space-y-2">
+                            <p className="text-xs text-gray-600 font-medium">Quick questions you can ask:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {message.suggestions.map((suggestion, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => {
+                                    setInputMessage(suggestion);
+                                    inputRef.current?.focus();
+                                  }}
+                                  className="text-xs px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200 transition-colors cursor-pointer"
+                                >
+                                  {suggestion}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                     )}
