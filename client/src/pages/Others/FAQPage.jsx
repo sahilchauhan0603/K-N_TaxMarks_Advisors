@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import OthersContactModal from "../../components/OthersContactModal";
+import ChatbotWrapper from "../../components/ChatbotWrapper";
 
 const FAQPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -230,7 +231,7 @@ const FAQPage = () => {
         {/* Quick Contact */}
         <div className="bg-white rounded-2xl shadow-xl mt-8 p-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Quick Contact</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <a href="mailto:kntaxmarkadvisors@gmail.com" className="flex items-center justify-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
               <svg className="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
@@ -244,6 +245,13 @@ const FAQPage = () => {
               </svg>
               <span className="text-blue-700">Call Us</span>
             </a>
+            <div className="flex items-center justify-center">
+              <ChatbotWrapper 
+                serviceName="FAQ Support" 
+                buttonText="AI Help"
+                buttonClassName="p-3 text-sm w-full justify-center hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              />
+            </div>
             <button 
               onClick={() => setShowContactModal(true)}
               className="flex items-center cursor-pointer justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
