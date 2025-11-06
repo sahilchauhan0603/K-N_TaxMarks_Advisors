@@ -77,7 +77,7 @@ router.post('/ask', async (req, res) => {
     }
 
     // Get the generative model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Build conversation context
     let conversationContext = generateSystemPrompt(serviceName);
@@ -102,7 +102,7 @@ router.post('/ask', async (req, res) => {
     const text = response.text();
 
     // Log the interaction (optional, for analytics)
-    console.log(`Chatbot Query [${serviceName}]: ${message.substring(0, 100)}...`);
+    // console.log(`Chatbot Query [${serviceName}]: ${message.substring(0, 100)}...`);
 
     res.json({ 
       response: text,

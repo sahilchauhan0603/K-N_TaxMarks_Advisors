@@ -170,7 +170,7 @@ const ITRFiling = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <ChatbotWrapper serviceName="ITR Filing" />
+              <ChatbotWrapper serviceName="ITR Filing" buttonClassName="bg-white text-green-600 hover:bg-gray-100"  />
               <Link
                 to="/contact-us"
                 className="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"

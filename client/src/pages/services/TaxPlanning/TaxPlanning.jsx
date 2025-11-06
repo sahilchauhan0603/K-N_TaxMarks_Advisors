@@ -148,7 +148,7 @@ const TaxPlanning = () => {
                 to="/contact-us"
                 className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
               >
-                Contact Us Now
+                Contact Us
               </Link>
             </div>
           </div>

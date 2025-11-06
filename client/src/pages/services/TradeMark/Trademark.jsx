@@ -174,7 +174,7 @@ const Trademark = () => {
                 to="/contact-us"
                 className="bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
               >
-                Contact Us Now
+                Contact Us
               </Link>
             </div>
           </div>

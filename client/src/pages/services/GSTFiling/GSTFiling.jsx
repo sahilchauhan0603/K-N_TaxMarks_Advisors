@@ -180,7 +180,7 @@ const GSTFiling = () => {
                 to="/contact-us"
                 className="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
               >
-                Contact Us Now
+                Contact Us
               </Link>
             </div>
           </div>

@@ -1,6 +1,93 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from '../utils/axios';
 
+// Markdown formatter for AI responses
+const formatAIResponse = (text) => {
+  if (!text) return '';
+  
+  // Convert markdown to HTML-like JSX elements
+  let formattedText = text;
+  
+  // Handle bold text **text** or __text__
+  formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  formattedText = formattedText.replace(/__(.*?)__/g, '<strong>$1</strong>');
+  
+  // Handle italic text *text* or _text_
+  formattedText = formattedText.replace(/(?<!\*)\*(?!\*)([^*]+)\*(?!\*)/g, '<em>$1</em>');
+  formattedText = formattedText.replace(/(?<!_)_(?!_)([^_]+)_(?!_)/g, '<em>$1</em>');
+  
+  // Handle bullet points
+  formattedText = formattedText.replace(/^\* (.+)/gm, '• $1');
+  formattedText = formattedText.replace(/^- (.+)/gm, '• $1');
+  
+  // Handle numbered lists
+  formattedText = formattedText.replace(/^(\d+)\. (.+)/gm, '$1. $2');
+  
+  // Handle code blocks `code`
+  formattedText = formattedText.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  return formattedText;
+};
+
+// Component to render formatted text
+const FormattedText = ({ text, className }) => {
+  const formattedText = formatAIResponse(text);
+  
+  // Split text by HTML tags and render accordingly
+  const renderFormattedText = (text) => {
+    const parts = text.split(/(<\/?(?:strong|em|code)>)/g);
+    let isStrong = false;
+    let isEm = false;
+    let isCode = false;
+    
+    return parts.map((part, index) => {
+      if (part === '<strong>') {
+        isStrong = true;
+        return null;
+      } else if (part === '</strong>') {
+        isStrong = false;
+        return null;
+      } else if (part === '<em>') {
+        isEm = true;
+        return null;
+      } else if (part === '</em>') {
+        isEm = false;
+        return null;
+      } else if (part === '<code>') {
+        isCode = true;
+        return null;
+      } else if (part === '</code>') {
+        isCode = false;
+        return null;
+      } else if (part) {
+        let elementClass = className;
+        if (isStrong) {
+          return <strong key={index} className={elementClass}>{part}</strong>;
+        } else if (isEm) {
+          return <em key={index} className={elementClass}>{part}</em>;
+        } else if (isCode) {
+          return <code key={index} className={`${elementClass} bg-gray-100 px-1 py-0.5 rounded text-xs font-mono`}>{part}</code>;
+        } else {
+          return <span key={index} className={elementClass}>{part}</span>;
+        }
+      }
+      return null;
+    }).filter(Boolean);
+  };
+  
+  // Split by line breaks and render each line
+  const lines = formattedText.split('\n');
+  return (
+    <div className="space-y-1">
+      {lines.map((line, lineIndex) => (
+        <div key={lineIndex} className="leading-relaxed">
+          {renderFormattedText(line)}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -103,12 +190,12 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-end p-4 pointer-events-none bottom-20">
-      <div className={`bg-white rounded-lg shadow-2xl border border-gray-200 transition-all duration-300 pointer-events-auto ${
-        isMinimized ? 'w-80 h-16' : 'w-96 h-[min(500px,calc(100vh-180px))]'
+    <div className="fixed bottom-24 right-4 z-50 pointer-events-none">
+      <div className={`bg-white rounded-lg shadow-2xl border border-gray-200 transition-all duration-300 pointer-events-auto relative ${
+        isMinimized ? 'w-80 h-16' : 'w-96 h-[500px] max-h-[calc(100vh-120px)]'
       }`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-red-500 text-white rounded-t-lg">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-white text-black bg-opacity-20 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -143,7 +230,7 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
         {!isMinimized && (
           <>
             {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style={{ minHeight: '200px', maxHeight: 'calc(100vh - 200px)' }}>
+            <div className="overflow-y-auto p-4 space-y-4 bg-gray-50" style={{ height: 'calc(100% - 160px)', paddingBottom: '8px' }}>
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -151,11 +238,15 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
                 >
                   <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                     message.sender === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-none'
+                      ? 'bg-gradient-to-br from-blue-600 to-red-500 text-white rounded-br-none'
                       : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
                   }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-                    <p className={`text-xs mt-1 ${
+                    {message.sender === 'bot' ? (
+                      <FormattedText text={message.text} className="text-sm" />
+                    ) : (
+                      <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                    )}
+                    <p className={`text-xs mt-2 ${
                       message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}>
                       {message.timestamp}
@@ -182,7 +273,7 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-gray-200 bg-white text-black rounded-b-lg">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white text-black rounded-b-lg">
               <div className="flex items-center space-x-2">
                 <div className="flex-1 relative">
                   <textarea
@@ -190,16 +281,16 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask me anything about our services..."
+                    placeholder="Need Info? Ask me..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                     rows="1"
-                    style={{ minHeight: '40px', maxHeight: '80px' }}
+                    style={{ minHeight: '40px', maxHeight: '60px' }}
                   />
                 </div>
                 <button
                   onClick={sendMessage}
                   disabled={!inputMessage.trim() || isLoading}
-                  className="p-2 cursor-pointer bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 cursor-pointer bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -207,7 +298,7 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
                 </button>
                 <button
                   onClick={clearChat}
-                  className="p-2 text-gray-500 hover:text-gray-700 cursor-pointer transition-colors"
+                  className="p-2 text-red-500 hover:text-red-700 cursor-pointer transition-colors"
                   title="Clear chat"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,7 +306,7 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
                   </svg>
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-4 mb-1">
+              <p className="text-xs text-gray-500 mt-2 mb-0">
                 Press Enter to send • Shift+Enter for new line
               </p>
             </div>
