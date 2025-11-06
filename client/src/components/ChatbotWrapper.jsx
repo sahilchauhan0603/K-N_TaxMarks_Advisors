@@ -8,7 +8,7 @@ const ChatbotWrapper = ({ serviceName = "General", buttonText = "Ask AI !", butt
     <>
       <button
         onClick={() => setIsChatbotOpen(true)}
-        className={`group relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-600 to-red-600 hover:from-blue-600 hover:via-purple-600 hover:to-red-700 text-white font-bold py-1 px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 cursor-pointer flex items-center justify-center space-x-3 border-2 border-white/20 backdrop-blur-sm ${buttonClassName}`}
+        className={`group relative overflow-hidden bg-gradient-to-r from-blue-700 via-blue-600 to-red-600 hover:from-blue-600 hover:via-purple-600 hover:to-red-700 text-white font-bold py-1 px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 cursor-pointer flex items-center justify-center space-x-3 border-2 border-white/20 backdrop-blur-sm ${buttonClassName}`}
       >
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>

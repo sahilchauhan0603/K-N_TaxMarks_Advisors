@@ -160,9 +160,12 @@ const BusinessAdvisory = () => {
         <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl p-8 shadow-lg text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-2/3 mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-3">Let Us Help You Build & Scale</h3>
+              <h3 className="text-2xl font-bold mb-3">Get Instant Business Help & Expert Support</h3>
+              <p className="text-pink-100 mb-2">
+                <span className="font-semibold">🤖 AI Assistant:</span> Get immediate answers to business queries, registration guidance, and compliance tips 24/7
+              </p>
               <p className="text-pink-100">
-                Book a strategy session and get expert guidance for your business growth and compliance.
+                <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified business advisors for personalized solutions and strategic planning
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">

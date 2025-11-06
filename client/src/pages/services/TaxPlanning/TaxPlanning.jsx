@@ -205,6 +205,33 @@ const TaxPlanning = () => {
           </div>
         </div>
 
+        {/* CTA Section */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-8 shadow-lg text-white mb-16">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="md:w-2/3 mb-6 md:mb-0">
+              <h3 className="text-2xl font-bold mb-3">Get Instant Tax Planning Help & Expert Support</h3>
+              <p className="text-blue-100 mb-2">
+                <span className="font-semibold">🤖 AI Assistant:</span> Get immediate answers to tax planning queries, investment guidance, and tax-saving tips 24/7
+              </p>
+              <p className="text-blue-100">
+                <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified tax planners for personalized strategies and complex financial planning
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChatbotWrapper 
+                serviceName="Tax Planning" 
+                buttonClassName="bg-white text-blue-600 hover:bg-gray-100" 
+              />
+              <Link
+                to="/contact-us"
+                className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+              >
+                Contact Us
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Testimonials Section */}
         <TestimonialSection service="Tax Planning" />
       </div>

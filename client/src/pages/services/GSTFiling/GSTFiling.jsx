@@ -165,10 +165,12 @@ const GSTFiling = () => {
         <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl p-8 shadow-lg text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-2/3 mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-3">Need Expert GST Assistance?</h3>
+              <h3 className="text-2xl font-bold mb-3">Get Instant GST Help & Expert Support</h3>
+              <p className="text-yellow-100 mb-2">
+                <span className="font-semibold">🤖 AI Assistant:</span> Get immediate answers to GST queries, filing guidance, and compliance tips 24/7
+              </p>
               <p className="text-yellow-100">
-                Our team of GST professionals is ready to handle all your compliance needs, 
-                saving you time and ensuring accuracy.
+                <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified GST professionals for personalized solutions and complex tax matters
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">

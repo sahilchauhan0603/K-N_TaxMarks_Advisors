@@ -160,9 +160,12 @@ const Trademark = () => {
         <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-8 shadow-lg text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-2/3 mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-3">Protect Your Brand Today</h3>
+              <h3 className="text-2xl font-bold mb-3">Get Instant Trademark Help & Expert Support</h3>
+              <p className="text-purple-100 mb-2">
+                <span className="font-semibold">🤖 AI Assistant:</span> Get immediate answers to trademark queries, registration guidance, and IP protection tips 24/7
+              </p>
               <p className="text-purple-100">
-                Schedule a legal consultation and safeguard your business identity and IP.
+                <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified legal professionals for personalized trademark solutions and complex IP matters
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">

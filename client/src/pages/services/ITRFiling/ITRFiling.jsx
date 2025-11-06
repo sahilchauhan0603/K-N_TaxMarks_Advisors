@@ -164,9 +164,12 @@ const ITRFiling = () => {
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-8 shadow-lg text-white">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-2/3 mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-3">Let Us Handle Your ITR Filing</h3>
+              <h3 className="text-2xl font-bold mb-3">Get Instant ITR Help & Expert Support</h3>
+              <p className="text-green-100 mb-2">
+                <span className="font-semibold">🤖 AI Assistant:</span> Get immediate answers to ITR queries, filing guidance, and tax deduction tips 24/7
+              </p>
               <p className="text-green-100">
-                Focus on your goals while our team ensures your ITR is filed accurately and on time.
+                <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified tax professionals for personalized ITR solutions and complex tax situations
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
