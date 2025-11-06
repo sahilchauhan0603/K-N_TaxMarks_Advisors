@@ -293,7 +293,7 @@ const TestimonialForm = ({ service, onClose, onSuccess, color }) => {
   }, [user]);
 
   return (
-    <div className="fixed inset-0 backdrop-blur-lg bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md h-[90vh] max-h-[600px] relative overflow-hidden animate-fadeIn border border-gray-200 flex flex-col">
         {/* Header - Fixed */}
         <div 

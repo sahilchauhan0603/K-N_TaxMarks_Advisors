@@ -57,11 +57,11 @@ export const getFormattedServicePrice = (category, serviceType) => {
 // Async helper to get price from API (with fallback)
 export const getServicePriceFromAPI = async (category, serviceType) => {
   try {
-    console.log(`Fetching price for ${category}/${serviceType}`);
+    // console.log(`Fetching price for ${category}/${serviceType}`);
     
     const response = await axios.get(`/api/pricing/${category}/${serviceType}`);
     
-    console.log('API response:', response.data);
+    // console.log('API response:', response.data);
     
     if (response.data && response.data.success && response.data.data) {
       return response.data.data.price; // Return raw price, not formatted
@@ -76,7 +76,7 @@ export const getServicePriceFromAPI = async (category, serviceType) => {
   }
   
   // Fallback to static pricing
-  console.log(`Using fallback pricing for ${category}/${serviceType}`);
+  // console.log(`Using fallback pricing for ${category}/${serviceType}`);
   return getServicePrice(category, serviceType);
 };
 
@@ -90,12 +90,12 @@ export const useServicePrice = (category, serviceType) => {
     setLoading(true);
     try {
       const apiPrice = await getServicePriceFromAPI(category, serviceType);
-      console.log(`useServicePrice: Got price ${apiPrice} for ${category}/${serviceType}`);
+      // console.log(`useServicePrice: Got price ${apiPrice} for ${category}/${serviceType}`);
       setPrice(apiPrice);
     } catch (error) {
       console.error('Error fetching price:', error);
       const fallbackPrice = getServicePrice(category, serviceType);
-      console.log(`useServicePrice: Using fallback ${fallbackPrice} for ${category}/${serviceType}`);
+      // console.log(`useServicePrice: Using fallback ${fallbackPrice} for ${category}/${serviceType}`);
       setPrice(fallbackPrice);
     } finally {
       setLoading(false);
