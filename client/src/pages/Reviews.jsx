@@ -68,7 +68,7 @@ const Reviews = () => {
   
   // Pagination states
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize] = useState(3); // Number of cards per page
+  const [pageSize, setPageSize] = useState(1); // Dynamic page size based on screen
   const [totalPages, setTotalPages] = useState(0);
   const [displayedTestimonials, setDisplayedTestimonials] = useState([]);
   const [loadingPage, setLoadingPage] = useState(false);
@@ -76,6 +76,22 @@ const Reviews = () => {
   // Touch/Swipe support
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+
+  // Handle responsive page size
+  useEffect(() => {
+    const handleResize = () => {
+      // lg screens (1024px+) show 3, smaller screens show 1
+      const newPageSize = window.innerWidth >= 1024 ? 3 : 1;
+      if (newPageSize !== pageSize) {
+        setPageSize(newPageSize);
+        setCurrentPage(0); // Reset to first page when page size changes
+      }
+    };
+
+    handleResize(); // Set initial page size
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [pageSize]);
 
   const services = [
     'Business Advisory',
@@ -91,7 +107,7 @@ const Reviews = () => {
 
   useEffect(() => {
     filterAndSortTestimonials();
-  }, [testimonials, searchTerm, selectedService, sortBy]);
+  }, [testimonials, searchTerm, selectedService, sortBy, pageSize]);
 
   useEffect(() => {
     updateDisplayedTestimonials();
@@ -100,7 +116,7 @@ const Reviews = () => {
   useEffect(() => {
     // Reset to first page when filters change
     setCurrentPage(0);
-  }, [searchTerm, selectedService, sortBy]);
+  }, [searchTerm, selectedService, sortBy, pageSize]);
 
   // Handle redirect after login to open testimonial form
   useEffect(() => {
@@ -462,7 +478,7 @@ const Reviews = () => {
                   </div>
                 </div>
               )}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-8">
                 {displayedTestimonials.map((testimonial, index) => (
               <div
                 key={testimonial._id}
@@ -690,94 +706,112 @@ const TestimonialForm = ({ onClose, onSuccess }) => {
   }, [user]);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <form
-        className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-6 w-full max-w-lg relative border border-gray-200 animate-fadeIn`}
+        className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl p-4 sm:p-6 w-full max-w-lg relative border border-gray-200 animate-fadeIn max-h-screen overflow-y-auto"
         onSubmit={handleSubmit}
-        style={{ minHeight: '480px' }}
       >
         <button
           type="button"
-          className="absolute cursor-pointer top-2 right-2 text-gray-400 hover:text-black text-2xl focus:outline-none"
+          className="absolute cursor-pointer top-2 right-2 text-gray-400 hover:text-black text-xl sm:text-2xl focus:outline-none z-10"
           onClick={onClose}
           aria-label="Close"
         >
           &times;
         </button>
-        <h3 className="text-xl font-extrabold mb-2 text-gray-800 text-center tracking-tight">Share Your Experience</h3>
-        <p className="text-xs text-gray-400 mb-4 text-center">We value your feedback!</p>
-        
-        <div className="mb-2">
+        <h3 className="text-lg sm:text-xl font-extrabold mb-2 text-gray-800 text-center tracking-tight pr-8">
+          Share Your Experience
+        </h3>
+        <p className="text-xs text-gray-400 mb-4 text-center">
+          We value your feedback!
+        </p>
+
+        <div className="mb-3 sm:mb-4">
           <input
             type="text"
             name="name"
             value={form.name}
             onChange={handleChange}
-            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white placeholder-gray-300"
+            className="w-full border border-gray-200 focus:border-blue-500 rounded px-3 py-2 text-sm focus:outline-none bg-white placeholder-gray-300 transition-colors"
             placeholder="Your Name"
             required
           />
         </div>
-        
-        <div className="mb-2">
+
+        <div className="mb-3 sm:mb-4">
           <input
             type="text"
             name="role"
             value={form.role}
             onChange={handleChange}
-            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white placeholder-gray-500"
+            className="w-full border border-gray-200 focus:border-blue-500 rounded px-3 py-2 text-sm focus:outline-none bg-white placeholder-gray-500 transition-colors"
             placeholder="Your Designation"
             required
           />
         </div>
-        
-        <div className="mb-2">
-          <label className="block mb-1 font-semibold text-gray-700">Upload Profile Photo</label>
+
+        <div className="mb-3 sm:mb-4">
+          <label className="block mb-2 font-semibold text-gray-700 text-sm">
+            Upload Profile Photo
+          </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white placeholder-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300"
+            className="w-full border border-gray-200 focus:border-blue-500 rounded px-3 py-2 text-sm focus:outline-none bg-white transition-colors file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4 file:rounded-full file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
         </div>
-        
-        <div className="mb-2">
+
+        <div className="mb-3 sm:mb-4">
           <select
             name="service"
             value={form.service}
             onChange={handleChange}
-            className="w-full cursor-pointer border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm mb-2 focus:outline-none bg-white text-gray-800"
+            className="w-full cursor-pointer border border-gray-200 focus:border-blue-500 rounded px-3 py-2 text-sm focus:outline-none bg-white text-gray-800 transition-colors"
             required
           >
             <option value="">Select Service</option>
-            {SERVICE_OPTIONS.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
+            {SERVICE_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
             ))}
           </select>
         </div>
-        
-        <div className="mb-2">
+
+        <div className="mb-3 sm:mb-4">
           <textarea
             name="feedback"
             value={form.feedback}
             onChange={handleChange}
-            className="w-full border border-gray-200 focus:border-black rounded px-3 py-1.5 text-sm focus:outline-none bg-white placeholder-gray-500 resize-none"
-            rows={2}
-            maxLength={180}
-            placeholder="Your feedback (max 180 chars)"
+            className="w-full border border-gray-200 focus:border-blue-500 rounded px-3 py-2 text-sm focus:outline-none bg-white placeholder-gray-500 resize-none transition-colors"
+            rows={4}
+            maxLength={250}
+            placeholder="Your feedback (max 250 chars)"
             required
           />
+          <div className="text-xs text-gray-400 text-right mt-1">
+            {form.feedback.length}/250 characters
+          </div>
         </div>
-        
-        {error && <p className="text-red-500 mb-2 text-center text-xs">{error}</p>}
-        {success && <p className="text-green-600 mb-2 text-center text-xs">Thank you for your feedback!</p>}
-        
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg mb-4 text-xs sm:text-sm text-center">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg mb-4 text-xs sm:text-sm text-center">
+            Thank you for your feedback!
+          </div>
+        )}
+
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white cursor-pointer font-bold py-2 px-4 rounded-lg shadow transition text-sm mt-1"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-bold py-2.5 px-4 rounded-lg shadow transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >
-          {loading ? 'Submitting...' : 'Submit Review'}
+          {loading ? "Submitting..." : "Submit Testimonial"}
         </button>
       </form>
     </div>

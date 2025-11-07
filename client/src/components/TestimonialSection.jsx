@@ -55,7 +55,13 @@ const SERVICE_COLORS = {
 const TestimonialSection = ({ service }) => {
   const [testimonials, setTestimonials] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const colors = SERVICE_COLORS[service] || SERVICE_COLORS['Business Advisory'];
+
+  // Limit testimonials to 4 initially
+  const INITIAL_DISPLAY_COUNT = 4;
+  const displayedTestimonials = showAll ? testimonials : testimonials.slice(0, INITIAL_DISPLAY_COUNT);
+  const hasMoreTestimonials = testimonials.length > INITIAL_DISPLAY_COUNT;
 
   const fetchTestimonials = async () => {
     try {
@@ -118,91 +124,136 @@ const TestimonialSection = ({ service }) => {
             <p className="text-gray-500">Be the first to share your experience with our {service} services!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {testimonials.map((t, idx) => (
-              <div 
-                key={t._id || idx} 
-                className="group bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-100 p-6 transition-all duration-300 hover:-translate-y-1"
-              >
-                {/* Quote Icon */}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {displayedTestimonials.map((t, idx) => (
                 <div 
-                  className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-4"
-                  style={{
-                    backgroundColor: colors.primary === 'purple' ? '#F3E8FF' : 
-                                   colors.primary === 'pink' ? '#FCE7F3' : 
-                                   colors.primary === 'yellow' ? '#FEF3C7' : 
-                                   colors.primary === 'green' ? '#D1FAE5' : 
-                                   colors.primary === 'blue' ? '#DBEAFE' : '#F3E8FF'
-                  }}
+                  key={t._id || idx} 
+                  className="group bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-100 p-6 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <FaQuoteLeft 
-                    className="w-5 h-5"
-                    style={{
-                      color: colors.primary === 'purple' ? '#7C3AED' : 
-                             colors.primary === 'pink' ? '#EC4899' : 
-                             colors.primary === 'yellow' ? '#EAB308' : 
-                             colors.primary === 'green' ? '#10B981' : 
-                             colors.primary === 'blue' ? '#3B82F6' : '#7C3AED'
-                    }}
-                  />
-                </div>
-
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className="w-4 h-4 text-yellow-400" />
-                  ))}
-                </div>
-
-                {/* Feedback Text */}
-                <p className="text-gray-700 leading-relaxed mb-6 italic">
-                  "{t.feedback}"
-                </p>
-
-                {/* Client Info */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <img
-                        src={t.photoUrl || `https://randomuser.me/api/portraits/lego/${idx % 10}.jpg`}
-                        alt="Client"
-                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                        onError={(e) => {
-                          e.target.src = `https://ui-avatars.com/api/?name=${t.name}&background=${colors.primary.substring(0,3)}&color=fff&size=48`;
-                        }}
-                      />
-                      <div className="absolute -bottom-1 -right-1">
-                        <MdVerified className="w-5 h-5 text-blue-500 bg-white rounded-full" />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{t.name}</p>
-                      <p className="text-sm text-gray-500">{t.role}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Service Badge */}
+                  {/* Quote Icon */}
                   <div 
-                    className="px-3 py-1 text-xs font-medium rounded-full"
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-4"
                     style={{
                       backgroundColor: colors.primary === 'purple' ? '#F3E8FF' : 
                                      colors.primary === 'pink' ? '#FCE7F3' : 
                                      colors.primary === 'yellow' ? '#FEF3C7' : 
                                      colors.primary === 'green' ? '#D1FAE5' : 
-                                     colors.primary === 'blue' ? '#DBEAFE' : '#F3E8FF',
-                      color: colors.primary === 'purple' ? '#5B21B6' : 
-                             colors.primary === 'pink' ? '#BE185D' : 
-                             colors.primary === 'yellow' ? '#B45309' : 
-                             colors.primary === 'green' ? '#047857' : 
-                             colors.primary === 'blue' ? '#1D4ED8' : '#5B21B6'
+                                     colors.primary === 'blue' ? '#DBEAFE' : '#F3E8FF'
                     }}
                   >
-                    {t.service}
+                    <FaQuoteLeft 
+                      className="w-5 h-5"
+                      style={{
+                        color: colors.primary === 'purple' ? '#7C3AED' : 
+                               colors.primary === 'pink' ? '#EC4899' : 
+                               colors.primary === 'yellow' ? '#EAB308' : 
+                               colors.primary === 'green' ? '#10B981' : 
+                               colors.primary === 'blue' ? '#3B82F6' : '#7C3AED'
+                      }}
+                    />
+                  </div>
+
+                  {/* Rating Stars */}
+                  <div className="flex items-center gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar key={i} className="w-4 h-4 text-yellow-400" />
+                    ))}
+                  </div>
+
+                  {/* Feedback Text */}
+                  <p className="text-gray-700 leading-relaxed mb-6 italic">
+                    "{t.feedback}"
+                  </p>
+
+                  {/* Client Info */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <img
+                          src={t.photoUrl || `https://randomuser.me/api/portraits/lego/${idx % 10}.jpg`}
+                          alt="Client"
+                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                          onError={(e) => {
+                            e.target.src = `https://ui-avatars.com/api/?name=${t.name}&background=${colors.primary.substring(0,3)}&color=fff&size=48`;
+                          }}
+                        />
+                        <div className="absolute -bottom-1 -right-1">
+                          <MdVerified className="w-5 h-5 text-blue-500 bg-white rounded-full" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800">{t.name}</p>
+                        <p className="text-sm text-gray-500">{t.role}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Service Badge */}
+                    <div 
+                      className="px-3 py-1 text-xs font-medium rounded-full"
+                      style={{
+                        backgroundColor: colors.primary === 'purple' ? '#F3E8FF' : 
+                                       colors.primary === 'pink' ? '#FCE7F3' : 
+                                       colors.primary === 'yellow' ? '#FEF3C7' : 
+                                       colors.primary === 'green' ? '#D1FAE5' : 
+                                       colors.primary === 'blue' ? '#DBEAFE' : '#F3E8FF',
+                        color: colors.primary === 'purple' ? '#5B21B6' : 
+                               colors.primary === 'pink' ? '#BE185D' : 
+                               colors.primary === 'yellow' ? '#B45309' : 
+                               colors.primary === 'green' ? '#047857' : 
+                               colors.primary === 'blue' ? '#1D4ED8' : '#5B21B6'
+                      }}
+                    >
+                      {t.service}
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+            
+            {/* Show More/Show Less Buttons */}
+            {hasMoreTestimonials && (
+              <div className="text-center mt-8">
+                {!showAll ? (
+                  <button
+                    onClick={() => setShowAll(true)}
+                    className="inline-flex items-center gap-2 font-semibold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-white"
+                    style={{
+                      background: `linear-gradient(to right, 
+                        ${colors.primary === 'purple' ? '#7C3AED' : 
+                          colors.primary === 'pink' ? '#EC4899' : 
+                          colors.primary === 'yellow' ? '#EAB308' : 
+                          colors.primary === 'green' ? '#10B981' : 
+                          colors.primary === 'blue' ? '#3B82F6' : '#7C3AED'}, 
+                        ${colors.primary === 'purple' ? '#5B21B6' : 
+                          colors.primary === 'pink' ? '#DB2777' : 
+                          colors.primary === 'yellow' ? '#D97706' : 
+                          colors.primary === 'green' ? '#059669' : 
+                          colors.primary === 'blue' ? '#2563EB' : '#5B21B6'})`
+                    }}
+                  >
+                    <span>Show More Testimonials</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                    <span className="bg-white/20 px-2 py-1 rounded-full text-xs">
+                      +{testimonials.length - INITIAL_DISPLAY_COUNT}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setShowAll(false)}
+                    className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                  >
+                    <span>Show Less</span>
+                    <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                )}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
       {showForm && (

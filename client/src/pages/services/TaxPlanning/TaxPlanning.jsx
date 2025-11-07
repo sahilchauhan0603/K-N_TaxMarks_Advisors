@@ -217,18 +217,7 @@ const TaxPlanning = () => {
                 <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified tax planners for personalized strategies and complex financial planning
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <ChatbotWrapper 
-                serviceName="Tax Planning" 
-                buttonClassName="bg-white text-blue-600 hover:bg-gray-100" 
-              />
-              <Link
-                to="/contact-us"
-                className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
-              >
-                Contact Us
-              </Link>
-            </div>
+            
           </div>
         </div>
 
