@@ -612,8 +612,8 @@ const UserProfile = () => {
               Need More Help?
             </h4>
             <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">Contact our support team:</p>
-            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">📧 Email: support@kntaxmarkadvisors.com</p>
-            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">📱 Phone: +91-XXXXXXXXXX</p>
+            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">📧 Email: kntaxmarkadvisors@gmail.com</p>
+            <p style="color: #7f1d1d; margin: 5px 0; font-size: 14px;">📱 Phone: +91-9318469138</p>
           </div>
         </div>
       `,
@@ -927,7 +927,7 @@ const UserProfile = () => {
                   Verified Account
                 </span>
                 <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                  Active Status
+                  Active User
                 </span>
               </div>
 
@@ -940,6 +940,26 @@ const UserProfile = () => {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Location</p>
                   <p className="text-gray-900 mt-1">{userProfile?.state || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Member Since</p>
+                  <p className="text-gray-900 mt-1">
+                    {userProfile?.createdAt 
+                      ? new Date(userProfile.createdAt).toLocaleDateString('en-IN', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                      : "Not available"
+                    }
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Account Status</p>
+                  <p className="text-gray-900 mt-1 flex items-center">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    Active
+                  </p>
                 </div>
               </div>
             </div>

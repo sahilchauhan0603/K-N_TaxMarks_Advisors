@@ -413,25 +413,25 @@ const AdminBills = () => {
         <div className="bg-white rounded-xl shadow-sm border w-full border-gray-100">
           <div className="w-full overflow-hidden">
             <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 border-collapse">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
                       S.No.
                     </th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
                       Bill Details
                     </th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
                       Customer
                     </th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
                       Amount Billable
                     </th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
                       Status
                     </th>
-                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
                       Dates
                     </th>
                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -450,12 +450,12 @@ const AdminBills = () => {
                       }`} 
                       id={`bill-${bill._id}`}
                     >
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap border-r border-gray-200">
                         <div className="text-sm font-medium text-gray-900">
                           {startIndex + index + 1}
                         </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap border-r border-gray-200">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
                             {bill.billNumber}
@@ -468,7 +468,7 @@ const AdminBills = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap border-r border-gray-200">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
                             {bill.userId?.name || "N/A"}
@@ -478,12 +478,12 @@ const AdminBills = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap border-r border-gray-200">
                         <div className="text-sm font-medium text-gray-900">
                           ₹{bill.amount.toLocaleString()}
                         </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap border-r border-gray-200">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${getStatusColor(
                             bill.status
@@ -492,7 +492,7 @@ const AdminBills = () => {
                           {bill.status}
                         </span>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
                         <div>
                           <div className="text-xs sm:text-sm">
                             Created: {formatDate(bill.createdAt)}

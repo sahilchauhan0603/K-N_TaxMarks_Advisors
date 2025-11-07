@@ -640,10 +640,10 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left">
+                  <th className="px-4 py-3 text-left border-r border-gray-200">
                     <input
                       type="checkbox"
                       checked={
@@ -665,22 +665,22 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
                       className="rounded border-gray-300"
                     />
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
                     Contact
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
                     Subject
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
                     Source
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
                     Priority
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 border-r border-gray-200">
                     Date
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
@@ -691,7 +691,7 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
               <tbody className="divide-y divide-gray-200">
                 {contacts.map((contact) => (
                   <tr key={contact._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 border-r border-gray-200">
                       <input
                         type="checkbox"
                         checked={bulkActions.selectedIds.includes(contact._id)}
@@ -716,7 +716,7 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
                         className="rounded border-gray-300"
                       />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 border-r border-gray-200">
                       <div>
                         <p className="font-medium text-gray-800">
                           {contact.name}
@@ -724,17 +724,17 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
                         <p className="text-sm text-gray-600">{contact.email}</p>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 border-r border-gray-200">
                       <p className="text-gray-800 truncate max-w-xs">
                         {contact.subject}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 border-r border-gray-200">
                       <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                         {contact.source.replace("-", " ")}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 border-r border-gray-200">
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
                           contact.status
@@ -743,7 +743,7 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
                         {contact.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 border-r border-gray-200">
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(
                           contact.priority
@@ -752,7 +752,7 @@ const AdminOthersContact = ({ setSidebarVisible }) => {
                         {contact.priority}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="px-4 py-3 text-sm text-gray-600 border-r border-gray-200">
                       {new Date(contact.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
