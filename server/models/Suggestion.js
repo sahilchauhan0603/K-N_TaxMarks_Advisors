@@ -16,6 +16,11 @@ const suggestionSchema = new mongoose.Schema({
     default: 'Medium'
   },
   isRead: { type: Boolean, default: false },
+  status: { 
+    type: String, 
+    enum: ['Open', 'Reviewed', 'Resolved'],
+    default: 'Open'
+  },
   adminNotes: { type: String, default: '' }, // For admin internal notes
   createdAt: { type: Date, default: Date.now }
 });

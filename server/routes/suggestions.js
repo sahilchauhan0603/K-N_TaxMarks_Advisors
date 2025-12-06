@@ -93,9 +93,30 @@ router.put('/:id/read', adminAuth, async (req, res) => {
   try {
     const { isRead } = req.body;
     
+    // When marking as read, also update status to 'Reviewed' if not already resolved
+    const updateFields = { isRead: isRead !== undefined ? isRead : true };
+    
+    // Get current suggestion to check status
+    const currentSuggestion = await Suggestion.findById(req.params.id);
+    
+    if (!currentSuggestion) {
+      return res.status(404).json({ message: 'Suggestion not found' });
+    }
+    
+    // Prevent modification if already resolved
+    if (currentSuggestion.status === 'Resolved') {
+      return res.status(400).json({ 
+        message: 'Cannot modify read status of a resolved suggestion' 
+      });
+    }
+    
+    if (currentSuggestion.status !== 'Resolved') {
+      updateFields.status = (isRead !== undefined ? isRead : true) ? 'Reviewed' : 'Open';
+    }
+    
     const suggestion = await Suggestion.findByIdAndUpdate(
       req.params.id,
-      { isRead: isRead !== undefined ? isRead : true },
+      updateFields,
       { new: true }
     );
     
@@ -106,6 +127,45 @@ router.put('/:id/read', adminAuth, async (req, res) => {
     res.json({ message: `Suggestion marked as ${suggestion.isRead ? 'read' : 'unread'}`, suggestion });
   } catch (err) {
     console.error('Error updating suggestion:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// PUT /api/suggestions/:id/status - Update suggestion status (admin only)
+router.put('/:id/status', adminAuth, async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!['Open', 'Reviewed', 'Resolved'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Must be Open, Reviewed, or Resolved.' });
+    }
+    
+    // If trying to set as Resolved, ensure it's been marked as read first
+    if (status === 'Resolved') {
+      const suggestion = await Suggestion.findById(req.params.id);
+      if (!suggestion) {
+        return res.status(404).json({ message: 'Suggestion not found' });
+      }
+      if (!suggestion.isRead) {
+        return res.status(400).json({ 
+          message: 'Suggestion must be marked as read before it can be resolved' 
+        });
+      }
+    }
+    
+    const suggestion = await Suggestion.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    
+    if (!suggestion) {
+      return res.status(404).json({ message: 'Suggestion not found' });
+    }
+    
+    res.json({ message: `Suggestion marked as ${status}`, suggestion });
+  } catch (err) {
+    console.error('Error updating suggestion status:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

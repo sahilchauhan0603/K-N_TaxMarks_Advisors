@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, AreaChart, Area } from 'recharts';
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, 
+  AreaChart, Area, LineChart, Line, RadialBarChart, RadialBar, FunnelChart, Funnel, LabelList
+} from 'recharts';
 import axios from '../../../utils/axios';
 import { 
   FaUsers, 
@@ -11,13 +14,23 @@ import {
   FaRegChartBar,
   FaBusinessTime,
   FaArrowUp,
-  FaArrowDown
+  FaArrowDown,
+  FaClock,
+  FaCheckCircle,
+  FaHourglassHalf,
+  FaComments,
+  FaChartLine,
+  FaPercent,
+  FaTrophy,
+  FaFunnelDollar
 } from 'react-icons/fa';
-import { GiCash, GiTakeMyMoney } from 'react-icons/gi';
-import { BsGraphUp, BsFillBarChartFill, BsThreeDotsVertical } from 'react-icons/bs';
+import { GiCash, GiTakeMyMoney, GiProgression } from 'react-icons/gi';
+import { BsGraphUp, BsFillBarChartFill, BsThreeDotsVertical, BsClipboardCheck } from 'react-icons/bs';
+import { MdRateReview, MdPendingActions, MdDone, MdTrendingUp } from 'react-icons/md';
 import { AdminPageLoader, AdminPageError } from "../components/AdminPageLoader";
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4'];
+const RADIAL_COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ 
@@ -26,13 +39,32 @@ const AdminDashboard = () => {
     inactive: 0, 
     monthly: [],
     revenue: 0,
+    pendingRevenue: 0,
     services: {
       gst: 0,
       trademark: 0,
       tax: 0,
       other: 0
     },
-    dailyActivity: []
+    dailyActivity: [],
+    revenueByService: {},
+    testimonials: {
+      total: 0,
+      approved: 0,
+      pending: 0,
+      byService: {}
+    },
+    suggestions: {
+      total: 0,
+      byStatus: {}
+    },
+    completionRate: 0,
+    avgTransactionValue: 0,
+    paymentStatus: {},
+    serviceRequests: [],
+    retentionData: [],
+    processingTime: [],
+    conversionFunnel: {}
   });
   const [recentUsers, setRecentUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,21 +78,16 @@ const AdminDashboard = () => {
         const res = await axios.get('/api/admin/dashboard-stats', {
           headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
         });
-        const {
-          total,
-          active,
-          inactive,
-          monthly,
-          revenue,
-          services,
-          recentUsers: recent,
-          dailyActivity
-        } = res.data;
-        setStats({ total, active, inactive, monthly, revenue, services, dailyActivity });
-        setRecentUsers(recent);
+        setStats(res.data);
+        setRecentUsers(res.data.recentUsers || []);
       } catch (err) {
         setError("Failed to fetch dashboard stats. Please try again.");
-        setStats({ total: 0, active: 0, inactive: 0, monthly: [], revenue: 0, services: {}, dailyActivity: [] });
+        setStats({ 
+          total: 0, active: 0, inactive: 0, monthly: [], revenue: 0, pendingRevenue: 0,
+          services: {}, dailyActivity: [], revenueByService: {}, testimonials: {},
+          suggestions: {}, completionRate: 0, avgTransactionValue: 0, paymentStatus: {},
+          serviceRequests: [], retentionData: [], processingTime: [], conversionFunnel: {}
+        });
         setRecentUsers([]);
       } finally {
         setLoading(false);
@@ -321,6 +348,460 @@ const AdminDashboard = () => {
                 <Bar dataKey="Suggestions" stackId="a" fill="url(#colorSuggestions)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 mt-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="text-sm font-medium text-gray-500">Pending Revenue</div>
+              <div className="text-2xl font-bold text-gray-800 mt-1">₹{stats.pendingRevenue?.toLocaleString() || 0}</div>
+              <div className="text-xs font-medium mt-2 text-orange-500 flex items-center">
+                <FaHourglassHalf className="mr-1" />
+                Awaiting payment
+              </div>
+            </div>
+            <div className="p-3 bg-orange-100 rounded-lg">
+              <MdPendingActions className="text-2xl text-orange-500" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="text-sm font-medium text-gray-500">Avg Transaction</div>
+              <div className="text-2xl font-bold text-gray-800 mt-1">₹{stats.avgTransactionValue?.toLocaleString() || 0}</div>
+              <div className="text-xs font-medium mt-2 text-teal-500 flex items-center">
+                <FaChartLine className="mr-1" />
+                Per service
+              </div>
+            </div>
+            <div className="p-3 bg-teal-100 rounded-lg">
+              <GiTakeMyMoney className="text-2xl text-teal-500" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="text-sm font-medium text-gray-500">Completion Rate</div>
+              <div className="text-2xl font-bold text-gray-800 mt-1">{stats.completionRate || 0}%</div>
+              <div className="text-xs font-medium mt-2 text-green-500 flex items-center">
+                <FaCheckCircle className="mr-1" />
+                Services completed
+              </div>
+            </div>
+            <div className="p-3 bg-green-100 rounded-lg">
+              <BsClipboardCheck className="text-2xl text-green-500" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="text-sm font-medium text-gray-500">Testimonials</div>
+              <div className="text-2xl font-bold text-gray-800 mt-1">{stats.testimonials?.approved || 0}/{stats.testimonials?.total || 0}</div>
+              <div className="text-xs font-medium mt-2 text-pink-500 flex items-center">
+                <MdRateReview className="mr-1" />
+                {stats.testimonials?.pending || 0} pending
+              </div>
+            </div>
+            <div className="p-3 bg-pink-100 rounded-lg">
+              <FaComments className="text-2xl text-pink-500" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Row 3 - Revenue & Payment Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Revenue by Service Type */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Revenue by Service Type</h4>
+            <div className="text-sm text-gray-500">Total: ₹{stats.revenue?.toLocaleString()}</div>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie 
+                  data={Object.entries(stats.revenueByService || {}).map(([key, value]) => ({
+                    name: key,
+                    value: value
+                  }))}
+                  dataKey="value" 
+                  nameKey="name" 
+                  cx="50%" 
+                  cy="50%" 
+                  outerRadius={100}
+                  innerRadius={60}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {Object.keys(stats.revenueByService || {}).map((entry, idx) => (
+                    <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, '']} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Payment Status Overview */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Payment Status</h4>
+            <div className="text-sm text-gray-500">Transactions</div>
+          </div>
+          <div className="h-80 flex flex-col justify-center">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="text-center p-6 bg-green-50 rounded-xl border-2 border-green-200">
+                <FaCheckCircle className="text-4xl text-green-500 mx-auto mb-3" />
+                <div className="text-3xl font-bold text-green-700">{stats.paymentStatus?.paid || 0}</div>
+                <div className="text-sm text-gray-600 mt-1">Paid Bills</div>
+                <div className="text-lg font-semibold text-green-600 mt-2">
+                  ₹{stats.paymentStatus?.paidAmount?.toLocaleString() || 0}
+                </div>
+              </div>
+              <div className="text-center p-6 bg-orange-50 rounded-xl border-2 border-orange-200">
+                <FaHourglassHalf className="text-4xl text-orange-500 mx-auto mb-3" />
+                <div className="text-3xl font-bold text-orange-700">{stats.paymentStatus?.pending || 0}</div>
+                <div className="text-sm text-gray-600 mt-1">Pending Bills</div>
+                <div className="text-lg font-semibold text-orange-600 mt-2">
+                  ₹{stats.paymentStatus?.pendingAmount?.toLocaleString() || 0}
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Payment Completion Rate</span>
+                <span className="text-lg font-bold text-blue-600">
+                  {stats.paymentStatus?.paid && stats.paymentStatus?.pending 
+                    ? Math.round((stats.paymentStatus.paid / (stats.paymentStatus.paid + stats.paymentStatus.pending)) * 100)
+                    : 0}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className="bg-green-500 h-2 rounded-full transition-all duration-500"
+                  style={{ 
+                    width: `${stats.paymentStatus?.paid && stats.paymentStatus?.pending 
+                      ? Math.round((stats.paymentStatus.paid / (stats.paymentStatus.paid + stats.paymentStatus.pending)) * 100)
+                      : 0}%` 
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Row 4 - Testimonials & Suggestions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Testimonials by Service */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Testimonials by Service</h4>
+            <div className="text-sm text-gray-500">{stats.testimonials?.total || 0} Total</div>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart 
+                data={Object.entries(stats.testimonials?.byService || {}).map(([key, value]) => ({
+                  name: key,
+                  count: value
+                }))}
+                layout="vertical"
+              >
+                <defs>
+                  <linearGradient id="colorTestimonials" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#ec4899" stopOpacity={0.4}/>
+                  </linearGradient>
+                </defs>
+                <XAxis type="number" />
+                <YAxis dataKey="name" type="category" width={120} />
+                <Tooltip />
+                <Bar dataKey="count" fill="url(#colorTestimonials)" radius={[0, 8, 8, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Suggestions Status */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Suggestions Status</h4>
+            <div className="text-sm text-gray-500">{stats.suggestions?.total || 0} Total</div>
+          </div>
+          <div className="h-80 flex items-center justify-center">
+            <div className="w-full max-w-md">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie 
+                    data={[
+                      { name: 'Open', value: stats.suggestions?.byStatus?.open || 0, color: '#f59e0b' },
+                      { name: 'Reviewed', value: stats.suggestions?.byStatus?.reviewed || 0, color: '#3b82f6' },
+                      { name: 'Resolved', value: stats.suggestions?.byStatus?.resolved || 0, color: '#10b981' }
+                    ]}
+                    dataKey="value" 
+                    nameKey="name" 
+                    cx="50%" 
+                    cy="50%" 
+                    outerRadius={80}
+                    label
+                  >
+                    {[0, 1, 2].map((idx) => (
+                      <Cell key={`cell-${idx}`} fill={[' #f59e0b', '#3b82f6', '#10b981'][idx]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Row 5 - Service Performance */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Top 5 Requested Services */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Top Requested Services</h4>
+            <FaTrophy className="text-yellow-500 text-xl" />
+          </div>
+          <div className="space-y-4">
+            {(stats.serviceRequests || []).slice(0, 5).map((service, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
+                    index === 0 ? 'bg-yellow-500' : 
+                    index === 1 ? 'bg-gray-400' : 
+                    index === 2 ? 'bg-amber-600' : 'bg-gray-300'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-800">{service.name}</div>
+                    <div className="text-sm text-gray-500">{service.count} requests</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full"
+                      style={{ width: `${(service.count / (stats.serviceRequests[0]?.count || 1)) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Service Processing Time */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Avg Processing Time</h4>
+            <FaClock className="text-blue-500 text-xl" />
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.processingTime || []} layout="horizontal">
+                <defs>
+                  <linearGradient id="colorProcessing" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="service" angle={-15} textAnchor="end" height={80} />
+                <YAxis label={{ value: 'Days', angle: -90, position: 'insideLeft' }} />
+                <Tooltip formatter={(value) => [`${value} days`, 'Processing Time']} />
+                <Bar dataKey="days" fill="url(#colorProcessing)" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Row 6 - Conversion & Retention */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Conversion Funnel */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">Conversion Funnel</h4>
+            <div className="text-sm text-gray-500">{stats.conversionFunnel?.conversionRate || 0}% Rate</div>
+          </div>
+          <div className="h-80 flex flex-col justify-center space-y-4">
+            <div className="relative">
+              <div className="flex items-center justify-between p-4 bg-blue-100 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <FaUsers className="text-2xl text-blue-600" />
+                  <div>
+                    <div className="font-semibold text-gray-800">Visited</div>
+                    <div className="text-sm text-gray-600">Total visitors</div>
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-blue-600">{stats.conversionFunnel?.visited || 0}</div>
+              </div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-3 text-gray-400">
+                <FaArrowDown className="text-xl" />
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="flex items-center justify-between p-4 bg-purple-100 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <FaChartBar className="text-2xl text-purple-600" />
+                  <div>
+                    <div className="font-semibold text-gray-800">Started</div>
+                    <div className="text-sm text-gray-600">Began process</div>
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-purple-600">{stats.conversionFunnel?.started || 0}</div>
+              </div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-3 text-gray-400">
+                <FaArrowDown className="text-xl" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-green-100 rounded-lg">
+              <div className="flex items-center gap-3">
+                <FaCheckCircle className="text-2xl text-green-600" />
+                <div>
+                  <div className="font-semibold text-gray-800">Completed</div>
+                  <div className="text-sm text-gray-600">Finished service</div>
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-green-600">{stats.conversionFunnel?.completed || 0}</div>
+            </div>
+
+            <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-700">Conversion Rate</span>
+                <span className="text-2xl font-bold text-green-600">{stats.conversionFunnel?.conversionRate || 0}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* User Retention */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-semibold text-gray-700 text-lg">User Retention</h4>
+            <div className="text-sm text-gray-500">Monthly cohorts</div>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={stats.retentionData || []}>
+                <defs>
+                  <linearGradient id="colorRetention" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" />
+                <YAxis label={{ value: 'Retention %', angle: -90, position: 'insideLeft' }} />
+                <Tooltip formatter={(value) => [`${value}%`, 'Retention']} />
+                <Line 
+                  type="monotone" 
+                  dataKey="retention" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#8b5cf6', r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Action Cards & Real-time Feed */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Pending Actions */}
+        <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl shadow-sm border border-orange-200 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-orange-500 rounded-lg">
+              <MdPendingActions className="text-2xl text-white" />
+            </div>
+            <h4 className="font-semibold text-gray-700 text-lg">Pending Actions</h4>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Testimonials to Review</span>
+              <span className="font-bold text-orange-600">{stats?.testimonials?.pending || 0}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Pending Payments</span>
+              <span className="font-bold text-orange-600">{stats?.paymentStatus?.pending || 0}</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Open Suggestions</span>
+              <span className="font-bold text-orange-600">{stats?.suggestions?.byStatus?.open || 0}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Today's Summary */}
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-sm border border-blue-200 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-blue-500 rounded-lg">
+              <FaRegCalendarCheck className="text-2xl text-white" />
+            </div>
+            <h4 className="font-semibold text-gray-700 text-lg">Today's Activity</h4>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">New Signups</span>
+              <span className="font-bold text-blue-600">
+                {stats.dailyActivity?.[stats.dailyActivity.length - 1]?.Signups || 0}
+              </span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Service Forms</span>
+              <span className="font-bold text-blue-600">
+                {stats.dailyActivity?.[stats.dailyActivity.length - 1]?.["Service Forms"] || 0}
+              </span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Total Activity</span>
+              <span className="font-bold text-blue-600">
+                {stats.dailyActivity?.[stats.dailyActivity.length - 1]?.["Total Activity"] || 0}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl shadow-sm border border-green-200 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 bg-green-500 rounded-lg">
+              <MdTrendingUp className="text-2xl text-white" />
+            </div>
+            <h4 className="font-semibold text-gray-700 text-lg">Key Metrics</h4>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Completion Rate</span>
+              <span className="font-bold text-green-600">{stats.completionRate || 0}%</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Conversion Rate</span>
+              <span className="font-bold text-green-600">{stats.conversionFunnel?.conversionRate || 0}%</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-white rounded-lg">
+              <span className="text-sm text-gray-600">Active Users</span>
+              <span className="font-bold text-green-600">{Math.round((stats.active / stats.total) * 100) || 0}%</span>
+            </div>
           </div>
         </div>
       </div>

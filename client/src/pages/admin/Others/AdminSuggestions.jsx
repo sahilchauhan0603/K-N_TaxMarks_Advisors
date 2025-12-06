@@ -15,6 +15,7 @@ import {
   FaEnvelope,
   FaTag,
   FaStickyNote,
+  FaCheckCircle,
 } from "react-icons/fa";
 import { MdMessage, MdSubject } from "react-icons/md";
 import Swal from "sweetalert2";
@@ -132,6 +133,19 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
   };
 
   const toggleReadStatus = async (suggestionId, currentStatus) => {
+    // Find the suggestion to check if it's resolved
+    const suggestion = suggestions.find(s => s._id === suggestionId);
+    
+    if (suggestion?.status === 'Resolved') {
+      Swal.fire({
+        title: "Cannot Modify",
+        text: "This suggestion has been resolved and cannot be modified.",
+        icon: "info",
+        confirmButtonColor: "#3b82f6",
+      });
+      return;
+    }
+
     try {
       await axios.put(`/api/suggestions/${suggestionId}/read`, {
         isRead: !currentStatus,
@@ -190,6 +204,61 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
       } catch (error) {
         console.error("Error deleting suggestion:", error);
         Swal.fire("Error", "Failed to delete suggestion", "error");
+      }
+    }
+  };
+
+  const markAsResolved = async (suggestionId) => {
+    // Find the suggestion to check if it's been read
+    const suggestion = suggestions.find(s => s._id === suggestionId);
+    
+    if (!suggestion?.isRead) {
+      Swal.fire({
+        title: "Cannot Mark as Resolved",
+        text: "Please mark this suggestion as read first before resolving it.",
+        icon: "warning",
+        confirmButtonColor: "#3b82f6",
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: "Mark as Resolved?",
+      text: "This will mark the suggestion as resolved.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#8b5cf6",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, mark as resolved!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.put(`/api/suggestions/${suggestionId}/status`, {
+          status: 'Resolved'
+        });
+        
+        setSuggestions((prev) =>
+          prev.map((suggestion) =>
+            suggestion._id === suggestionId
+              ? { ...suggestion, status: 'Resolved' }
+              : suggestion
+          )
+        );
+        
+        fetchStats(); // Refresh stats
+
+        Swal.fire({
+          title: "Resolved!",
+          text: "Suggestion has been marked as resolved.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error("Error marking as resolved:", error);
+        Swal.fire("Error", "Failed to mark suggestion as resolved", "error");
       }
     }
   };
@@ -562,14 +631,37 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
                           onClick={() =>
                             toggleReadStatus(suggestion._id, suggestion.isRead)
                           }
-                          className="text-green-600 hover:text-green-900 cursor-pointer transition-colors"
+                          className={`transition-colors ${
+                            suggestion.status === 'Resolved'
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "text-green-600 hover:text-green-900 cursor-pointer"
+                          }`}
                           title={
-                            suggestion.isRead
+                            suggestion.status === 'Resolved'
+                              ? "Cannot modify - Already resolved"
+                              : suggestion.isRead
                               ? "Mark as Unread"
                               : "Mark as Read"
                           }
+                          disabled={suggestion.status === 'Resolved'}
                         >
                           {suggestion.isRead ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                        <button
+                          onClick={() => markAsResolved(suggestion._id)}
+                          className={`transition-colors ${
+                            suggestion.isRead
+                              ? "text-purple-600 hover:text-purple-900 cursor-pointer"
+                              : "text-gray-300 cursor-not-allowed"
+                          }`}
+                          title={
+                            suggestion.isRead
+                              ? "Mark as Resolved"
+                              : "Mark as Read first"
+                          }
+                          disabled={!suggestion.isRead}
+                        >
+                          <FaCheckCircle />
                         </button>
                         <button
                           onClick={() => deleteSuggestion(suggestion._id)}
