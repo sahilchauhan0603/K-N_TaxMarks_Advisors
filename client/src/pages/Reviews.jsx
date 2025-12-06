@@ -403,28 +403,44 @@ const Reviews = () => {
             ))}
             </div>
 
-            {/* Show More Button */}
-            {hasMoreTestimonials && (
-              <div className="text-center pt-8">
-                <button
-                  onClick={loadMoreTestimonials}
-                  disabled={loadingMore}
-                  className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 mx-auto min-w-48"
-                >
-                  {loadingMore ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Loading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Show More Reviews</span>
-                      <div className="bg-white/20 px-2 py-1 rounded-full text-xs">
-                        +{Math.min(ITEMS_PER_LOAD, filteredTestimonials.length - displayedCount)}
-                      </div>
-                    </>
-                  )}
-                </button>
+            {/* Show More/Less Buttons */}
+            {(hasMoreTestimonials || displayedCount > ITEMS_PER_LOAD) && (
+              <div className="flex justify-center gap-4 pt-8">
+                {/* Show Less Button */}
+                {displayedCount > ITEMS_PER_LOAD && (
+                  <button
+                    onClick={() => setDisplayedCount(ITEMS_PER_LOAD)}
+                    className="cursor-pointer bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center gap-3 min-w-48"
+                  >
+                    <span>Less</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                    </svg>
+                  </button>
+                )}
+
+                {/* Show More Button */}
+                {hasMoreTestimonials && (
+                  <button
+                    onClick={loadMoreTestimonials}
+                    disabled={loadingMore}
+                    className="cursor-pointer bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 min-w-48"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        <span>Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>More</span>
+                        <div className="bg-white/20 px-2 py-1 rounded-full text-xs">
+                          +{Math.min(ITEMS_PER_LOAD, filteredTestimonials.length - displayedCount)}
+                        </div>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
           </div>

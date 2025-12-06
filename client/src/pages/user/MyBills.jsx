@@ -745,7 +745,7 @@ const MyBills = () => {
       {/* Detailed Bill Modal */}
       {showBillModal && selectedBill && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/40 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
               <div className="flex items-center justify-between">
@@ -1002,12 +1002,12 @@ const MyBills = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-                <button
+                {/* <button
                   onClick={closeBillModal}
                   className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg cursor-pointer transition-colors"
                 >
                   Close
-                </button>
+                </button> */}
                 
                 {(selectedBill.status === "Pending" || selectedBill.status === "Overdue") && (
                   <button
@@ -1031,7 +1031,7 @@ const MyBills = () => {
                   </button>
                 )}
                 
-                <button
+                {/* <button
                   onClick={() => {
                     // Handle download functionality
                     console.log('Download invoice for:', selectedBill.billNumber);
@@ -1040,7 +1040,7 @@ const MyBills = () => {
                 >
                   <Download className="w-5 h-5" />
                   Download
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
