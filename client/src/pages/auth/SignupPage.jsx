@@ -112,10 +112,10 @@ const SignupPage = () => {
     const fetchStats = async () => {
       try {
         const response = await axios.get('/api/stats/public');
-        if (response.data) {
+        if (response.data.success && response.data.stats) {
           setStats({
-            totalClients: response.data.totalClients || 1000,
-            satisfactionRate: response.data.satisfactionRate || 98.5,
+            totalClients: response.data.stats.totalClients || 1000,
+            satisfactionRate: response.data.stats.satisfactionRate || 98.5,
           });
         }
       } catch (error) {
@@ -483,7 +483,7 @@ const SignupPage = () => {
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             {/* Logo for mobile */}
             <Link to="/" className="flex justify-center mb-6 lg:hidden">
-              <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
+              <div className="bg-white p-2 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
                 <img
                   src={logo}
                   alt="K-N Taxmarks Advisors"
@@ -578,12 +578,12 @@ const SignupPage = () => {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="flex justify-center">
                     <button
                       type="button"
                       onClick={handleSendOTP}
                       disabled={isLoading}
-                      className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
+                      className="group relative w-64 flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg"
                     >
                       {isLoading ? (
                         <svg
@@ -629,12 +629,19 @@ const SignupPage = () => {
                     <div className="mt-6 flex justify-center">
                       <button
                         type="button"
-                        onClick={() =>
-                          (window.location.href =
-                            import.meta.env.VITE_GOOGLE_AUTH_URL ||
-                            "http://localhost:5000/api/auth/google")
-                        }
-                        className="w-[150px] max-w-xs cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                        onClick={() => {
+                          const googleAuthUrl = import.meta.env.VITE_GOOGLE_AUTH_URL || "http://localhost:5000/api/auth/google";
+                          const width = 500;
+                          const height = 600;
+                          const left = window.screen.width / 2 - width / 2;
+                          const top = window.screen.height / 2 - height / 2;
+                          window.open(
+                            googleAuthUrl,
+                            'Google Sign In',
+                            `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes,resizable=yes`
+                          );
+                        }}
+                        className="w-64 cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                       >
                         <svg
                           className="w-5 h-5"

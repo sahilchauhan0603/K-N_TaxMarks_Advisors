@@ -154,8 +154,8 @@ const ForgotPasswordPage = () => {
                 cx="200"
                 cy="200"
                 r="150"
-                fill="white"
-                fillOpacity="0.1"
+                fill="#EEF2FF"
+                fillOpacity="0.5"
                 // stroke="black"
               />
               {/* Lock icon */}
@@ -238,7 +238,7 @@ const ForgotPasswordPage = () => {
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             {/* Logo for mobile */}
             <Link to="/" className="flex justify-center mb-6 lg:hidden">
-              <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
+              <div className="bg-white p-2 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
                 <img
                   src={logo}
                   alt="K-N Taxmarks Advisors"
@@ -316,11 +316,11 @@ const ForgotPasswordPage = () => {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="flex justify-center">
                     <button
                       onClick={handleSendOTP}
                       disabled={isLoading}
-                      className="w-full flex justify-center cursor-pointer py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                      className="w-64 flex justify-center cursor-pointer py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                     >
                       {isLoading ? (
                         <svg
@@ -502,11 +502,12 @@ const ForgotPasswordPage = () => {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <button
-                      onClick={handleResetPassword}
-                      disabled={isLoading}
-                      className="w-full flex cursor-pointer justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
-                    >
+                    <div className="flex justify-center">
+                      <button
+                        onClick={handleResetPassword}
+                        disabled={isLoading}
+                        className="w-64 flex cursor-pointer justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                      >
                       {isLoading ? (
                         <svg
                           className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -532,15 +533,18 @@ const ForgotPasswordPage = () => {
                         <FiLock className="mr-2" />
                       )}
                       {isLoading ? "Resetting..." : "Reset Password"}
-                    </button>
+                      </button>
+                    </div>
 
-                    <button
-                      onClick={() => setStep(1)}
-                      className="w-full flex justify-center cursor-pointer py-2 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 shadow-sm"
-                    >
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => setStep(1)}
+                        className="w-64 flex justify-center cursor-pointer py-2 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 shadow-sm"
+                      >
                       <FiArrowLeft className="mr-2" />
                       Back to Email Entry
-                    </button>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

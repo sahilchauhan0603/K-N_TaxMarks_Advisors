@@ -4,7 +4,6 @@ import { FiUser, FiLogOut, FiLogIn, FiStar, FiBookmark, FiShield, FiTrendingUp }
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import HeadlineBanner from "./HeadlineBanner";
 
 const Navbar = () => {
   const [showLogoutMsg, setShowLogoutMsg] = useState(false);
@@ -429,9 +428,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      
-      {/* Headline Banner - Below Navbar */}
-      <HeadlineBanner />
     </>
   );
 };

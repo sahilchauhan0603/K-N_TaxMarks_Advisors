@@ -147,8 +147,8 @@ const CompleteProfilePage = () => {
                 cx="200"
                 cy="200"
                 r="150"
-                fill="white"
-                fillOpacity="0.1"
+                fill="#EEF2FF"
+                fillOpacity="0.5"
               />
               {/* Profile completion */}
               <circle cx="200" cy="180" r="50" fill="white" fillOpacity="0.9" />
@@ -243,7 +243,7 @@ const CompleteProfilePage = () => {
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             {/* Logo for mobile */}
             <Link to="/" className="flex justify-center mb-6 lg:hidden">
-              <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
+              <div className="bg-white p-2 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
                 <img
                   src={logo}
                   alt="K-N Taxmarks Advisors"
@@ -403,11 +403,11 @@ const CompleteProfilePage = () => {
                   </div>
                 </div>
 
-                <div>
+                <div className="flex justify-center">
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="group relative w-full cursor-pointer flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+                    className="group relative w-64 cursor-pointer flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
                   >
                     {isLoading ? (
                       <svg

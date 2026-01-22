@@ -4,6 +4,7 @@ import { FiArrowRight, FiCheckCircle, FiBarChart2, FiUsers, FiMail, FiTarget } f
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useAuth } from '../context/AuthContext';
+import HeadlineBanner from '../components/HeadlineBanner';
 
 const heroImage = "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80";
 const dashboardImage = "https://images.unsplash.com/photo-1516534775068-ba3e7458af70?auto=format&fit=crop&w=1000&q=80";
@@ -198,6 +199,8 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 overflow-x-hidden">
+      {/* Headline Banner */}
+      <HeadlineBanner />
       {/* Hero Section */}
       <div className="w-full">
         <motion.section 
