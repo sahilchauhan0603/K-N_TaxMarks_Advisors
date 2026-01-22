@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import axios from "../../utils/axios";
 import {
   FiMail,
   FiLock,
@@ -9,7 +10,9 @@ import {
   FiEyeOff,
   FiAlertCircle,
   FiCheckCircle,
+  FiShield,
 } from "react-icons/fi";
+import logo from "../../assets/logo.png";
 
 const LoginPage = () => {
   const location = useLocation();
@@ -22,7 +25,30 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [hasFormData, setHasFormData] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [stats, setStats] = useState({
+    totalClients: 1000,
+    yearsOfExperience: 10,
+  });
   const { login } = useAuth();
+
+  // Fetch real stats from backend
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get('/api/stats/public');
+        if (response.data) {
+          setStats({
+            totalClients: response.data.totalClients || 1000,
+            yearsOfExperience: response.data.yearsOfExperience || 10,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        // Keep default fallback values if fetch fails
+      }
+    };
+    fetchStats();
+  }, []);
 
   // Page reload warning effect
   useEffect(() => {
@@ -97,54 +123,141 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* Back to Home Link */}
-      <div className="absolute top-3 left-6">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
-        >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Back to Home
-        </Link>
-      </div>
-      
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* <div className="flex justify-center mb-4">
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-4 shadow-lg transform hover:scale-105 transition-transform duration-200">
-            <FiLock className="text-white text-3xl" />
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex overflow-hidden">
+      {/* Left Side - Image/Illustration Section - Hidden on mobile */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 via-indigo-100 to-blue-100 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+        </div>
+        
+        <div className="relative z-10 flex flex-col justify-center items-center px-8 py-6 text-gray-800 w-full">
+          {/* Logo */}
+          <div className="mb-4 relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+            <div className="relative bg-white/95 backdrop-blur-xl p-2 rounded-2xl border-2 border-blue-300/50 shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 hover:scale-105">
+              <img src={logo} alt="K-N Taxmarks Advisors" className="h-16 w-auto" />
+            </div>
           </div>
-        </div> */}
-        <h2 className="text-center text-3xl font-bold text-gray-900">
-          Welcome Back
-        </h2>
-        {/* <p className="mt-1 text-center text-sm text-gray-600">
-          Sign in to continue to your account
-        </p> */}
+          
+          {/* Illustration - Tax/Finance SVG */}
+          <div className="mb-4">
+            <svg className="w-48 h-48" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Calculator/Document Illustration */}
+              <circle cx="200" cy="200" r="150" fill="white" fillOpacity="0.1" />
+              <rect x="120" y="100" width="160" height="200" rx="10" fill="white" fillOpacity="0.9" />
+              <rect x="140" y="120" width="120" height="30" rx="5" fill="#3B82F6" />
+              <circle cx="150" cy="170" r="8" fill="#60A5FA" />
+              <circle cx="180" cy="170" r="8" fill="#60A5FA" />
+              <circle cx="210" cy="170" r="8" fill="#60A5FA" />
+              <circle cx="240" cy="170" r="8" fill="#60A5FA" />
+              <rect x="140" y="200" width="120" height="4" rx="2" fill="#E0E7FF" />
+              <rect x="140" y="215" width="90" height="4" rx="2" fill="#E0E7FF" />
+              <rect x="140" y="230" width="100" height="4" rx="2" fill="#E0E7FF" />
+              <path d="M180 260 L200 280 L240 240" stroke="#10B981" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold mb-2 drop-shadow-sm text-gray-800">Trusted Tax Solutions</h1>
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              Access your account to manage filings, track submissions, and stay updated with the latest tax regulations.
+            </p>
+            <div className="grid grid-cols-2 gap-3 text-xs mb-4">
+              <div className="bg-white/70 backdrop-blur-sm rounded-lg p-2 border border-blue-200 shadow-sm">
+                <div className="text-xl font-bold text-blue-600">{stats.yearsOfExperience}+</div>
+                <div className="text-gray-600 text-[10px]">Years Experience</div>
+              </div>
+              <div className="bg-white/70 backdrop-blur-sm rounded-lg p-2 border border-blue-200 shadow-sm">
+                <div className="text-xl font-bold text-blue-600">{stats.totalClients}+</div>
+                <div className="text-gray-600 text-[10px]">Happy Clients</div>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-4 text-xs text-gray-700">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="font-medium">Secure Platform</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="font-medium">24/7 Support</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full ml-4 mr-4 sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
+      {/* Right Side - Form Section */}
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+        <div className="flex-1 flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-12 xl:px-16 relative">
+          {/* Back to Home Link */}
+          <div className="absolute top-4 left-4">
+            <Link
+              to="/"
+              className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Home
+            </Link>
+          </div>
+        
+          <div className="sm:mx-auto sm:w-full sm:max-w-md">
+            {/* Logo for mobile */}
+            <Link to="/" className="flex justify-center mb-4 lg:hidden">
+              <div className="bg-white p-4 rounded-2xl shadow-lg border-2 border-blue-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300">
+                <img
+                  src={logo}
+                  alt="K-N Taxmarks Advisors"
+                  className="h-12 w-auto object-contain"
+                />
+              </div>
+            </Link>
+            
+            <h2 className="text-center text-2xl lg:text-3xl font-bold text-gray-900">
+              Welcome Back
+            </h2>
+            <p className="mt-1 text-center text-sm text-gray-600">
+              Sign in to continue to your account
+            </p>
+            
+            {/* Trust Indicators */}
+            <div className="mt-3 flex items-center justify-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <FiShield className="text-green-600" />
+                <span>Secure Login</span>
+              </div>
+              <div className="h-3 w-px bg-gray-300"></div>
+              <div className="flex items-center gap-1">
+                <FiLock className="text-blue-600" />
+                <span>SSL Encrypted</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="bg-white py-6 px-6 shadow-xl rounded-2xl sm:px-8 border border-gray-100">
           {message && (
             <div
-              className={`mb-4 p-4 rounded-lg flex items-start gap-3 ${
+              className={`mb-3 p-3 rounded-lg flex items-start gap-3 ${
                 messageType === "error"
                   ? "bg-red-50 text-red-800 border border-red-200"
                   : "bg-green-50 text-green-800 border border-green-200"
               }`}
             >
               {messageType === "error" ? (
-                <FiAlertCircle className="text-red-500 text-xl mt-0.5 flex-shrink-0" />
+                <FiAlertCircle className="text-red-500 text-lg mt-0.5 flex-shrink-0" />
               ) : (
-                <FiCheckCircle className="text-green-500 text-xl mt-0.5 flex-shrink-0" />
+                <FiCheckCircle className="text-green-500 text-lg mt-0.5 flex-shrink-0" />
               )}
-              <span>{message}</span>
+              <span className="text-sm">{message}</span>
             </div>
           )}
 
-          <form className="space-y-5" onSubmit={handleLogin}>
+          <form className="space-y-4" onSubmit={handleLogin}>
             <div>
               <label
                 htmlFor="email"
@@ -343,6 +456,26 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+        </div>
+      </div>
+      
+      <style jsx>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(20px, -50px) scale(1.1); }
+          50% { transform: translate(-20px, 20px) scale(0.9); }
+          75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   );
 };

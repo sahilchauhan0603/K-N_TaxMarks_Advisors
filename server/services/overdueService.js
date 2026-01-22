@@ -1,6 +1,7 @@
 const Bill = require('../models/Bill');
 const User = require('../models/User');
 const sendMail = require('../utils/mailer');
+const mongoose = require('mongoose');
 
 class OverdueService {
   constructor() {
@@ -18,6 +19,12 @@ class OverdueService {
 
   // Process overdue bills - update amounts and send notifications
   async processOverdueBills() {
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.log('⚠️  Overdue service skipped - MongoDB not connected');
+      return;
+    }
+
     if (this.isRunning) {
       return;
     }

@@ -4,6 +4,7 @@ import { FiUser, FiLogOut, FiLogIn, FiStar, FiBookmark, FiShield, FiTrendingUp }
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import HeadlineBanner from "./HeadlineBanner";
 
 const Navbar = () => {
   const [showLogoutMsg, setShowLogoutMsg] = useState(false);
@@ -74,6 +75,7 @@ const Navbar = () => {
           </div>
         </div>
       )}
+      
       <nav
         className={`bg-gradient-to-r from-white via-blue-50 to-white shadow-xl sticky top-0 z-50 transition-transform duration-300 border-b-2 border-blue-100 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
@@ -427,6 +429,9 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      
+      {/* Headline Banner - Below Navbar */}
+      <HeadlineBanner />
     </>
   );
 };

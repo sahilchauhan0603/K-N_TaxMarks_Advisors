@@ -24,6 +24,7 @@ const suggestionsRoutes = require('./routes/suggestions');
 const servicesRoutes = require('./routes/services');
 const pricingRoutes = require('./routes/pricing');
 const chatbotRoutes = require('./routes/chatbot');
+const statsRoutes = require('./routes/stats');
 const path = require('path');
 
 const app = express();
@@ -74,6 +75,7 @@ app.use('/api/services', servicesRoutes);
 app.use('/api/pricing', pricingRoutes);
 app.use('/api/bills', require('./routes/bills'));
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -84,8 +86,11 @@ app.use((err, req, res, next) => {
 connectDB();
 
 // Start overdue service for bill reminders and penalty calculations
-const overdueService = require('./services/overdueService');
-overdueService.startPeriodicCheck();
+// Only start after a delay to ensure MongoDB is connected
+setTimeout(() => {
+  const overdueService = require('./services/overdueService');
+  overdueService.startPeriodicCheck();
+}, 5000); // Wait 5 seconds for MongoDB to connect
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
