@@ -256,7 +256,7 @@ const Reviews = () => {
               <FaQuoteLeft className="w-10 h-10 text-slate-600" />
             </div>
           </div> */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-gray-800">
+          <h1 className="text-4xl md:text-4xl font-bold mb-6 leading-tight text-gray-800">
             Client Reviews & Testimonials
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
