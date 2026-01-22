@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiUser, FiLogOut, FiLogIn, FiStar, FiBookmark } from "react-icons/fi";
+import { FiUser, FiLogOut, FiLogIn, FiStar, FiBookmark, FiShield, FiTrendingUp } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
@@ -75,30 +75,38 @@ const Navbar = () => {
         </div>
       )}
       <nav
-        className={`bg-gray-50 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
+        className={`bg-gradient-to-r from-white via-blue-50 to-white shadow-xl sticky top-0 z-50 transition-transform duration-300 border-b-2 border-blue-100 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0 flex items-center">
-                {/* Logo */}
+              <Link to="/" className="flex-shrink-0 flex items-center group">
+                {/* Logo with hover effect */}
                 <img
                   src={logo}
                   alt="Logo"
-                  className="h-25 w-25 mr-2 object-contain"
+                  className="h-25 w-25 mr-3 object-contain transition-transform duration-300 group-hover:scale-110"
                 />
-                {/* <span className="text-2xl font-bold text-blue-600">K&N TaxMark Advisors</span> */}
+                {/* Tagline for larger screens */}
+                <div className="hidden lg:flex flex-col">
+                  <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider flex items-center gap-1">
+                    <FiShield className="w-3 h-3" /> Trusted Tax Experts
+                  </span>
+                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                    <FiTrendingUp className="w-3 h-3" /> Your Financial Growth Partner
+                  </span>
+                </div>
               </Link>
 
               <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4 relative">
                 <NavLink to="/" text="Home" />
                 <div className="relative group">
-                  <button className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center gap-1 focus:outline-none">
+                  <button className="px-3 py-2 rounded-md text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 flex items-center gap-1 focus:outline-none">
                     Services
                     <svg
-                      className="w-4 h-4"
+                      className="w-4 h-4 transition-transform group-hover:rotate-180 duration-300"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -111,12 +119,12 @@ const Navbar = () => {
                       />
                     </svg>
                   </button>
-                  <div className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition-opacity duration-200">
+                  <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition-all duration-200 border border-blue-100">
                     <button
                       onClick={() =>
                         handleProtectedRoute("/services/tax-planning")
                       }
-                      className="block px-4 cursor-pointer py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                      className="block px-4 cursor-pointer py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 w-full text-left font-medium rounded-t-xl transition-all duration-200"
                     >
                       Tax Planning
                     </button>
@@ -124,7 +132,7 @@ const Navbar = () => {
                       onClick={() =>
                         handleProtectedRoute("/services/itr-filing")
                       }
-                      className="block px-4 py-2 cursor-pointer text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                      className="block px-4 py-3 cursor-pointer text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 w-full text-left font-medium transition-all duration-200"
                     >
                       ITR Filing
                     </button>
@@ -132,7 +140,7 @@ const Navbar = () => {
                       onClick={() =>
                         handleProtectedRoute("/services/gst-filing")
                       }
-                      className="block px-4 py-2 cursor-pointer text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                      className="block px-4 py-3 cursor-pointer text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 w-full text-left font-medium transition-all duration-200"
                     >
                       GST Filing
                     </button>
@@ -140,7 +148,7 @@ const Navbar = () => {
                       onClick={() =>
                         handleProtectedRoute("/services/trademark")
                       }
-                      className="block px-4 py-2 cursor-pointer text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                      className="block px-4 py-3 cursor-pointer text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 w-full text-left font-medium transition-all duration-200"
                     >
                       Trademark & Legal
                     </button>
@@ -148,7 +156,7 @@ const Navbar = () => {
                       onClick={() =>
                         handleProtectedRoute("/services/business-advisory")
                       }
-                      className="block px-4 py-2 cursor-pointer text-gray-700 hover:bg-blue-50 hover:text-blue-700 w-full text-left"
+                      className="block px-4 py-3 cursor-pointer text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 w-full text-left font-medium rounded-b-xl transition-all duration-200"
                     >
                       Business Advisory
                     </button>
@@ -156,16 +164,18 @@ const Navbar = () => {
                 </div>
                 <button
                   onClick={() => navigate("/reviews")}
-                  className="px-3 py-2 rounded-md cursor-pointer text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center gap-1"
+                  className="px-3 py-2 rounded-md cursor-pointer text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 flex items-center gap-1 relative group"
                 >
                   {/* <FiStar className="w-4 h-4" /> */}
                   Reviews
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </button>
                 <button
                   onClick={() => navigate("/contact-us")}
-                  className="px-3 py-2 rounded-md cursor-pointer text-sm font-medium text-black hover:text-blue-600 transition duration-300"
+                  className="px-3 py-2 rounded-md cursor-pointer text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 relative group"
                 >
                   Contact Us
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </button>
               </div>
             </div>
@@ -225,9 +235,12 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => navigate("/login")}
-                  className="ml-4 px-4 py-2 cursor-pointer bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg font-semibold items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 hidden md:inline-flex"
+                  className="ml-4 px-6 py-2.5 cursor-pointer bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white rounded-xl font-bold items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 transform transition-all duration-300 hidden md:inline-flex relative overflow-hidden group"
                 >
-                  <FiLogIn className="text-lg" /> Login
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                  <FiLogIn className="text-lg relative z-10" /> 
+                  <span className="relative z-10">Login</span>
+                  <span className="absolute right-0 top-0 h-full w-0 bg-white opacity-20 group-hover:w-full transition-all duration-500"></span>
                 </button>
               )}
 
@@ -404,9 +417,11 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => navigate("/login")}
-                className="cursor-pointer px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-blue-700 flex items-center gap-2 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200 mt-2"
+                className="cursor-pointer px-4 py-2.5 rounded-xl text-base font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 transform transition-all duration-300 mt-2 w-full justify-center group relative overflow-hidden"
               >
-                <FiLogIn className="text-lg" /> Login
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                <FiLogIn className="text-lg relative z-10" /> 
+                <span className="relative z-10">Login Now</span>
               </button>
             )}
           </div>
@@ -419,9 +434,10 @@ const Navbar = () => {
 const NavLink = ({ to, text }) => (
   <Link
     to={to}
-    className="px-3 py-2 rounded-md text-sm font-medium text-black hover:text-blue-600 transition duration-300 flex items-center gap-1"
+    className="px-3 py-2 rounded-md text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 flex items-center gap-1 relative group"
   >
     {text}
+    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
   </Link>
 );
 
