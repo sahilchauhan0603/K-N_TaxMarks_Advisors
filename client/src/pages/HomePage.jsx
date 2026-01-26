@@ -147,7 +147,7 @@ const HomePage = () => {
 
   const features = [
     {
-      icon: <FiBarChart2 className="text-4xl mb-4" />,
+      icon: <FiBarChart2 className="text-3xl mb-4" />,
       title: 'Tax Planning',
       description: 'Strategic year-round tax saving plans customized to meet personal and business objectives.',
       link: '/services/tax-planning',
@@ -155,7 +155,7 @@ const HomePage = () => {
       bgGradient: 'from-blue-50 to-blue-100'
     },
     {
-      icon: <FiCheckCircle className="text-4xl mb-4" />,
+      icon: <FiCheckCircle className="text-3xl mb-4" />,
       title: 'ITR Filing',
       description: 'Hassle-free and accurate Income Tax Return filing for individuals, firms, and companies.',
       link: '/services/itr-filing',
@@ -163,7 +163,7 @@ const HomePage = () => {
       bgGradient: 'from-green-50 to-green-100'
     },
     {
-      icon: <FiTrendingUp className="text-4xl mb-4" />,
+      icon: <FiTrendingUp className="text-3xl mb-4" />,
       title: 'GST Filing',
       description: 'Timely GST registration, filing, return reconciliation, and expert resolution services.',
       link: '/services/gst-filing',
@@ -171,7 +171,7 @@ const HomePage = () => {
       bgGradient: 'from-yellow-50 to-orange-100'
     },
     {
-      icon: <FiTarget className="text-4xl mb-4" />,
+      icon: <FiTarget className="text-3xl mb-4" />,
       title: 'Trademark & Legal',
       description: 'Secure your business identity through end-to-end support in trademark registration and compliance.',
       link: '/services/trademark',
@@ -179,7 +179,7 @@ const HomePage = () => {
       bgGradient: 'from-purple-50 to-purple-100'
     },
     {
-      icon: <FiUsers className="text-4xl mb-4" />,
+      icon: <FiUsers className="text-3xl mb-4" />,
       title: 'Business Advisory',
       description: 'Startup registration, company incorporation, and legal advisory for smooth operations and compliance.',
       link: '/services/business-advisory',
@@ -308,7 +308,7 @@ const HomePage = () => {
                 </motion.div>
                 
                 <motion.p 
-                  className="text-xl text-gray-600 leading-relaxed"
+                  className="text-base text-gray-600 leading-relaxed"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
@@ -357,7 +357,7 @@ const HomePage = () => {
                 </motion.div>
 
                 <motion.div 
-                  className="grid grid-cols-2 gap-4 pt-8"
+                  className="grid grid-cols-2 gap-3 pt-4 max-w-md"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.8 }}
@@ -366,11 +366,11 @@ const HomePage = () => {
                     { icon: <FiShield />, text: "100% Secure", color: "red" },
                     { icon: <FiZap />, text: "Fast Processing", color: "yellow" },
                     { icon: <FiAward />, text: "Expert Team", color: "purple" },
-                    { icon: <FiCheckCircle />, text: "Trusted by 1000+", color: "green" }
+                    { icon: <FiCheckCircle />, text: "Trusted by 10+", color: "green" }
                   ].map((item, index) => (
                     <motion.div
                       key={index}
-                      className={`flex items-center gap-3 bg-white px-4 py-3 rounded-xl shadow-sm border border-${item.color}-100`}
+                      className={`flex items-center gap-2 bg-white px-3 py-2.5 rounded-lg shadow-sm border border-${item.color}-100`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.9 + index * 0.1 }}
@@ -380,7 +380,7 @@ const HomePage = () => {
                         transition: { duration: 0.2 }
                       }}
                     >
-                      <div className={`text-${item.color}-600 text-xl`}>
+                      <div className={`text-${item.color}-600 text-lg`}>
                         {item.icon}
                       </div>
                       <span className="text-sm font-semibold text-gray-700">{item.text}</span>
@@ -510,13 +510,13 @@ const HomePage = () => {
             >
               ✨ Our Services
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
               Comprehensive{' '}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Financial Solutions
               </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-base text-gray-600 max-w-3xl mx-auto">
               Everything you need to manage your finances, taxes, and business compliance effectively
             </p>
             {!isAuthenticated && (
@@ -569,7 +569,7 @@ const HomePage = () => {
                         {feature.icon}
                       </motion.div>
                       
-                      <h3 className="text-2xl font-bold mb-4 text-gray-900 group-hover:text-blue-700 transition-colors">
+                      <h3 className="text-xl font-bold mb-4 text-gray-900 group-hover:text-blue-700 transition-colors">
                         {feature.title}
                       </h3>
                       
@@ -651,14 +651,14 @@ const HomePage = () => {
                 💼 Dashboard Features
               </motion.div>
               
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
                 Intuitive{' '}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Dashboard
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-600 leading-relaxed">
                 Get a complete overview of your finances and compliance with our beautifully designed dashboard.
               </p>
               
@@ -767,7 +767,7 @@ const HomePage = () => {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Tax Savings</p>
-                      <p className="text-lg font-bold text-gray-900">₹2.5L+</p>
+                      <p className="text-lg font-bold text-gray-900">₹2.5k+</p>
                     </div>
                   </div>
                 </motion.div>
@@ -936,14 +936,14 @@ const HomePage = () => {
                 📊 Analytics & Insights
               </motion.div>
               
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
                 Advanced{' '}
                 <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                   Analytics
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-600 leading-relaxed">
+              <p className="text-base text-gray-600 leading-relaxed">
                 Make data-driven decisions with our powerful analytics tools and visualizations for your tax and business needs.
               </p>
               
@@ -984,7 +984,7 @@ const HomePage = () => {
                 transition={{ delay: 0.3 }}
               >
                 {[
-                  { value: "10K+", label: "Reports Generated" },
+                  { value: "1K+", label: "Reports Generated" },
                   { value: "99.9%", label: "Uptime" },
                   { value: "4.9/5", label: "Client Rating" }
                 ].map((stat, index) => (
@@ -996,7 +996,7 @@ const HomePage = () => {
                       boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2)"
                     }}
                   >
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    <p className="text-xl font-bold text-gray-900">{stat.value}</p>
                     <p className="text-sm text-gray-600">{stat.label}</p>
                   </motion.div>
                 ))}
@@ -1055,7 +1055,7 @@ const HomePage = () => {
               🚀 Start Your Journey Today
             </motion.div>
             
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight text-gray-900">
               Ready to simplify your taxes and{' '}
               <span className="inline-block text-blue-700 px-4 py-1 rounded-lg">
                 grow your business?
@@ -1153,7 +1153,7 @@ const HomePage = () => {
             viewport={{ once: true }}
           >
             {[
-              { icon: <FiUsers />, text: "100+ Happy Clients" },
+              { icon: <FiUsers />, text: "10+ Happy Clients" },
               { icon: <FiShield />, text: "100% Secure" },
               { icon: <FiZap />, text: "24/7 Support" },
               // { icon: <FiAward />, text: "Award Winning" }

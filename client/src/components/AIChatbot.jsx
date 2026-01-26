@@ -254,7 +254,7 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1 hover:bg-white hover:text-black hover:bg-opacity-20 rounded transition-colors"
+              className="p-1 cursor-pointer hover:bg-white hover:text-black hover:bg-opacity-20 rounded transition-colors"
             >
               <svg className={`w-4 h-4 transition-transform ${isMinimized ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -262,7 +262,7 @@ const AIChatbot = ({ isOpen, onClose, serviceName = "General" }) => {
             </button>
             <button
               onClick={onClose}
-              className="p-1 hover:bg-white hover:text-black hover:bg-opacity-20 rounded transition-colors"
+              className="p-1 cursor-pointer hover:bg-white hover:text-black hover:bg-opacity-20 rounded transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
