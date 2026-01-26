@@ -698,18 +698,18 @@ const HomePage = () => {
                 className="inline-block"
               >
                 <Link
-                  to={isAuthenticated ? "/profile" : "#"}
+                  to={isAuthenticated ? "/profile/dashboard" : "#"}
                   onClick={(e) => {
                     if (!isAuthenticated) {
                       e.preventDefault();
                       if (typeof window.setShowAuthPopup === 'function') {
                         window.setShowAuthPopup(true);
                         setTimeout(() => {
-                          navigate('/login?redirectTo=' + encodeURIComponent('/profile'));
+                          navigate('/login?redirectTo=' + encodeURIComponent('/profile/dashboard'));
                           window.setShowAuthPopup(false);
                         }, 1200);
                       } else {
-                        navigate('/login?redirectTo=' + encodeURIComponent('/profile'));
+                        navigate('/login?redirectTo=' + encodeURIComponent('/profile/dashboard'));
                       }
                     }
                   }}

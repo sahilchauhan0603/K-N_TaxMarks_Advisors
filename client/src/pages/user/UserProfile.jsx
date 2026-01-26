@@ -39,6 +39,7 @@ import UserTestimonials from "./UserTestimonials";
 import MyServices from "./MyServices";
 import MyBills from "./MyBills";
 import UserSidebar from "./components/UserSidebar";
+import UserDashboard from "./UserDashboard";
 import UserPageLoader from "./components/UserPageLoader";
 import UserPageError from "./components/UserPageError";
 
@@ -117,6 +118,8 @@ const UserProfile = () => {
     const pathname = location.pathname;
     if (pathname === '/profile') {
       setActiveSection('profile');
+    } else if (pathname === '/profile/dashboard') {
+      setActiveSection('dashboard');
     } else if (pathname === '/profile/services') {
       setActiveSection('services');
     } else if (pathname === '/profile/testimonials') {
@@ -718,6 +721,7 @@ const UserProfile = () => {
     // Navigate to the appropriate URL
     const sectionPaths = {
       'profile': '/profile',
+      'dashboard': '/profile/dashboard',
       'services': '/profile/services',
       'testimonials': '/profile/testimonials',
       'bills': '/profile/bills'
@@ -1370,6 +1374,8 @@ const UserProfile = () => {
 
   const renderContent = () => {
     switch (activeSection) {
+      case "dashboard":
+        return <UserDashboard />;
       case "profile":
         return <ProfileOverview />;
       case "edit":

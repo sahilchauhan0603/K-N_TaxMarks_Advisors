@@ -133,6 +133,9 @@ const App = () => {
       case "/profile":
         pageTitle = "User Profile";
         break;
+      case "/profile/dashboard":
+        pageTitle = "Dashboard";
+        break;
       case "/profile/services":
         pageTitle = "My Services";
         break;
@@ -254,6 +257,7 @@ const App = () => {
             <Routes>
               {/* User Profile routes */}
               <Route path="/profile" element={<UserProfile />} />
+              <Route path="/profile/dashboard" element={<UserProfile />} />
               <Route path="/profile/services" element={<UserProfile />} />
               <Route path="/profile/testimonials" element={<UserProfile />} />
               <Route path="/profile/bills" element={<UserProfile />} />

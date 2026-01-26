@@ -11,7 +11,8 @@ import {
   ChevronRight,
   X,
   Menu,
-  Shield
+  Shield,
+  LayoutDashboard
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import Swal from 'sweetalert2';
@@ -33,6 +34,11 @@ const UserSidebar = ({
       key: "profile",
       label: "Profile Overview",
       icon: <User className="w-5 h-5" />,
+    },
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      icon: <LayoutDashboard className="w-5 h-5" />,
     },
     {
       key: "services", 
