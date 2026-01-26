@@ -151,7 +151,7 @@ const HeadlineBanner = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes shimmer {
           0% {
             transform: translateX(-100%);

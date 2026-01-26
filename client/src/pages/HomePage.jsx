@@ -286,7 +286,7 @@ const HomePage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <motion.div 
+                  {/* <motion.div 
                     className="inline-block mb-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold"
                     animate={{ 
                       boxShadow: ["0 0 0 0 rgba(59, 130, 246, 0.7)", "0 0 0 10px rgba(59, 130, 246, 0)", "0 0 0 0 rgba(59, 130, 246, 0)"],
@@ -298,7 +298,7 @@ const HomePage = () => {
                     }}
                   >
                     🎯 Your Trusted Financial Partner
-                  </motion.div>
+                  </motion.div> */}
                   <h1 className="text-5xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                     Secure Your Finances.{' '}
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -486,7 +486,7 @@ const HomePage = () => {
       {/* Features Grid */}
       <motion.section 
         id="features-grid" 
-        className="py-24 px-4 bg-white relative z-10"
+        className="py-12 px-4 bg-white relative z-10"
         ref={featuresRef}
         initial="hidden"
         animate={featuresControls}
@@ -615,7 +615,7 @@ const HomePage = () => {
 
       {/* Dashboard Preview */}
       <motion.section 
-        className="py-24 px-4 bg-gradient-to-br from-gray-50 to-blue-50 relative z-10 overflow-hidden"
+        className="py-12 px-4 bg-gradient-to-br from-gray-50 to-blue-50 relative z-10 overflow-hidden"
         ref={dashboardRef}
         initial="hidden"
         animate={dashboardControls}
@@ -816,7 +816,7 @@ const HomePage = () => {
 
       {/* Analytics Preview */}
       <motion.section 
-        className="py-24 px-4 bg-white relative z-10 overflow-hidden"
+        className="py-12 px-4 bg-white relative z-10 overflow-hidden"
         ref={analyticsRef}
         initial="hidden"
         animate={analyticsControls}
@@ -1008,7 +1008,7 @@ const HomePage = () => {
 
       {/* CTA Section */}
       <motion.section 
-        className="py-24 px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden"
+        className="py-12 px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
