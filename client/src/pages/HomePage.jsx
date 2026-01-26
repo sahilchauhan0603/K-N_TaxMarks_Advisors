@@ -299,7 +299,7 @@ const HomePage = () => {
                   >
                     🎯 Your Trusted Financial Partner
                   </motion.div>
-                  <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                  <h1 className="text-5xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                     Secure Your Finances.{' '}
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       Protect Your Brand.
@@ -363,7 +363,7 @@ const HomePage = () => {
                   transition={{ delay: 0.8 }}
                 >
                   {[
-                    { icon: <FiShield />, text: "100% Secure", color: "blue" },
+                    { icon: <FiShield />, text: "100% Secure", color: "red" },
                     { icon: <FiZap />, text: "Fast Processing", color: "yellow" },
                     { icon: <FiAward />, text: "Expert Team", color: "purple" },
                     { icon: <FiCheckCircle />, text: "Trusted by 1000+", color: "green" }
@@ -698,10 +698,24 @@ const HomePage = () => {
                 className="inline-block"
               >
                 <Link
-                  to="/contact-us"
+                  to={isAuthenticated ? "/profile" : "#"}
+                  onClick={(e) => {
+                    if (!isAuthenticated) {
+                      e.preventDefault();
+                      if (typeof window.setShowAuthPopup === 'function') {
+                        window.setShowAuthPopup(true);
+                        setTimeout(() => {
+                          navigate('/login?redirectTo=' + encodeURIComponent('/profile'));
+                          window.setShowAuthPopup(false);
+                        }, 1200);
+                      } else {
+                        navigate('/login?redirectTo=' + encodeURIComponent('/profile'));
+                      }
+                    }
+                  }}
                   className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-2xl transition-all duration-300"
                 >
-                  Get Started Today
+                  View Your Dashboard
                   <FiArrowRight />
                 </Link>
               </motion.div>
