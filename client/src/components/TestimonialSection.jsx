@@ -82,16 +82,19 @@ const TestimonialSection = ({ service }) => {
 
     let animationFrameId;
     let isPaused = false;
+    let scrollSpeed = 0.75; // Adjust speed here (higher = faster)
 
     const scroll = () => {
       if (!isPaused && scrollContainer) {
-        // Calculate halfway point (where original testimonials end)
-        const halfwayPoint = scrollContainer.scrollWidth / 2;
+        scrollContainer.scrollLeft += scrollSpeed;
         
-        scrollContainer.scrollLeft += 1; // Adjust speed here (higher = faster)
+        // Calculate the width of one set of testimonials
+        // Each card is 350px + 24px gap (1.5rem = 24px)
+        const cardWidth = 350 + 24;
+        const singleSetWidth = testimonials.length * cardWidth;
         
-        // Reset to beginning when we reach the halfway point
-        if (scrollContainer.scrollLeft >= halfwayPoint) {
+        // Reset to beginning seamlessly when we've scrolled past one complete set
+        if (scrollContainer.scrollLeft >= singleSetWidth) {
           scrollContainer.scrollLeft = 0;
         }
       }
@@ -110,6 +113,7 @@ const TestimonialSection = ({ service }) => {
     scrollContainer.addEventListener('mouseenter', handleMouseEnter);
     scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
+    // Start the animation
     animationFrameId = requestAnimationFrame(scroll);
 
     return () => {
@@ -146,9 +150,9 @@ const TestimonialSection = ({ service }) => {
       <div className={`bg-gradient-to-r ${getGradient()} rounded-2xl p-8 mb-8 shadow-xl`}>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-white text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
-              <FaQuoteLeft className="w-8 h-8" />
-              <h2 className="text-3xl md:text-4xl font-bold">What Our Clients Say</h2>
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
+              <FaQuoteLeft className="w-6 h-6" />
+              <h2 className="text-3xl md:text-3xl font-bold">What Our Clients Say</h2>
             </div>
             <p className="text-lg opacity-90">Real experiences from real people</p>
           </div>
@@ -165,7 +169,7 @@ const TestimonialSection = ({ service }) => {
       {testimonials.length === 0 ? (
         <div className="text-center py-16 bg-gray-50 rounded-2xl">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-200 rounded-full mb-4">
-            <FaQuoteLeft className="w-10 h-10 text-gray-400" />
+            <FaQuoteLeft className="w-8 h-8 text-gray-400" />
           </div>
           <h3 className="text-xl font-semibold text-gray-700 mb-2">No testimonials yet</h3>
           <p className="text-gray-500">Be the first to share your experience!</p>
@@ -179,10 +183,11 @@ const TestimonialSection = ({ service }) => {
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch',
             }}
           >
-            {/* Duplicate testimonials for seamless infinite scroll */}
-            {[...testimonials, ...testimonials].map((t, idx) => (
+            {/* Triple testimonials for seamless infinite scroll */}
+            {[...testimonials, ...testimonials, ...testimonials].map((t, idx) => (
               <div
                 key={t._id || idx}
                 className="flex-shrink-0 w-[350px] bg-white rounded-xl shadow-lg hover:shadow-2xl border border-gray-100 p-6 transition-all duration-300 hover:-translate-y-1"
@@ -200,7 +205,7 @@ const TestimonialSection = ({ service }) => {
                     }}
                   >
                     <FaQuoteLeft 
-                      className="w-5 h-5"
+                      className="w-4 h-4"
                       style={{
                         color: colors.primary === 'purple' ? '#7C3AED' : 
                                colors.primary === 'pink' ? '#EC4899' : 
