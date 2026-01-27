@@ -24,17 +24,49 @@ const GSTFiling = () => {
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row items-center gap-8 mb-16">
+        <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
           <div className="md:w-1/2">
-            <h1 className="text-4xl md:text-5xl font-bold text-yellow-700 mb-6">
+            <div className="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium mb-3">
+              ✓ Trusted by 500+ Businesses
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-yellow-700 mb-4">
               Simplify Your <span className="text-yellow-600">GST Compliance</span>
             </h1>
-            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">
               Timely GST registration, filing, return reconciliation, and expert resolution services. 
-              Stay compliant and avoid penalties with our professional GST solutions tailored for businesses of all sizes.
+              Stay compliant and avoid penalties with our professional GST solutions.
             </p>
+            
+            {/* Key Benefits */}
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-5 h-5 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span className="text-sm text-gray-700">100% Accurate Filing & Zero Errors</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-5 h-5 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span className="text-sm text-gray-700">On-Time Submission & Deadline Alerts</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-5 h-5 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span className="text-sm text-gray-700">Expert Support & ITC Optimization</span>
+              </div>
+            </div>
+
             <button
-              className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-pointer transition duration-300 transform hover:scale-105"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow cursor-pointer transition-all duration-200"
               onClick={scrollToServices}
             >
               Get Started Today
@@ -42,33 +74,35 @@ const GSTFiling = () => {
           </div>
           <div className="md:w-1/2">
             <img 
-              src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
-              alt="Tax documents and calculator" 
-              className="rounded-xl shadow-xl w-full h-auto object-cover"
+              src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+              alt="Business planning and tax compliance" 
+              className="rounded-lg shadow-lg w-full h-auto object-cover"
             />
           </div>
         </div>
 
         {/* Services Section */}
-        <div id="gst-services-section" className="mb-16">
-          <h2 className="text-3xl font-bold text-yellow-700 mb-8 text-center">Our GST Services</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div id="gst-services-section" className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Our GST Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Service Card 1 */}
-            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-yellow-500">
-              <div className="flex items-center mb-4">
+            <div className="bg-white p-5 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-100">
+              <div className="flex items-start gap-3 mb-3">
                 <img 
                   src="https://cdn-icons-png.flaticon.com/512/3652/3652191.png" 
                   alt="Registration" 
-                  className="w-12 h-12 mr-4" 
+                  className="w-10 h-10 mt-0.5" 
                 />
-                <h3 className="text-xl font-semibold text-gray-800">Registration & Amendments</h3>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Registration & Amendments</h3>
+                  <p className="text-sm text-gray-600">
+                    Hassle-free GST registration and seamless amendments to keep your business compliant.
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-600">
-                Hassle-free GST registration and seamless amendments to keep your business compliant.
-              </p>
               <button
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
+                className="mt-4 w-full bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer transition-colors duration-200"
                 onClick={() => setOpenForm(openForm === 1 ? null : 1)}
               >
                 {openForm === 1 ? 'Close Form' : 'Apply Now'}
@@ -90,20 +124,22 @@ const GSTFiling = () => {
             </div>
 
             {/* Service Card 2 */}
-            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-yellow-500">
-              <div className="flex items-center mb-4">
+            <div className="bg-white p-5 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-100">
+              <div className="flex items-start gap-3 mb-3">
                 <img 
                   src="https://cdn-icons-png.flaticon.com/512/3448/3448558.png" 
                   alt="Filing" 
-                  className="w-12 h-12 mr-4" 
+                  className="w-10 h-10 mt-0.5" 
                 />
-                <h3 className="text-xl font-semibold text-gray-800">Return Filing</h3>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Return Filing</h3>
+                  <p className="text-sm text-gray-600">
+                    Accurate monthly/quarterly GST return filing to ensure compliance and maximize input tax credits.
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-600">
-                Accurate monthly/quarterly GST return filing to ensure compliance and maximize input tax credits.
-              </p>
               <button
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
+                className="mt-4 w-full bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer transition-colors duration-200"
                 onClick={() => setOpenForm(openForm === 2 ? null : 2)}
               >
                 {openForm === 2 ? 'Close Form' : 'Apply Now'}
@@ -125,20 +161,22 @@ const GSTFiling = () => {
             </div>
 
             {/* Service Card 3 */}
-            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-yellow-500">
-              <div className="flex items-center mb-4">
+            <div className="bg-white p-5 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-100">
+              <div className="flex items-start gap-3 mb-3">
                 <img 
                   src="https://cdn-icons-png.flaticon.com/512/1570/1570887.png" 
                   alt="Reconciliation" 
-                  className="w-12 h-12 mr-4" 
+                  className="w-10 h-10 mt-0.5" 
                 />
-                <h3 className="text-xl font-semibold text-gray-800">ITC Reconciliation</h3>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">ITC Reconciliation</h3>
+                  <p className="text-sm text-gray-600">
+                    Comprehensive input tax credit reconciliation to optimize your tax savings and compliance.
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-600">
-                Comprehensive input tax credit reconciliation to optimize your tax savings and compliance.
-              </p>
               <button
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow cursor-pointer transition"
+                className="mt-4 w-full bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer transition-colors duration-200"
                 onClick={() => setOpenForm(openForm === 3 ? null : 3)}
               >
                 {openForm === 3 ? 'Close Form' : 'Apply Now'}
@@ -162,25 +200,25 @@ const GSTFiling = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl p-8 shadow-lg text-white">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="md:w-2/3 mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-3">Get Instant GST Help & Expert Support</h3>
-              <p className="text-yellow-100 mb-2">
-                <span className="font-semibold">🤖 AI Assistant:</span> Get immediate answers to GST queries, filing guidance, and compliance tips 24/7
+        <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 rounded-lg p-6 shadow text-white">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="md:w-2/3">
+              <h3 className="text-lg font-semibold mb-2">Get Instant GST Help & Expert Support</h3>
+              <p className="text-sm text-yellow-50 opacity-95 mb-1.5">
+                <span className="font-medium">🤖 AI Assistant:</span> Get immediate answers to GST queries, filing guidance, and compliance tips 24/7
               </p>
-              <p className="text-yellow-100">
-                <span className="font-semibold">👨‍💼 Expert Consultation:</span> Connect with our certified GST professionals for personalized solutions and complex tax matters
+              <p className="text-sm text-yellow-50 opacity-95">
+                <span className="font-medium">👨‍💼 Expert Consultation:</span> Connect with our certified GST professionals for personalized solutions
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <ChatbotWrapper 
                 serviceName="GST Filing" 
-                buttonClassName="bg-white text-yellow-600 hover:bg-gray-100" 
+                buttonClassName="bg-white text-yellow-700 hover:bg-yellow-50" 
               />
               <Link
                 to="/contact-us"
-                className="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 text-center"
+                className="bg-yellow-800 hover:bg-yellow-900 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-colors duration-200 text-center whitespace-nowrap"
               >
                 Contact Us
               </Link>
@@ -189,50 +227,50 @@ const GSTFiling = () => {
         </div>
 
         {/* Additional Benefits */}
-        <div className="mt-16">
-          <h2 className="text-3xl font-bold text-yellow-700 mb-8 text-center">Why Choose Us?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-3 flex items-center">
-                <svg className="w-6 h-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Why Choose Us?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <h3 className="text-base font-semibold text-gray-800 mb-2 flex items-center">
+                <svg className="w-5 h-5 text-yellow-600 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Expert Guidance
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Our team of certified GST practitioners provides accurate and up-to-date advice.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-3 flex items-center">
-                <svg className="w-6 h-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <h3 className="text-base font-semibold text-gray-800 mb-2 flex items-center">
+                <svg className="w-5 h-5 text-yellow-600 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 Timely Filing
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Never miss a deadline with our proactive reminders and timely filing services.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-3 flex items-center">
-                <svg className="w-6 h-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <h3 className="text-base font-semibold text-gray-800 mb-2 flex items-center">
+                <svg className="w-5 h-5 text-yellow-600 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
                 Secure Processing
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Your financial data is protected with bank-level security measures.
               </p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-gray-800 mb-3 flex items-center">
-                <svg className="w-6 h-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+              <h3 className="text-base font-semibold text-gray-800 mb-2 flex items-center">
+                <svg className="w-5 h-5 text-yellow-600 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
                 </svg>
                 Cloud Access
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Access your GST documents anytime, anywhere through our secure portal.
               </p>
             </div>

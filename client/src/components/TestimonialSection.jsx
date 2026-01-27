@@ -88,13 +88,9 @@ const TestimonialSection = ({ service }) => {
       if (!isPaused && scrollContainer) {
         scrollContainer.scrollLeft += scrollSpeed;
         
-        // Calculate the width of one set of testimonials
-        // Each card is 350px + 24px gap (1.5rem = 24px)
-        const cardWidth = 350 + 24;
-        const singleSetWidth = testimonials.length * cardWidth;
-        
-        // Reset to beginning seamlessly when we've scrolled past one complete set
-        if (scrollContainer.scrollLeft >= singleSetWidth) {
+        // Reset to beginning when reaching the end
+        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+        if (scrollContainer.scrollLeft >= maxScroll - 10) {
           scrollContainer.scrollLeft = 0;
         }
       }
@@ -186,11 +182,11 @@ const TestimonialSection = ({ service }) => {
               WebkitOverflowScrolling: 'touch',
             }}
           >
-            {/* Triple testimonials for seamless infinite scroll */}
-            {[...testimonials, ...testimonials, ...testimonials].map((t, idx) => (
+            {/* Testimonials scroll */}
+            {testimonials.map((t, idx) => (
               <div
                 key={t._id || idx}
-                className="flex-shrink-0 w-[350px] bg-white rounded-xl shadow-lg hover:shadow-2xl border border-gray-100 p-6 transition-all duration-300 hover:-translate-y-1"
+                className="flex-shrink-0 w-[350px] bg-white rounded-xl shadow-lg hover:shadow-2xl border border-gray-100 p-6 transition-all duration-300 hover:-translate-y-1 hover:z-10 group relative"
               >
                 {/* Quote Icon & Rating */}
                 <div className="flex items-center justify-between mb-4">
@@ -223,7 +219,7 @@ const TestimonialSection = ({ service }) => {
                 </div>
 
                 {/* Feedback */}
-                <p className="text-gray-700 leading-relaxed mb-6 line-clamp-4 italic text-sm">
+                <p className="text-gray-700 leading-relaxed mb-6 line-clamp-4 group-hover:line-clamp-none italic text-sm">
                   "{t.feedback}"
                 </p>
 
