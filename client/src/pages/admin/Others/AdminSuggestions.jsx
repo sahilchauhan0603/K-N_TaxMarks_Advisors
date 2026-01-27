@@ -650,16 +650,20 @@ const AdminSuggestions = ({ setSidebarVisible }) => {
                         <button
                           onClick={() => markAsResolved(suggestion._id)}
                           className={`transition-colors ${
-                            suggestion.isRead
+                            suggestion.status === 'Resolved'
+                              ? "text-green-400 cursor-not-allowed"
+                              : suggestion.isRead
                               ? "text-purple-600 hover:text-purple-900 cursor-pointer"
                               : "text-gray-300 cursor-not-allowed"
                           }`}
                           title={
-                            suggestion.isRead
+                            suggestion.status === 'Resolved'
+                              ? "Already Resolved"
+                              : suggestion.isRead
                               ? "Mark as Resolved"
                               : "Mark as Read first"
                           }
-                          disabled={!suggestion.isRead}
+                          disabled={!suggestion.isRead || suggestion.status === 'Resolved'}
                         >
                           <FaCheckCircle />
                         </button>
