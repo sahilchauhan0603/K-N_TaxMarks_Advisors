@@ -313,13 +313,14 @@ const Reviews = () => {
               Showing <strong>{displayedTestimonials.length}</strong> of{" "}
               <strong>{filteredTestimonials.length}</strong> reviews
             </span>
-            {(searchTerm || selectedService) && (
+            {(searchTerm || selectedService || sortBy !== "newest") && (
               <button
                 onClick={() => {
                   setSearchTerm("");
                   setSelectedService("");
+                  setSortBy("newest");
                 }}
-                className="text-slate-600 hover:text-slate-900 border-1 py-1 px-4 rounded-2xl font-medium cursor-pointer"
+                className="text-slate-600 hover:text-slate-900 border-1 py-1 px-4 rounded-2xl font-medium cursor-pointer mb-2"
               >
                 Clear filters
               </button>

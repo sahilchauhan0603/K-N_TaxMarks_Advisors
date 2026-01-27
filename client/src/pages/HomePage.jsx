@@ -147,7 +147,7 @@ const HomePage = () => {
 
   const features = [
     {
-      icon: <FiBarChart2 className="text-3xl mb-4" />,
+      icon: <FiBarChart2 className="text-2xl" />,
       title: 'Tax Planning',
       description: 'Strategic year-round tax saving plans customized to meet personal and business objectives.',
       link: '/services/tax-planning',
@@ -155,7 +155,7 @@ const HomePage = () => {
       bgGradient: 'from-blue-50 to-blue-100'
     },
     {
-      icon: <FiCheckCircle className="text-3xl mb-4" />,
+      icon: <FiCheckCircle className="text-2xl" />,
       title: 'ITR Filing',
       description: 'Hassle-free and accurate Income Tax Return filing for individuals, firms, and companies.',
       link: '/services/itr-filing',
@@ -163,7 +163,7 @@ const HomePage = () => {
       bgGradient: 'from-green-50 to-green-100'
     },
     {
-      icon: <FiTrendingUp className="text-3xl mb-4" />,
+      icon: <FiTrendingUp className="text-2xl" />,
       title: 'GST Filing',
       description: 'Timely GST registration, filing, return reconciliation, and expert resolution services.',
       link: '/services/gst-filing',
@@ -171,7 +171,7 @@ const HomePage = () => {
       bgGradient: 'from-yellow-50 to-orange-100'
     },
     {
-      icon: <FiTarget className="text-3xl mb-4" />,
+      icon: <FiTarget className="text-2xl" />,
       title: 'Trademark & Legal',
       description: 'Secure your business identity through end-to-end support in trademark registration and compliance.',
       link: '/services/trademark',
@@ -179,12 +179,21 @@ const HomePage = () => {
       bgGradient: 'from-purple-50 to-purple-100'
     },
     {
-      icon: <FiUsers className="text-3xl mb-4" />,
+      icon: <FiUsers className="text-2xl" />,
       title: 'Business Advisory',
       description: 'Startup registration, company incorporation, and legal advisory for smooth operations and compliance.',
       link: '/services/business-advisory',
       gradient: 'from-pink-400 to-pink-600',
       bgGradient: 'from-pink-50 to-pink-100'
+    },
+    {
+      icon: <FiZap className="text-2xl" />,
+      title: 'New Service',
+      description: 'Exciting new service coming soon to help you grow your business and achieve your goals.',
+      link: '#',
+      gradient: 'from-indigo-400 to-indigo-600',
+      bgGradient: 'from-indigo-50 to-indigo-100',
+      comingSoon: true
     },
   ];
 
@@ -540,17 +549,32 @@ const HomePage = () => {
                 className="group relative"
                 variants={itemVariants}
                 whileHover={{ y: -10 }}
-                onClick={!isAuthenticated ? (e) => {
+                onClick={feature.comingSoon ? undefined : (!isAuthenticated ? (e) => {
                   e.preventDefault();
                   login();
-                } : undefined}
+                } : undefined)}
               >
                 <Link 
-                  to={isAuthenticated ? feature.link : '#'}
-                  onClick={(e) => handleFeatureClick(e, feature.link)}
+                  to={feature.comingSoon ? '#' : (isAuthenticated ? feature.link : '#')}
+                  onClick={(e) => {
+                    if (feature.comingSoon) {
+                      e.preventDefault();
+                    } else {
+                      handleFeatureClick(e, feature.link);
+                    }
+                  }}
                   className="block h-full"
                 >
-                  <div className={`relative h-full p-8 rounded-2xl bg-gradient-to-br ${feature.bgGradient} backdrop-blur-sm transition-all duration-500 hover:shadow-2xl overflow-hidden`}>
+                  <div className={`relative h-full p-5 rounded-xl bg-gradient-to-br ${feature.bgGradient} backdrop-blur-sm transition-all duration-500 hover:shadow-2xl overflow-hidden ${feature.comingSoon ? 'opacity-90' : ''}`}>
+                    {/* Coming Soon Badge */}
+                    {feature.comingSoon && (
+                      <div className="absolute top-4 right-4 z-20">
+                        <span className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                          Coming Soon
+                        </span>
+                      </div>
+                    )}
+                    
                     {/* Animated gradient overlay */}
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
@@ -559,7 +583,7 @@ const HomePage = () => {
                     {/* Content */}
                     <div className="relative z-10">
                       <motion.div 
-                        className={`inline-block p-4 rounded-2xl bg-gradient-to-br ${feature.gradient} text-white mb-6 shadow-lg`}
+                        className={`inline-block p-3 rounded-xl bg-gradient-to-br ${feature.gradient} text-white mb-4 shadow-lg`}
                         whileHover={{ 
                           rotate: [0, -10, 10, -10, 0],
                           scale: 1.1
@@ -569,16 +593,16 @@ const HomePage = () => {
                         {feature.icon}
                       </motion.div>
                       
-                      <h3 className="text-xl font-bold mb-4 text-gray-900 group-hover:text-blue-700 transition-colors">
+                      <h3 className="text-lg font-bold mb-3 text-gray-900 group-hover:text-blue-700 transition-colors">
                         {feature.title}
                       </h3>
                       
-                      <p className="text-gray-600 mb-6 leading-relaxed">
+                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">
                         {feature.description}
                       </p>
                       
                       <motion.div 
-                        className="flex items-center text-blue-600 font-semibold"
+                        className="flex items-center text-sm text-blue-600 font-semibold"
                         animate={{ x: [0, 5, 0] }}
                         transition={{ 
                           duration: 1.5,
@@ -586,7 +610,11 @@ const HomePage = () => {
                           ease: "easeInOut"
                         }}
                       >
-                        {isAuthenticated ? (
+                        {feature.comingSoon ? (
+                          <>
+                            Stay tuned <FiArrowRight className="ml-2" />
+                          </>
+                        ) : isAuthenticated ? (
                           <>
                             Explore Service <FiArrowRight className="ml-2" />
                           </>
