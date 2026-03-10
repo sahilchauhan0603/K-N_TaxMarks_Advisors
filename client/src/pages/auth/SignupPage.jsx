@@ -88,6 +88,43 @@ const SignupPage = () => {
   const { sendOTP, register } = useAuth();
   const navigate = useNavigate();
 
+  // Detect if this window is the OAuth popup callback (evaluated once, before first paint)
+  const [isPopupCallback] = useState(
+    () =>
+      window.opener != null &&
+      window.opener !== window &&
+      (window.location.search.includes('code') ||
+        window.location.search.includes('token') ||
+        window.location.hash.includes('access_token')),
+  );
+
+  // Detect OAuth popup callback and relay to parent window
+  useEffect(() => {
+    // If running inside the OAuth popup, relay authentication result and close
+    if (window.opener && window.opener !== window) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get('success');
+      const token = urlParams.get('token');
+      const error = urlParams.get('error');
+
+      if (success || error) {
+        // Send result to parent window
+        window.opener.postMessage(
+          {
+            type: 'GOOGLE_AUTH_RESULT',
+            success: success === 'true',
+            token: token,
+            error: error,
+          },
+          window.location.origin,
+        );
+        // Close popup
+        window.close();
+        return;
+      }
+    }
+  }, []);
+
   // OTP Timer Effect
   useEffect(() => {
     let interval = null;
@@ -332,6 +369,18 @@ const SignupPage = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [hasFormData, isRedirecting]);
+
+  // If running inside the OAuth popup, show a minimal loader while redirecting
+  if (isPopupCallback) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Completing sign-up…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex overflow-hidden">
@@ -635,11 +684,48 @@ const SignupPage = () => {
                           const height = 600;
                           const left = window.screen.width / 2 - width / 2;
                           const top = window.screen.height / 2 - height / 2;
-                          window.open(
+                          
+                          const popup = window.open(
                             googleAuthUrl,
                             'Google Sign In',
                             `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes,resizable=yes`
                           );
+
+                          if (!popup) {
+                            alert('Popup blocked. Please allow popups for this site.');
+                            return;
+                          }
+
+                          // Listen for message from popup
+                          const handleMessage = (event) => {
+                            if (event.origin !== window.location.origin) return;
+                            if (event.data?.type !== 'GOOGLE_AUTH_RESULT') return;
+
+                            window.removeEventListener('message', handleMessage);
+
+                            if (event.data.success && event.data.token) {
+                              // Store token and redirect
+                              localStorage.setItem('token', event.data.token);
+                              setMessage('Sign up successful! Redirecting...');
+                              setMessageType('success');
+                              setTimeout(() => {
+                                navigate('/', { replace: true });
+                              }, 1000);
+                            } else {
+                              setMessage(event.data.error || 'Google sign-up failed');
+                              setMessageType('error');
+                            }
+                          };
+
+                          window.addEventListener('message', handleMessage);
+
+                          // Clean up if popup is closed without completing auth
+                          const checkClosed = setInterval(() => {
+                            if (popup.closed) {
+                              clearInterval(checkClosed);
+                              window.removeEventListener('message', handleMessage);
+                            }
+                          }, 500);
                         }}
                         className="w-64 cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                       >
