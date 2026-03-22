@@ -18,22 +18,54 @@ const GoogleAuthHandler = () => {
     const name = searchParams.get('name');
     const email = searchParams.get('email');
     const error = searchParams.get('error');
+    const isPopup = window.opener && window.opener !== window;
 
     if (error) {
       processedRef.current = true;
+
+      if (isPopup) {
+        window.opener.postMessage(
+          { type: 'GOOGLE_AUTH_ERROR', error },
+          window.location.origin
+        );
+        window.close();
+        return;
+      }
+
       navigate('/login?error=' + error, { replace: true });
       return;
     }
 
     if (token && name) {
       processedRef.current = true;
-      
-      handleGoogleCallback(token, decodeURIComponent(name), email ? decodeURIComponent(email) : '');
-      
-      // Navigate to home after successful authentication
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 500);
+
+      if (isPopup) {
+        window.opener.postMessage(
+          {
+            type: 'GOOGLE_AUTH_SUCCESS',
+            token,
+            name,
+            email: email || '',
+          },
+          window.location.origin
+        );
+        window.close();
+        return;
+      }
+
+      (async () => {
+        const result = await handleGoogleCallback(
+          token,
+          name,
+          email || ''
+        );
+
+        if (result?.success) {
+          navigate('/', { replace: true });
+        } else {
+          navigate('/login?error=google_auth_failed', { replace: true });
+        }
+      })();
     } else {
       processedRef.current = true;
       navigate('/login', { replace: true });

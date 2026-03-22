@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import NumericOTPInput from "../../components/NumericOTPInput";
 import axios from "../../utils/axios";
@@ -64,6 +64,7 @@ const SignupPage = () => {
   const [phone, setPhone] = useState("");
   const [hasFormData, setHasFormData] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isGoogleAuthInProgress, setIsGoogleAuthInProgress] = useState(false);
   const [stats, setStats] = useState({
     totalClients: 1000,
     satisfactionRate: 98.5,
@@ -85,8 +86,116 @@ const SignupPage = () => {
   const [otpTimer, setOtpTimer] = useState(0);
   const [canResendOtp, setCanResendOtp] = useState(false);
 
-  const { sendOTP, register } = useAuth();
+  const { sendOTP, register, handleGoogleCallback } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const googlePopupRef = useRef(null);
+  const popupCheckTimerRef = useRef(null);
+
+  const clearGooglePopupWatcher = () => {
+    if (popupCheckTimerRef.current) {
+      clearInterval(popupCheckTimerRef.current);
+      popupCheckTimerRef.current = null;
+    }
+    googlePopupRef.current = null;
+  };
+
+  useEffect(() => {
+    const handleGoogleAuthMessage = async (event) => {
+      if (event.origin !== window.location.origin) return;
+
+      if (event.data?.type === "GOOGLE_AUTH_ERROR") {
+        setIsGoogleAuthInProgress(false);
+        clearGooglePopupWatcher();
+        setMessageType("error");
+        setMessage("Google sign-up failed. Please try again.");
+        return;
+      }
+
+      if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
+
+      const { token, name: googleName, email: googleEmail } = event.data;
+      const result = await handleGoogleCallback(token, googleName, googleEmail);
+
+      setIsGoogleAuthInProgress(false);
+      clearGooglePopupWatcher();
+
+      if (!result?.success) {
+        setMessageType("error");
+        setMessage(result?.message || "Google sign-up failed.");
+        return;
+      }
+
+      setMessageType("success");
+      setMessage("Google sign-in successful! Redirecting...");
+
+      const params = new URLSearchParams(location.search);
+      const redirectTo = params.get("redirectTo");
+
+      if (redirectTo) {
+        navigate(redirectTo, { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    };
+
+    window.addEventListener("message", handleGoogleAuthMessage);
+    return () => {
+      window.removeEventListener("message", handleGoogleAuthMessage);
+    };
+  }, [handleGoogleCallback, location.search, navigate]);
+
+  const openGooglePopup = () => {
+    const configuredGoogleAuthUrl = import.meta.env.VITE_GOOGLE_AUTH_URL;
+    const apiBaseUrl = import.meta.env.VITE_API_URL;
+
+    let googleAuthUrl = "http://localhost:5000/api/auth/google";
+
+    if (configuredGoogleAuthUrl?.includes("/api/auth/google")) {
+      googleAuthUrl = configuredGoogleAuthUrl;
+    } else if (apiBaseUrl) {
+      const normalizedApiBase = apiBaseUrl.replace(/\/+$/, "");
+      googleAuthUrl = normalizedApiBase.endsWith("/api")
+        ? `${normalizedApiBase}/auth/google`
+        : `${normalizedApiBase}/api/auth/google`;
+    }
+
+    if (isGoogleAuthInProgress) return;
+
+    setIsGoogleAuthInProgress(true);
+    setMessageType("success");
+    setMessage("Waiting for Google sign-in...");
+
+    const width = 520;
+    const height = 640;
+    const left = Math.round(window.screenX + (window.outerWidth - width) / 2);
+    const top = Math.round(window.screenY + (window.outerHeight - height) / 2);
+
+    const popup = window.open(
+      googleAuthUrl,
+      "google-auth-popup",
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+
+    if (!popup) {
+      setIsGoogleAuthInProgress(false);
+      setMessageType("error");
+      setMessage("Popup blocked. Please allow popups and try Google sign-up again.");
+      return;
+    }
+
+    googlePopupRef.current = popup;
+    popupCheckTimerRef.current = setInterval(() => {
+      if (googlePopupRef.current && googlePopupRef.current.closed) {
+        clearGooglePopupWatcher();
+        setIsGoogleAuthInProgress(false);
+        setMessageType("error");
+        setMessage("Google sign-in window was closed before completion.");
+      }
+    }, 500);
+
+    popup.focus();
+  };
 
   // OTP Timer Effect
   useEffect(() => {
@@ -133,10 +242,16 @@ const SignupPage = () => {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const normalizeEmail = (value) => value.trim().toLowerCase();
+  const normalizePhone = (value) => value.replace(/\D/g, "").slice(0, 10);
+
   const validateEmail = (value) => {
-    if (!value) return "Email is required";
-    // Simple email regex
-    if (!/^\S+@\S+\.\S+$/.test(value)) return "Invalid email address";
+    const normalizedEmail = normalizeEmail(value);
+    if (!normalizedEmail) return "Email is required";
+    if (normalizedEmail.length > 254) return "Email is too long";
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(normalizedEmail)) {
+      return "Enter a valid email address";
+    }
     return "";
   };
 
@@ -147,8 +262,14 @@ const SignupPage = () => {
   };
 
   const validatePhone = (value) => {
-    if (!value) return "Phone number is required";
-    if (!/^\d{10}$/.test(value)) return "Phone number must be 10 digits";
+    const normalizedPhone = normalizePhone(value);
+    if (!normalizedPhone) return "Phone number is required";
+    if (normalizedPhone.length !== 10) {
+      return "Phone number must be exactly 10 digits";
+    }
+    if (!/^[6-9]\d{9}$/.test(normalizedPhone)) {
+      return "Phone number must start with 6, 7, 8, or 9";
+    }
     return "";
   };
 
@@ -183,7 +304,10 @@ const SignupPage = () => {
   };
 
   const handleSendOTP = async () => {
-    const emailError = validateEmail(email);
+    const normalizedEmail = normalizeEmail(email);
+    setEmail(normalizedEmail);
+
+    const emailError = validateEmail(normalizedEmail);
     setErrors((prev) => ({ ...prev, email: emailError }));
     if (emailError) {
       setMessageType("error");
@@ -196,7 +320,7 @@ const SignupPage = () => {
     setHasFormData(true);
 
     try {
-      const result = await sendOTP(email);
+      const result = await sendOTP(normalizedEmail);
       if (result?.success) {
         setStep(2);
         setMessageType("success");
@@ -234,7 +358,7 @@ const SignupPage = () => {
     setMessage("");
 
     try {
-      const result = await sendOTP(email);
+      const result = await sendOTP(normalizeEmail(email));
       if (result?.success) {
         setMessageType("success");
         setMessage("New OTP sent to your email. Check your inbox.");
@@ -257,8 +381,14 @@ const SignupPage = () => {
 
   const handleRegister = async () => {
     // Validate all fields
+    const normalizedEmail = normalizeEmail(email);
+    const normalizedPhone = normalizePhone(phone);
+
+    setEmail(normalizedEmail);
+    setPhone(normalizedPhone);
+
     const nameError = validateName(name);
-    const phoneError = validatePhone(phone);
+    const phoneError = validatePhone(normalizedPhone);
     const stateError = validateState(state);
     const otpError = validateOTP(otp);
     const passwordError = validatePassword(password);
@@ -284,7 +414,14 @@ const SignupPage = () => {
     setMessage("");
 
     try {
-      const result = await register(name, email, otp, password, phone, state);
+      const result = await register(
+        name.trim(),
+        normalizedEmail,
+        otp,
+        password,
+        normalizedPhone,
+        state
+      );
       if (result?.success) {
         // Set redirecting flag to prevent beforeunload warning
         setIsRedirecting(true);
@@ -332,6 +469,12 @@ const SignupPage = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [hasFormData, isRedirecting]);
+
+  useEffect(() => {
+    return () => {
+      clearGooglePopupWatcher();
+    };
+  }, []);
 
   return (
     <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex overflow-hidden">
@@ -559,13 +702,25 @@ const SignupPage = () => {
                         required
                         value={email}
                         onChange={(e) => {
-                          setEmail(e.target.value);
-                          setErrors((prev) => ({ ...prev, email: "" }));
-                          if (e.target.value.trim()) {
+                          const nextEmail = e.target.value.replace(/\s/g, "").toLowerCase();
+                          setEmail(nextEmail);
+                          setErrors((prev) => ({
+                            ...prev,
+                            email: nextEmail ? "" : prev.email,
+                          }));
+                          if (nextEmail.trim()) {
                             setHasFormData(true);
                           } else {
                             setHasFormData(false);
                           }
+                        }}
+                        onBlur={() => {
+                          const normalizedEmail = normalizeEmail(email);
+                          setEmail(normalizedEmail);
+                          setErrors((prev) => ({
+                            ...prev,
+                            email: validateEmail(normalizedEmail),
+                          }));
                         }}
                         className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                         placeholder="Enter your email"
@@ -629,35 +784,61 @@ const SignupPage = () => {
                     <div className="mt-6 flex justify-center">
                       <button
                         type="button"
-                        onClick={() => {
-                          const googleAuthUrl = import.meta.env.VITE_GOOGLE_AUTH_URL || "http://localhost:5000/api/auth/google";
-                          window.location.href = googleAuthUrl;
-                        }}
-                        className="w-64 cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                        onClick={openGooglePopup}
+                        disabled={isGoogleAuthInProgress}
+                        className="w-64 cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <svg
-                          className="w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 48 48"
-                        >
-                          <path
-                            fill="#EA4335"
-                            d="M24 9.5c3.94 0 7.47 1.35 10.26 3.98l7.64-7.64C37.61 1.67 31.27-1 24  -1 14.59-1 6.47 4.99 2.69 13.27l8.9 6.9C13.05 14.05 18.12 9.5 24 9.5z"
-                          />
-                          <path
-                            fill="#4285F4"
-                            d="M46.5 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.75c-.55 2.9-2.25 5.37-4.8 7.04l7.45 5.8c4.35-4.01 6.85-9.92 6.85-17.09z"
-                          />
-                          <path
-                            fill="#FBBC05"
-                            d="M11.59 28.17a14.48 14.48 0 01-.76-4.17c0-1.45.27-2.84.76-4.17l-8.9-6.9C1.6 16.3 0 20 0 24c0 4 1.6 7.7 4.19 10.07l8.9-6.9z"
-                          />
-                          <path
-                            fill="#34A853"
-                            d="M24 48c6.48 0 11.9-2.13 15.87-5.79l-7.45-5.8c-2.08 1.4-4.74 2.22-8.42 2.22-5.88 0-10.95-4.55-12.41-10.63l-8.9 6.9C6.47 43.01 14.59 49 24 49z"
-                          />
-                        </svg>
-                        <span className="ml-2">Google</span>
+                        {isGoogleAuthInProgress ? (
+                          <>
+                            <svg
+                              className="animate-spin h-5 w-5"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                              />
+                            </svg>
+                            <span className="ml-2">Waiting for Google sign-in...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-5 h-5"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 48 48"
+                            >
+                              <path
+                                fill="#EA4335"
+                                d="M24 9.5c3.94 0 7.47 1.35 10.26 3.98l7.64-7.64C37.61 1.67 31.27-1 24  -1 14.59-1 6.47 4.99 2.69 13.27l8.9 6.9C13.05 14.05 18.12 9.5 24 9.5z"
+                              />
+                              <path
+                                fill="#4285F4"
+                                d="M46.5 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.75c-.55 2.9-2.25 5.37-4.8 7.04l7.45 5.8c4.35-4.01 6.85-9.92 6.85-17.09z"
+                              />
+                              <path
+                                fill="#FBBC05"
+                                d="M11.59 28.17a14.48 14.48 0 01-.76-4.17c0-1.45.27-2.84.76-4.17l-8.9-6.9C1.6 16.3 0 20 0 24c0 4 1.6 7.7 4.19 10.07l8.9-6.9z"
+                              />
+                              <path
+                                fill="#34A853"
+                                d="M24 48c6.48 0 11.9-2.13 15.87-5.79l-7.45-5.8c-2.08 1.4-4.74 2.22-8.42 2.22-5.88 0-10.95-4.55-12.41-10.63l-8.9 6.9C6.47 43.01 14.59 49 24 49z"
+                              />
+                            </svg>
+                            <span className="ml-2">Google</span>
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -748,15 +929,25 @@ const SignupPage = () => {
                         id="phone"
                         name="phone"
                         type="tel"
+                        inputMode="numeric"
+                        pattern="[0-9]{10}"
+                        maxLength={10}
                         required
                         value={phone}
                         onChange={(e) => {
-                          setPhone(e.target.value);
+                          const digitsOnly = normalizePhone(e.target.value);
+                          setPhone(digitsOnly);
                           setErrors((prev) => ({ ...prev, phone: "" }));
                           setHasFormData(true);
                         }}
+                        onBlur={() => {
+                          setErrors((prev) => ({
+                            ...prev,
+                            phone: validatePhone(phone),
+                          }));
+                        }}
                         className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.phone ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
-                        placeholder="Phone Number"
+                        placeholder="10-digit mobile number"
                       />
                       {errors.phone && (
                         <span className="text-xs text-red-600 mt-1 block">

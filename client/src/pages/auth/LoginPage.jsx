@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
@@ -25,12 +25,123 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [hasFormData, setHasFormData] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isGoogleAuthInProgress, setIsGoogleAuthInProgress] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [stats, setStats] = useState({
     totalClients: 1000,
     yearsOfExperience: 10,
   });
-  const { login } = useAuth();
+  const googlePopupRef = useRef(null);
+  const popupCheckTimerRef = useRef(null);
+  const { login, handleGoogleCallback } = useAuth();
+
+  const clearGooglePopupWatcher = () => {
+    if (popupCheckTimerRef.current) {
+      clearInterval(popupCheckTimerRef.current);
+      popupCheckTimerRef.current = null;
+    }
+    googlePopupRef.current = null;
+  };
+
+  useEffect(() => {
+    const handleGoogleAuthMessage = async (event) => {
+      if (event.origin !== window.location.origin) return;
+
+      if (event.data?.type === "GOOGLE_AUTH_ERROR") {
+        setIsGoogleAuthInProgress(false);
+        clearGooglePopupWatcher();
+        setMessageType("error");
+        setMessage("Google sign-in failed. Please try again.");
+        return;
+      }
+
+      if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
+
+      const { token, name, email } = event.data;
+      const result = await handleGoogleCallback(token, name, email);
+      setIsGoogleAuthInProgress(false);
+      clearGooglePopupWatcher();
+
+      if (!result?.success) {
+        setMessageType("error");
+        setMessage(result?.message || "Google sign-in failed.");
+        return;
+      }
+
+      setMessageType("success");
+      setMessage("Google sign-in successful! Redirecting...");
+
+      const params = new URLSearchParams(location.search);
+      const redirectTo = params.get("redirectTo");
+      const stateRedirect = location.state?.redirect;
+      const shouldOpenForm = location.state?.openTestimonialForm;
+
+      if (redirectTo) {
+        navigate(redirectTo, { replace: true });
+      } else if (stateRedirect) {
+        const navigationState = shouldOpenForm
+          ? { openTestimonialForm: true }
+          : {};
+        navigate(stateRedirect, { replace: true, state: navigationState });
+      } else {
+        navigate("/", { replace: true });
+      }
+    };
+
+    window.addEventListener("message", handleGoogleAuthMessage);
+
+    return () => {
+      window.removeEventListener("message", handleGoogleAuthMessage);
+    };
+  }, [handleGoogleCallback, location.search, location.state, navigate]);
+
+  const openGooglePopup = () => {
+    const googleAuthUrl =
+      import.meta.env.VITE_GOOGLE_AUTH_URL ||
+      "http://localhost:5000/api/auth/google";
+
+    if (isGoogleAuthInProgress) return;
+
+    setIsGoogleAuthInProgress(true);
+    setMessageType("success");
+    setMessage("Waiting for Google sign-in...");
+
+    const width = 520;
+    const height = 640;
+    const left = Math.round(window.screenX + (window.outerWidth - width) / 2);
+    const top = Math.round(window.screenY + (window.outerHeight - height) / 2);
+
+    const popup = window.open(
+      googleAuthUrl,
+      "google-auth-popup",
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+
+    if (!popup) {
+      setIsGoogleAuthInProgress(false);
+      setMessageType("error");
+      setMessage("Popup blocked. Please allow popups and try Google sign-in again.");
+      return;
+    }
+
+    googlePopupRef.current = popup;
+    popupCheckTimerRef.current = setInterval(() => {
+      if (googlePopupRef.current && googlePopupRef.current.closed) {
+        clearGooglePopupWatcher();
+        setIsGoogleAuthInProgress(false);
+        setMessageType("error");
+        setMessage("Google sign-in window was closed before completion.");
+      }
+    }, 500);
+
+    popup.focus();
+  };
+
+  useEffect(() => {
+    return () => {
+      clearGooglePopupWatcher();
+    };
+  }, []);
 
   // Fetch real stats from backend
   useEffect(() => {
@@ -511,37 +622,61 @@ const LoginPage = () => {
                 <div className="mt-6 flex justify-center">
                   <button
                     type="button"
-                    onClick={() => {
-                      const googleAuthUrl =
-                        import.meta.env.VITE_GOOGLE_AUTH_URL ||
-                        "http://localhost:5000/api/auth/google";
-                      window.location.href = googleAuthUrl;
-                    }}
-                    className="w-64 cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    onClick={openGooglePopup}
+                    disabled={isGoogleAuthInProgress}
+                    className="w-64 cursor-pointer inline-flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 48 48"
-                    >
-                      <path
-                        fill="#EA4335"
-                        d="M24 9.5c3.94 0 7.47 1.35 10.26 3.98l7.64-7.64C37.61 1.67 31.27-1 24  -1 14.59-1 6.47 4.99 2.69 13.27l8.9 6.9C13.05 14.05 18.12 9.5 24 9.5z"
-                      />
-                      <path
-                        fill="#4285F4"
-                        d="M46.5 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.75c-.55 2.9-2.25 5.37-4.8 7.04l7.45 5.8c4.35-4.01 6.85-9.92 6.85-17.09z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M11.59 28.17a14.48 14.48 0 01-.76-4.17c0-1.45.27-2.84.76-4.17l-8.9-6.9C1.6 16.3 0 20 0 24c0 4 1.6 7.7 4.19 10.07l8.9-6.9z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M24 48c6.48 0 11.9-2.13 15.87-5.79l-7.45-5.8c-2.08 1.4-4.74 2.22-8.42 2.22-5.88 0-10.95-4.55-12.41-10.63l-8.9 6.9C6.47 43.01 14.59 49 24 49z"
-                      />
-                    </svg>
-                    <span className="ml-2">Google</span>
+                    {isGoogleAuthInProgress ? (
+                      <>
+                        <svg
+                          className="animate-spin h-5 w-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          />
+                        </svg>
+                        <span className="ml-2">Waiting for Google sign-in...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          className="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 48 48"
+                        >
+                          <path
+                            fill="#EA4335"
+                            d="M24 9.5c3.94 0 7.47 1.35 10.26 3.98l7.64-7.64C37.61 1.67 31.27-1 24  -1 14.59-1 6.47 4.99 2.69 13.27l8.9 6.9C13.05 14.05 18.12 9.5 24 9.5z"
+                          />
+                          <path
+                            fill="#4285F4"
+                            d="M46.5 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.75c-.55 2.9-2.25 5.37-4.8 7.04l7.45 5.8c4.35-4.01 6.85-9.92 6.85-17.09z"
+                          />
+                          <path
+                            fill="#FBBC05"
+                            d="M11.59 28.17a14.48 14.48 0 01-.76-4.17c0-1.45.27-2.84.76-4.17l-8.9-6.9C1.6 16.3 0 20 0 24c0 4 1.6 7.7 4.19 10.07l8.9-6.9z"
+                          />
+                          <path
+                            fill="#34A853"
+                            d="M24 48c6.48 0 11.9-2.13 15.87-5.79l-7.45-5.8c-2.08 1.4-4.74 2.22-8.42 2.22-5.88 0-10.95-4.55-12.41-10.63l-8.9 6.9C6.47 43.01 14.59 49 24 49z"
+                          />
+                        </svg>
+                        <span className="ml-2">Google</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

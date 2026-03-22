@@ -84,17 +84,54 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleGoogleCallback = (token, name, email) => {
-    // Prevent multiple calls
-    if (isAuthenticated && user) {
-      return;
+  const handleGoogleCallback = async (token, name, email) => {
+    try {
+      if (!token) {
+        return { success: false, message: 'Invalid Google auth token' };
+      }
+
+      localStorage.setItem('token', token);
+
+      // Verify token with backend so Google sign-in also follows server auth flow.
+      const verifyResponse = await axios.get('/api/verify-token', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const verifiedUser = verifyResponse.data?.user;
+      let userData = {
+        name: verifiedUser?.name || name || '',
+        email: verifiedUser?.email || email || '',
+      };
+
+      // Fetch full profile fields if available.
+      if (userData.email) {
+        try {
+          const profileResponse = await axios.get(`/api/user?email=${encodeURIComponent(userData.email)}`);
+          if (profileResponse.data) {
+            userData = profileResponse.data;
+          }
+        } catch (profileError) {
+          // Keep verified fallback user data when profile endpoint fails.
+        }
+      }
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return { success: true };
+    } catch (error) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAuthenticated(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Google sign-in failed',
+      };
     }
-    
-    localStorage.setItem('token', token);
-    const userData = { name, email: email || '' };
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-    setIsAuthenticated(true);
   };
 
   const logout = () => {
