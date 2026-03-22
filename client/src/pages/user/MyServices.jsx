@@ -12,12 +12,13 @@ import {
   TrendingUp, 
   Calendar,
   Eye,
-  Download,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
   X,
-  CreditCard
+  CreditCard,
+  Info,
+  User
 } from 'lucide-react';
 
 const MyServices = () => {
@@ -30,6 +31,8 @@ const MyServices = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [documentUrl, setDocumentUrl] = useState('');
+  const [selectedServiceItem, setSelectedServiceItem] = useState(null);
+  const [showServiceModal, setShowServiceModal] = useState(false);
   const itemsPerPage = 7;
 
   useEffect(() => {
@@ -60,6 +63,16 @@ const MyServices = () => {
     setShowDocumentModal(true);
   };
 
+  const handleServiceCardClick = (service) => {
+    setSelectedServiceItem(service);
+    setShowServiceModal(true);
+  };
+
+  const closeServiceModal = () => {
+    setShowServiceModal(false);
+    setSelectedServiceItem(null);
+  };
+
   const handlePayNow = (service) => {
     // Navigate to bills page with bill ID for highlighting
     const billId = service.bill?._id;
@@ -87,7 +100,7 @@ const MyServices = () => {
       itr: 'ITR Services',
       business: 'Business Advisory',
       tax: 'Tax Planning',
-      trademark: 'Trademark'
+      trademark: 'Trademark Services'
     };
     return nameMap[serviceType] || 'Service';
   };
@@ -444,6 +457,165 @@ const MyServices = () => {
     );
   };
 
+  const ServiceDetailsModal = () => {
+    if (!showServiceModal || !selectedServiceItem) return null;
+
+    return (
+      <div className="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center p-4 z-50">
+        <div className="bg-white shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Service Details</h2>
+                <p className="text-sm text-gray-500">{getServiceName(selectedServiceItem.serviceCategory)}</p>
+              </div>
+              <button
+                onClick={closeServiceModal}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="mb-6">
+              <div className="flex items-start justify-between mb-3 gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">{selectedServiceItem.title}</h3>
+                  <p className="text-gray-600">{selectedServiceItem.details}</p>
+                </div>
+                <div className="shrink-0">{getStatusBadge(selectedServiceItem)}</div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Info className="w-5 h-5 text-gray-600 mr-2" />
+                    <h4 className="font-semibold text-gray-900">Service Type</h4>
+                  </div>
+                  <p className="text-gray-700 text-transform: capitalize">{selectedServiceItem.serviceCategory || 'Not available'}</p>
+                </div>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center mb-2">
+                    <Calendar className="w-5 h-5 text-gray-600 mr-2" />
+                    <h4 className="font-semibold text-gray-900">Applied Date</h4>
+                  </div>
+                  <p className="text-gray-700">{formatDate(selectedServiceItem.createdAt)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                <User className="w-5 h-5 text-gray-600 mr-2" />
+                Customer Information
+              </h4>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-green-700 font-medium mb-1">Name</p>
+                    <p className="text-gray-900 font-semibold">{user?.name || 'Not available'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-green-700 font-medium mb-1">Email</p>
+                    <p className="text-gray-900">{user?.email || 'Not available'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900 mb-3">Service Notes</h4>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">User Notes</p>
+                  <p className="text-gray-800">{selectedServiceItem.notes || 'No notes added'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Admin Response</p>
+                  <p className="text-gray-800">{selectedServiceItem.adminNotes || 'No admin response yet'}</p>
+                </div>
+              </div>
+            </div>
+
+            {selectedServiceItem.bill && (
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Billing Information</h4>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-blue-700 font-medium mb-1">Bill Status</p>
+                      <p className="text-gray-900 font-semibold">{selectedServiceItem.bill.status}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-blue-700 font-medium mb-1">Amount</p>
+                      <p className="text-gray-900 font-semibold">₹{getTotalAmount(selectedServiceItem.bill).toLocaleString()}</p>
+                    </div>
+                    {selectedServiceItem.bill.dueDate && (
+                      <div>
+                        <p className="text-sm text-blue-700 font-medium mb-1">Due Date</p>
+                        <p className="text-gray-900">{formatDate(selectedServiceItem.bill.dueDate)}</p>
+                      </div>
+                    )}
+                    {selectedServiceItem.bill.billNumber && (
+                      <div>
+                        <p className="text-sm text-blue-700 font-medium mb-1">Invoice</p>
+                        <p className="text-gray-900">{selectedServiceItem.bill.billNumber}</p>
+                      </div>
+                    )}
+                    {selectedServiceItem.bill.paidAt && (
+                      <div>
+                        <p className="text-sm text-blue-700 font-medium mb-1">Payment Date</p>
+                        <p className="text-gray-900">{formatDate(selectedServiceItem.bill.paidAt)}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900 mb-3">Document</h4>
+              {selectedServiceItem.documentUrl ? (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="text-indigo-800 font-medium">Document attached</div>
+                  <button
+                    onClick={() => handleViewDocument(selectedServiceItem.documentUrl)}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    Preview Document
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-gray-600">
+                  No document attached for this service.
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+              {(selectedServiceItem.bill && (selectedServiceItem.bill.status === 'Pending' || selectedServiceItem.bill.status === 'Overdue')) && (
+                <button
+                  onClick={() => {
+                    closeServiceModal();
+                    handlePayNow(selectedServiceItem);
+                  }}
+                  className={`${isOverdue(selectedServiceItem.bill)
+                    ? 'bg-red-200 hover:bg-red-300'
+                    : 'bg-blue-200 hover:bg-blue-300'
+                  } text-gray-800 font-medium py-3 px-6 rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-2`}
+                >
+                  <CreditCard className="w-5 h-5" />
+                  {isOverdue(selectedServiceItem.bill) ? 'Pay Overdue Bill' : 'Pay Bill'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return <UserPageLoader />;
   }
@@ -541,7 +713,11 @@ const MyServices = () => {
       ) : (
         <div className="space-y-4">
           {paginatedServices.map((service, index) => (
-            <div key={`${service.serviceCategory}-${service._id}-${index}`} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div
+              key={`${service.serviceCategory}-${service._id}-${index}`}
+              onClick={() => handleServiceCardClick(service)}
+              className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border border-transparent hover:border-blue-200"
+            >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-start space-x-4">
@@ -550,6 +726,11 @@ const MyServices = () => {
                       <h3 className="text-lg font-semibold text-gray-900">{service.title}</h3>
                       <p className="text-gray-600">{service.details}</p>
                       <p className="text-sm text-gray-500">Service Type: {service.subType}</p>
+                      {service.documentUrl && (
+                        <div className="mt-1 inline-flex items-center text-xs text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-1 rounded-full">
+                          Document attached
+                        </div>
+                      )}
                       {service.notes && (
                         <p className="text-sm text-gray-500 mt-1">Notes: {service.notes}</p>
                       )}
@@ -568,9 +749,16 @@ const MyServices = () => {
                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    Applied on {formatDate(service.createdAt)}
+                  <div className="flex flex-col text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Applied on {formatDate(service.createdAt)}
+                    </div>
+                    {service.bill?.status === 'Paid' && service.bill?.paidAt && (
+                      <div className="mt-1 text-green-700 font-medium">
+                        Paid on {formatDate(service.bill.paidAt)}
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex flex-col space-y-2 items-end">
@@ -595,7 +783,10 @@ const MyServices = () => {
                       {/* Pay Now button for services with pending or overdue bills */}
                       {service.bill && (service.bill.status === 'Pending' || service.bill.status === 'Overdue') && (
                         <button
-                          onClick={() => handlePayNow(service)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePayNow(service);
+                          }}
                           className={`${isOverdue(service.bill) 
                             ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 animate-pulse' 
                             : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
@@ -611,30 +802,7 @@ const MyServices = () => {
                           )}
                         </button>
                       )}
-                    
-                      {service.documentUrl && (
-                        <>
-                          <button
-                            onClick={() => handleViewDocument(service.documentUrl)}
-                            className="text-blue-600 hover:text-blue-800 p-2 cursor-pointer rounded-lg hover:bg-blue-50 transition-colors"
-                            title="View document"
-                        >
-                          <Eye className="w-5 h-5" />
-                        </button>
-                        {/* <button
-                          onClick={() => {
-                            const link = document.createElement('a');
-                            link.href = service.documentUrl;
-                            link.download = `${service.title}-document`;
-                            link.click();
-                          }}
-                          className="text-green-600 hover:text-green-800 p-2 cursor-pointer rounded-lg hover:bg-green-50 transition-colors"
-                          title="Download document"
-                        >
-                          <Download className="w-5 h-5" />
-                        </button> */}
-                        </>
-                      )}
+
                     </div>
                   </div>
                 </div>
@@ -693,6 +861,9 @@ const MyServices = () => {
 
       {/* Document Modal */}
       {showDocumentModal && <DocumentModal />}
+
+      {/* Service Details Modal */}
+      {showServiceModal && <ServiceDetailsModal />}
     </div>
   );
 };
