@@ -67,13 +67,30 @@ const Navbar = () => {
     <>
       {/* Logout confirmation message (always visible at top) */}
       {showLogoutMsg && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-green-500 text-black px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-fade-in-up">
-            <FiLogOut className="text-white text-xl" />
+        <div className="fixed top-5 right-5 z-500 pointer-events-none">
+          <div className="toast-slide-in bg-white text-green-500 px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <FiLogOut className="text-black text-xl" />
             <span>Logged out successfully</span>
           </div>
         </div>
       )}
+
+      <style jsx="true">{`
+        @keyframes toastSlideInRight {
+          0% {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .toast-slide-in {
+          animation: toastSlideInRight 0.35s ease-out;
+        }
+      `}</style>
       
       <nav
         className={`bg-gradient-to-r from-white via-blue-50 to-white shadow-xl sticky top-0 z-50 transition-transform duration-300 border-b-2 border-blue-100 ${

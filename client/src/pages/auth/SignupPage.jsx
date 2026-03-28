@@ -16,6 +16,7 @@ import {
   FiEyeOff,
   FiShield,
   FiCheck,
+  FiChevronDown,
 } from "react-icons/fi";
 import logo from "../../assets/logo.png";
 
@@ -1036,7 +1037,7 @@ const SignupPage = () => {
                           setErrors((prev) => ({ ...prev, state: "" }));
                           setHasFormData(true);
                         }}
-                        className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.state ? "border-red-500" : "border-gray-300"} rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
+                        className={`appearance-none cursor-pointer block w-full pl-10 pr-10 py-3 border ${errors.state ? "border-red-500" : "border-gray-300"} rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                       >
                         <option value="">Select your state</option>
                         {STATES_OF_INDIA.map((stateName) => (
@@ -1045,6 +1046,9 @@ const SignupPage = () => {
                           </option>
                         ))}
                       </select>
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <FiChevronDown className="h-5 w-5 text-gray-400" />
+                      </div>
                       {errors.state && (
                         <span className="text-xs text-red-600 mt-1 block">
                           {errors.state}

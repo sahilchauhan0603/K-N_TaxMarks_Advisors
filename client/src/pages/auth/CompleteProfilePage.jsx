@@ -10,6 +10,7 @@ import {
   FiCheckCircle,
   FiShield,
   FiLock,
+  FiChevronDown,
 } from "react-icons/fi";
 import logo from "../../assets/logo.png";
 
@@ -59,6 +60,10 @@ const CompleteProfilePage = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    phone: "",
+    state: "",
+  });
   const token = searchParams.get("token");
 
   useEffect(() => {
@@ -67,19 +72,54 @@ const CompleteProfilePage = () => {
     }
   }, [token, navigate]);
 
+  const normalizePhone = (value) => value.replace(/\D/g, "").slice(0, 10);
+
+  const validatePhone = (value) => {
+    const normalizedPhone = normalizePhone(value);
+    if (!normalizedPhone) return "Phone number is required";
+    if (normalizedPhone.length !== 10) {
+      return "Phone number must be exactly 10 digits";
+    }
+    if (!/^[6-9]\d{9}$/.test(normalizedPhone)) {
+      return "Phone number must start with 6, 7, 8, or 9";
+    }
+    return "";
+  };
+
+  const validateState = (value) => {
+    if (!value) return "State is required";
+    if (!STATES_OF_INDIA.includes(value)) return "Please select a valid state";
+    return "";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.phone || !formData.state) {
+
+    const normalizedPhone = normalizePhone(formData.phone);
+    const phoneError = validatePhone(normalizedPhone);
+    const stateError = validateState(formData.state);
+
+    setFormData((prev) => ({
+      ...prev,
+      phone: normalizedPhone,
+    }));
+    setErrors({
+      phone: phoneError,
+      state: stateError,
+    });
+
+    if (phoneError || stateError) {
       setMessageType("error");
-      setMessage("Please fill all required fields");
+      setMessage("Please fix the errors below.");
       return;
     }
+
     setIsLoading(true);
     setMessage("");
     try {
       const result = await completeGoogleProfile(
         token,
-        formData.phone,
+        normalizedPhone,
         formData.state,
       );
       if (result.success) {
@@ -355,17 +395,33 @@ const CompleteProfilePage = () => {
                       id="phone"
                       name="phone"
                       type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]{10}"
+                      maxLength={10}
                       required
                       value={formData.phone}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const digitsOnly = normalizePhone(e.target.value);
                         setFormData((prev) => ({
                           ...prev,
-                          phone: e.target.value,
-                        }))
-                      }
-                      className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                          phone: digitsOnly,
+                        }));
+                        setErrors((prev) => ({ ...prev, phone: "" }));
+                      }}
+                      onBlur={() => {
+                        setErrors((prev) => ({
+                          ...prev,
+                          phone: validatePhone(formData.phone),
+                        }));
+                      }}
+                      className={`appearance-none block w-full pl-10 pr-4 py-3 border ${errors.phone ? "border-red-500" : "border-gray-300"} rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                       placeholder="Enter your phone number"
                     />
+                    {errors.phone && (
+                      <span className="text-xs text-red-600 mt-1 block">
+                        {errors.phone}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -385,13 +441,20 @@ const CompleteProfilePage = () => {
                       name="state"
                       required
                       value={formData.state}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData((prev) => ({
                           ...prev,
                           state: e.target.value,
-                        }))
-                      }
-                      className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200"
+                        }));
+                        setErrors((prev) => ({ ...prev, state: "" }));
+                      }}
+                      onBlur={() => {
+                        setErrors((prev) => ({
+                          ...prev,
+                          state: validateState(formData.state),
+                        }));
+                      }}
+                      className={`appearance-none cursor-pointer block w-full pl-10 pr-10 py-3 border ${errors.state ? "border-red-500" : "border-gray-300"} rounded-xl bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200`}
                     >
                       <option value="">Select your state</option>
                       {STATES_OF_INDIA.map((stateName) => (
@@ -400,6 +463,14 @@ const CompleteProfilePage = () => {
                         </option>
                       ))}
                     </select>
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <FiChevronDown className="h-5 w-5 text-gray-400" />
+                    </div>
+                    {errors.state && (
+                      <span className="text-xs text-red-600 mt-1 block">
+                        {errors.state}
+                      </span>
+                    )}
                   </div>
                 </div>
 

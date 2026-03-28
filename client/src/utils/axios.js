@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+const isAdminAuthEndpoint = (url = '') => {
+  return url.includes('/admin/send-otp') || url.includes('/admin/verify-otp');
+};
+
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://k-n-taxmarks-advisors-backend.onrender.com',
   headers: {
@@ -44,6 +48,10 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      if (isAdminAuthEndpoint(error.config?.url || '')) {
+        return Promise.reject(error);
+      }
+
       // Check if this was an admin route
       const isAdminRoute = error.config?.url?.includes('/admin') || 
                           error.config?.url?.includes('admin') ||
