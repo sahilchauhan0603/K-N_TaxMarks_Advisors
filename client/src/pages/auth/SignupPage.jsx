@@ -113,6 +113,17 @@ const SignupPage = () => {
         return;
       }
 
+      if (event.data?.type === "GOOGLE_AUTH_PROFILE_INCOMPLETE") {
+        const { token, name: googleName, email: googleEmail } = event.data;
+        setIsGoogleAuthInProgress(false);
+        clearGooglePopupWatcher();
+        navigate(
+          `/complete-profile?token=${encodeURIComponent(token)}&name=${encodeURIComponent(googleName || "")}&email=${encodeURIComponent(googleEmail || "")}`,
+          { replace: true }
+        );
+        return;
+      }
+
       if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
 
       const { token, name: googleName, email: googleEmail } = event.data;

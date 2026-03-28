@@ -55,6 +55,17 @@ const LoginPage = () => {
         return;
       }
 
+      if (event.data?.type === "GOOGLE_AUTH_PROFILE_INCOMPLETE") {
+        const { token, name, email } = event.data;
+        setIsGoogleAuthInProgress(false);
+        clearGooglePopupWatcher();
+        navigate(
+          `/complete-profile?token=${encodeURIComponent(token)}&name=${encodeURIComponent(name || "")}&email=${encodeURIComponent(email || "")}`,
+          { replace: true }
+        );
+        return;
+      }
+
       if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
 
       const { token, name, email } = event.data;

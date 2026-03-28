@@ -182,6 +182,7 @@ const ReportsPage = () => {
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
             >
+              <option value="all">All Time</option>
               <option value="last7">Last 7 days</option>
               <option value="last30">Last 30 days</option>
               <option value="last90">Last 90 days</option>

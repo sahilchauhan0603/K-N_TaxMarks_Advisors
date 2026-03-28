@@ -49,13 +49,10 @@ router.get('/google/callback',
             { expiresIn: '7d' }
           );
 
-          // If profile is incomplete, redirect to profile completion
-          if (!user.profileComplete) {
-            res.redirect(`${process.env.CLIENT_URL}/complete-profile?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
-          } else {
-            // Profile is complete, redirect to auth callback handler
-            res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}`);
-          }
+          // Always route through auth callback so popup can postMessage and close.
+          res.redirect(
+            `${process.env.CLIENT_URL}/auth/callback?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}&profileComplete=${user.profileComplete ? 'true' : 'false'}`
+          );
         } catch (error) {
           res.redirect(`${process.env.CLIENT_URL}/login?error=auth_failed`);
         }

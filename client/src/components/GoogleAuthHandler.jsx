@@ -17,6 +17,7 @@ const GoogleAuthHandler = () => {
     const token = searchParams.get('token');
     const name = searchParams.get('name');
     const email = searchParams.get('email');
+    const profileComplete = searchParams.get('profileComplete');
     const error = searchParams.get('error');
     const isPopup = window.opener && window.opener !== window;
 
@@ -38,8 +39,23 @@ const GoogleAuthHandler = () => {
 
     if (token && name) {
       processedRef.current = true;
+      const isProfileComplete = profileComplete !== 'false';
 
       if (isPopup) {
+        if (!isProfileComplete) {
+          window.opener.postMessage(
+            {
+              type: 'GOOGLE_AUTH_PROFILE_INCOMPLETE',
+              token,
+              name,
+              email: email || '',
+            },
+            window.location.origin
+          );
+          window.close();
+          return;
+        }
+
         window.opener.postMessage(
           {
             type: 'GOOGLE_AUTH_SUCCESS',
@@ -50,6 +66,14 @@ const GoogleAuthHandler = () => {
           window.location.origin
         );
         window.close();
+        return;
+      }
+
+      if (!isProfileComplete) {
+        navigate(
+          `/complete-profile?token=${encodeURIComponent(token)}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email || '')}`,
+          { replace: true }
+        );
         return;
       }
 
