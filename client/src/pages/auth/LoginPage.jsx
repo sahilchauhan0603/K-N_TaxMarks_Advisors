@@ -32,22 +32,50 @@ const LoginPage = () => {
     yearsOfExperience: 10,
   });
   const googlePopupRef = useRef(null);
-  const popupCheckTimerRef = useRef(null);
+  const popupAuthTimeoutRef = useRef(null);
   const popupCloseDelayRef = useRef(null);
+  const popupFocusFallbackRef = useRef(null);
   const googleAuthMessageReceivedRef = useRef(false);
   const { login, handleGoogleCallback } = useAuth();
 
   const clearGooglePopupWatcher = () => {
-    if (popupCheckTimerRef.current) {
-      clearInterval(popupCheckTimerRef.current);
-      popupCheckTimerRef.current = null;
+    if (popupAuthTimeoutRef.current) {
+      clearTimeout(popupAuthTimeoutRef.current);
+      popupAuthTimeoutRef.current = null;
     }
     if (popupCloseDelayRef.current) {
       clearTimeout(popupCloseDelayRef.current);
       popupCloseDelayRef.current = null;
     }
+    if (popupFocusFallbackRef.current) {
+      clearTimeout(popupFocusFallbackRef.current);
+      popupFocusFallbackRef.current = null;
+    }
     googlePopupRef.current = null;
   };
+
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      if (!isGoogleAuthInProgress || googleAuthMessageReceivedRef.current) return;
+
+      if (popupFocusFallbackRef.current) {
+        clearTimeout(popupFocusFallbackRef.current);
+      }
+
+      // If user returns focus and no callback arrives shortly, assume popup flow was cancelled.
+      popupFocusFallbackRef.current = setTimeout(() => {
+        if (!googleAuthMessageReceivedRef.current && isGoogleAuthInProgress) {
+          clearGooglePopupWatcher();
+          setIsGoogleAuthInProgress(false);
+          setMessageType("error");
+          setMessage("Google sign-in was cancelled before completion.");
+        }
+      }, 1000);
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    return () => window.removeEventListener("focus", handleWindowFocus);
+  }, [isGoogleAuthInProgress]);
 
   useEffect(() => {
     const handleGoogleAuthMessage = async (event) => {
@@ -151,19 +179,17 @@ const LoginPage = () => {
     }
 
     googlePopupRef.current = popup;
-    popupCheckTimerRef.current = setInterval(() => {
-      if (googlePopupRef.current && googlePopupRef.current.closed) {
-        clearGooglePopupWatcher();
 
-        popupCloseDelayRef.current = setTimeout(() => {
-          if (!googleAuthMessageReceivedRef.current) {
-            setIsGoogleAuthInProgress(false);
-            setMessageType("error");
-            setMessage("Google sign-in window was closed before completion.");
-          }
-        }, 1200);
+    // Avoid reading popup.closed repeatedly (can trigger COOP warnings in modern browsers).
+    // If no callback message arrives within timeout, treat it as cancelled/failed.
+    popupAuthTimeoutRef.current = setTimeout(() => {
+      if (!googleAuthMessageReceivedRef.current) {
+        clearGooglePopupWatcher();
+        setIsGoogleAuthInProgress(false);
+        setMessageType("error");
+        setMessage("Google sign-in was not completed. Please try again.");
       }
-    }, 500);
+    }, 90000);
 
     popup.focus();
   };

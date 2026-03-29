@@ -91,21 +91,49 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const googlePopupRef = useRef(null);
-  const popupCheckTimerRef = useRef(null);
+  const popupAuthTimeoutRef = useRef(null);
   const popupCloseDelayRef = useRef(null);
+  const popupFocusFallbackRef = useRef(null);
   const googleAuthMessageReceivedRef = useRef(false);
 
   const clearGooglePopupWatcher = () => {
-    if (popupCheckTimerRef.current) {
-      clearInterval(popupCheckTimerRef.current);
-      popupCheckTimerRef.current = null;
+    if (popupAuthTimeoutRef.current) {
+      clearTimeout(popupAuthTimeoutRef.current);
+      popupAuthTimeoutRef.current = null;
     }
     if (popupCloseDelayRef.current) {
       clearTimeout(popupCloseDelayRef.current);
       popupCloseDelayRef.current = null;
     }
+    if (popupFocusFallbackRef.current) {
+      clearTimeout(popupFocusFallbackRef.current);
+      popupFocusFallbackRef.current = null;
+    }
     googlePopupRef.current = null;
   };
+
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      if (!isGoogleAuthInProgress || googleAuthMessageReceivedRef.current) return;
+
+      if (popupFocusFallbackRef.current) {
+        clearTimeout(popupFocusFallbackRef.current);
+      }
+
+      // If user returns focus and no callback arrives shortly, assume popup flow was cancelled.
+      popupFocusFallbackRef.current = setTimeout(() => {
+        if (!googleAuthMessageReceivedRef.current && isGoogleAuthInProgress) {
+          clearGooglePopupWatcher();
+          setIsGoogleAuthInProgress(false);
+          setMessageType("error");
+          setMessage("Google sign-in was cancelled before completion.");
+        }
+      }, 1000);
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    return () => window.removeEventListener("focus", handleWindowFocus);
+  }, [isGoogleAuthInProgress]);
 
   useEffect(() => {
     const handleGoogleAuthMessage = async (event) => {
@@ -207,20 +235,16 @@ const SignupPage = () => {
     }
 
     googlePopupRef.current = popup;
-    popupCheckTimerRef.current = setInterval(() => {
-      if (googlePopupRef.current && googlePopupRef.current.closed) {
-        clearGooglePopupWatcher();
 
-        // Give postMessage from callback page a moment to arrive before showing close warning.
-        popupCloseDelayRef.current = setTimeout(() => {
-          if (!googleAuthMessageReceivedRef.current) {
-            setIsGoogleAuthInProgress(false);
-            setMessageType("error");
-            setMessage("Google sign-in window was closed before completion.");
-          }
-        }, 1200);
+    // Avoid repeated popup.closed checks to prevent COOP warnings in browser console.
+    popupAuthTimeoutRef.current = setTimeout(() => {
+      if (!googleAuthMessageReceivedRef.current) {
+        clearGooglePopupWatcher();
+        setIsGoogleAuthInProgress(false);
+        setMessageType("error");
+        setMessage("Google sign-in was not completed. Please try again.");
       }
-    }, 500);
+    }, 90000);
 
     popup.focus();
   };
@@ -1263,7 +1287,7 @@ const SignupPage = () => {
           </div>
         </div>
 
-        <style jsx>{`
+        <style jsx="true">{`
           @keyframes blob {
             0%,
             100% {

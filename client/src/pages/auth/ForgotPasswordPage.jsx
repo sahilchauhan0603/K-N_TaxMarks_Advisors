@@ -564,7 +564,7 @@ const ForgotPasswordPage = () => {
           </div>
         </div>
 
-        <style jsx>{`
+        <style jsx="true">{`
           @keyframes blob {
             0%,
             100% {
