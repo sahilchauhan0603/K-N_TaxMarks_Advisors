@@ -435,7 +435,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => navigate("/login")}
-                className="cursor-pointer px-4 py-2.5 rounded-xl text-base font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 transform transition-all duration-300 mt-2 w-full justify-center group relative overflow-hidden"
+                className="cursor-pointer px-4 py-2.5 rounded-xl text-base font-bold text-white bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-100 transform transition-all duration-300 mt-2 w-full justify-center group relative overflow-hidden"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                 <FiLogIn className="text-lg relative z-10" /> 

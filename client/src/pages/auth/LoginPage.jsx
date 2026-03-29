@@ -33,12 +33,18 @@ const LoginPage = () => {
   });
   const googlePopupRef = useRef(null);
   const popupCheckTimerRef = useRef(null);
+  const popupCloseDelayRef = useRef(null);
+  const googleAuthMessageReceivedRef = useRef(false);
   const { login, handleGoogleCallback } = useAuth();
 
   const clearGooglePopupWatcher = () => {
     if (popupCheckTimerRef.current) {
       clearInterval(popupCheckTimerRef.current);
       popupCheckTimerRef.current = null;
+    }
+    if (popupCloseDelayRef.current) {
+      clearTimeout(popupCloseDelayRef.current);
+      popupCloseDelayRef.current = null;
     }
     googlePopupRef.current = null;
   };
@@ -48,6 +54,7 @@ const LoginPage = () => {
       if (event.origin !== window.location.origin) return;
 
       if (event.data?.type === "GOOGLE_AUTH_ERROR") {
+        googleAuthMessageReceivedRef.current = true;
         setIsGoogleAuthInProgress(false);
         clearGooglePopupWatcher();
         setMessageType("error");
@@ -56,6 +63,7 @@ const LoginPage = () => {
       }
 
       if (event.data?.type === "GOOGLE_AUTH_PROFILE_INCOMPLETE") {
+        googleAuthMessageReceivedRef.current = true;
         const { token, name, email } = event.data;
         setIsGoogleAuthInProgress(false);
         clearGooglePopupWatcher();
@@ -68,6 +76,7 @@ const LoginPage = () => {
 
       if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
 
+  googleAuthMessageReceivedRef.current = true;
       const { token, name, email } = event.data;
       const result = await handleGoogleCallback(token, name, email);
       setIsGoogleAuthInProgress(false);
@@ -113,6 +122,7 @@ const LoginPage = () => {
 
     if (isGoogleAuthInProgress) return;
 
+    googleAuthMessageReceivedRef.current = false;
     setIsGoogleAuthInProgress(true);
     setMessageType("success");
     setMessage("Waiting for Google sign-in...");
@@ -128,6 +138,11 @@ const LoginPage = () => {
       `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
     );
 
+    if (popupCloseDelayRef.current) {
+      clearTimeout(popupCloseDelayRef.current);
+      popupCloseDelayRef.current = null;
+    }
+
     if (!popup) {
       setIsGoogleAuthInProgress(false);
       setMessageType("error");
@@ -139,9 +154,14 @@ const LoginPage = () => {
     popupCheckTimerRef.current = setInterval(() => {
       if (googlePopupRef.current && googlePopupRef.current.closed) {
         clearGooglePopupWatcher();
-        setIsGoogleAuthInProgress(false);
-        setMessageType("error");
-        setMessage("Google sign-in window was closed before completion.");
+
+        popupCloseDelayRef.current = setTimeout(() => {
+          if (!googleAuthMessageReceivedRef.current) {
+            setIsGoogleAuthInProgress(false);
+            setMessageType("error");
+            setMessage("Google sign-in window was closed before completion.");
+          }
+        }, 1200);
       }
     }, 500);
 
@@ -170,6 +190,7 @@ const LoginPage = () => {
         // Keep default fallback values if fetch fails
       }
     };
+
     fetchStats();
   }, []);
 
