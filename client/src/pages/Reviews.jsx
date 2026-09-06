@@ -130,9 +130,14 @@ const Reviews = () => {
   const showLessTestimonials = () => {
     setDisplayedCount(ITEMS_PER_LOAD);
     // Smooth scroll to top of testimonials section
-    const testimonialsSection = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
+    const testimonialsSection = document.querySelector(
+      ".grid.grid-cols-1.md\\:grid-cols-2",
+    );
     if (testimonialsSection) {
-      testimonialsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      testimonialsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
 
@@ -459,27 +464,31 @@ const Reviews = () => {
         )}
 
         {/* CTA Section */}
-        <div className="mt-16 bg-slate-900 rounded-lg p-8 md:p-12 text-white text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Work with Us?
-          </h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join hundreds of satisfied clients who trust K&N Tax Marks Advisors
-            with their professional services.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleWriteReview}
-              className="bg-white text-slate-900 hover:bg-gray-100 font-semibold py-3 px-8 cursor-pointer rounded-lg transition-all shadow-md hover:shadow-lg"
-            >
-              Share Your Review
-            </button>
-            <Link
-              to="/"
-              className="border-2 border-white text-white hover:bg-white hover:text-slate-900 font-semibold py-3 px-8 rounded-lg transition-colors"
-            >
-              Explore Services
-            </Link>
+        <div className="mt-16 bg-slate-900 rounded-xl px-8 py-8 text-white border border-slate-800">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="text-center md:text-left">
+              <h2 className="text-2xl font-bold mb-2 tracking-tight">
+                Ready to Work with Us?
+              </h2>
+              <p className="text-sm text-slate-400 max-w-md">
+                Join hundreds of satisfied clients who trust K&N Tax Marks
+                Advisors with their professional services.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+              <button
+                onClick={handleWriteReview}
+                className="bg-white text-slate-900 hover:bg-slate-100 font-medium text-sm py-2.5 px-6 cursor-pointer rounded-lg transition-colors whitespace-nowrap"
+              >
+                Share Your Review
+              </button>
+              <Link
+                to="/"
+                className="border border-slate-600 text-white hover:border-white hover:bg-white/5 font-medium text-sm py-2.5 px-6 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Explore Services
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -596,109 +605,97 @@ const TestimonialForm = ({ onClose, onSuccess }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <form
-        className="bg-white rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-lg relative border border-slate-200 max-h-screen overflow-y-auto"
+        className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-lg relative max-h-screen overflow-y-auto"
         onSubmit={handleSubmit}
       >
         <button
           type="button"
-          className="absolute cursor-pointer top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl focus:outline-none z-10"
+          className="absolute cursor-pointer top-5 right-5 text-gray-400 hover:text-gray-600 text-xl focus:outline-none z-10"
           onClick={onClose}
           aria-label="Close"
         >
           <FaTimes />
         </button>
 
-        <h3 className="text-2xl font-bold mb-2 text-gray-900 pr-8">
-          Share Your Experience
-        </h3>
-        <p className="text-sm text-gray-600 mb-6">
-          Help other clients make informed decisions. Your honest feedback
-          matters.
-        </p>
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold text-slate-900">
+            Share Your Experience
+          </h3>
+          <p className="text-sm text-slate-500 mt-1">
+            We value your feedback!
+          </p>
+        </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Name */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Full Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full border border-slate-200 focus:border-slate-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none bg-white placeholder-gray-400 transition-colors"
-              placeholder="Enter your full name"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            className="w-full bg-slate-100 focus:bg-slate-50 border border-transparent focus:border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none placeholder-slate-500 transition-colors"
+            placeholder="Your Name"
+            required
+          />
 
           {/* Designation */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Designation <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full border border-slate-200 focus:border-slate-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none bg-white placeholder-gray-400 transition-colors"
-              placeholder="e.g., Business Owner, CA, etc."
-              required
-            />
-          </div>
+          <input
+            type="text"
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full bg-slate-100 focus:bg-slate-50 border border-transparent focus:border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none placeholder-slate-500 transition-colors"
+            placeholder="Your Designation"
+            required
+          />
 
           {/* Profile Photo */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Profile Photo (Optional)
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              Upload Profile Photo
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="w-full border border-slate-200 focus:border-slate-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none bg-white transition-colors file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
-            />
+            <div className="bg-slate-100 rounded-lg px-4 py-3">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-white hover:file:bg-slate-800 file:cursor-pointer cursor-pointer transition-colors"
+              />
+            </div>
           </div>
 
           {/* Service */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Service <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="service"
-              value={form.service}
-              onChange={handleChange}
-              className="w-full border border-slate-200 focus:border-slate-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none bg-white text-gray-900 transition-colors cursor-pointer"
-              required
-            >
-              <option value="">Select the service you used</option>
-              {SERVICE_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            name="service"
+            value={form.service}
+            onChange={handleChange}
+            className="w-full bg-slate-100 focus:bg-slate-50 border border-transparent focus:border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none text-slate-700 transition-colors cursor-pointer"
+            required
+          >
+            <option value="">Select Service</option>
+            {SERVICE_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
 
           {/* Rating */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
-              Your Rating <span className="text-red-500">*</span>
-            </label>
-            <div className="flex gap-2">
-              {[5, 4, 3, 2, 1].map((star) => (
+          <div className="flex items-center justify-between bg-slate-100 rounded-lg px-4 py-3">
+            <span className="text-sm font-semibold text-slate-700">
+              Your Rating
+            </span>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   type="button"
                   onClick={() => handleRatingChange(star)}
-                  className="cursor-pointer p-1 transition-transform hover:scale-110"
+                  className="cursor-pointer p-0.5 transition-transform hover:scale-110"
                 >
                   <FaStar
-                    className={`w-8 h-8 ${
-                      star <= form.rating ? "text-yellow-400" : "text-gray-300"
+                    className={`w-6 h-6 ${
+                      star <= form.rating ? "text-yellow-400" : "text-slate-300"
                     }`}
                   />
                 </button>
@@ -708,20 +705,17 @@ const TestimonialForm = ({ onClose, onSuccess }) => {
 
           {/* Feedback */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Your Feedback <span className="text-red-500">*</span>
-            </label>
             <textarea
               name="feedback"
               value={form.feedback}
               onChange={handleChange}
-              className="w-full border border-slate-200 focus:border-slate-400 rounded-lg px-4 py-2.5 text-sm focus:outline-none bg-white placeholder-gray-400 resize-none transition-colors"
-              rows={5}
+              className="w-full bg-slate-100 focus:bg-slate-50 border border-transparent focus:border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none placeholder-slate-500 resize-none transition-colors"
+              rows={4}
               maxLength={500}
-              placeholder="Share your experience with us (max 500 characters)"
+              placeholder="Your feedback (max 500 chars)"
               required
             />
-            <div className="text-xs text-gray-500 text-right mt-1">
+            <div className="text-xs text-slate-400 text-right mt-1">
               {form.feedback.length}/500 characters
             </div>
           </div>
@@ -737,7 +731,7 @@ const TestimonialForm = ({ onClose, onSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-lg shadow transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-700 mt-6"
+            className="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3.5 px-4 rounded-lg shadow transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-800 mt-2"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -745,7 +739,7 @@ const TestimonialForm = ({ onClose, onSuccess }) => {
                 Submitting...
               </span>
             ) : (
-              "Submit Review"
+              "Submit Testimonial"
             )}
           </button>
         </div>
